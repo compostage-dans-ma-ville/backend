@@ -7,8 +7,8 @@ module.exports = {
   },
   plugins: ['@typescript-eslint/eslint-plugin'],
   extends: [
-    'plugin:@typescript-eslint/recommended',
-    "airbnb-base/legacy",
+    'plugin:@typescript-eslint/strict',
+    'airbnb-base/legacy',
   ],
   root: true,
   env: {
@@ -17,9 +17,20 @@ module.exports = {
   },
   ignorePatterns: ['.eslintrc.js'],
   rules: {
-    '@typescript-eslint/interface-name-prefix': 'off',
-    '@typescript-eslint/explicit-function-return-type': 'off',
+    'class-methods-use-this': 'off',
+    'indent': [
+      'warn',
+      2
+    ],
+    'no-empty-function': ['error', { 'allow': ['constructors'] }],
+    'no-unused-vars': 'off',
+    'semi': [
+      'error',
+      'never'
+    ],
+    '@typescript-eslint/explicit-function-return-type': 'error',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
-    '@typescript-eslint/no-explicit-any': 'off',
+    '@typescript-eslint/no-explicit-any': 'error',
+    '@typescript-eslint/no-unused-vars': 'error'
   },
 };
