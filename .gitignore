@@ -36,5 +36,7 @@ lerna-debug.log*
 
 # yarn
 .yarn
+.pnp.cjs
+.pnp.loader.mjs
 
 .env
