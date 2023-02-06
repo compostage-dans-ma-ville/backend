@@ -11,7 +11,100 @@ datasource db {
 }
 
 model User {
-  id    Int     @default(autoincrement()) @id
-  email String  @unique
-  name  String?
+  id               Int      @id @default(autoincrement())
+  email            String   @unique
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  firstname        String
+  lastname         String
+  description      String?
+  password         String
+  isEmailConfirmed Boolean  @default(false)
+  avatar           Image?   @relation(fields: [imageId], references: [id])
+  imageId          String?
+
+  Organization             Organization[]
+  UserOrganizationRelation UserOrganizationRelation[]
+}
+
+// TODO: add opening hours
+model Site {
+  id             Int                 @id @default(autoincrement())
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+  name           String
+  description    String?
+  avatar         String?
+  Addresses      Address? // TODO: should always be defined
+  Images         ImageSiteRelation[]
+  Organization   Organization?       @relation(fields: [organizationId], references: [id])
+  organizationId Int?
+}
+
+model ImageSiteRelation {
+  site   Site @relation(fields: [siteId], references: [id])
+  siteId Int
+
+  order Int
+
+  image   Image  @relation(fields: [imageId], references: [id])
+  imageId String
+
+  @@id([siteId, imageId])
+  @@unique([siteId, order])
+}
+
+model Image {
+  id                String              @id
+  mimeType          String
+  imageSiteRelation ImageSiteRelation[]
+  User              User[]
+  Organization      Organization[]
+}
+
+// TODO: better modelization of the street number (1bis, 47Ter, ...)
+// TODO: check if there are better coordinate type (distance between 2 coordinates) (small prio)
+model Address {
+  id          Int    @id @default(autoincrement())
+  houseNumber String
+  streetName  String
+  zipCode     Int
+  city        String
+  latitude    String
+  longitude   String
+
+  site   Site @relation(fields: [siteId], references: [id])
+  siteId Int  @unique
+}
+
+model Organization {
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  name        String   @unique
+  description String?
+  avatar      Image?   @relation(fields: [imageId], references: [id])
+  imageId     String?
+  links       String[]
+
+  sites                    Site[]
+  members                  User[]
+  UserOrganizationRelation UserOrganizationRelation[]
+}
+
+enum OrganizationRole {
+  MEMBER
+  ADMIN
+}
+
+model UserOrganizationRelation {
+  User   User @relation(fields: [userId], references: [id])
+  userId Int
+
+  role OrganizationRole
+
+  Organization   Organization @relation(fields: [organizationId], references: [id])
+  organizationId Int
+
+  @@id([userId, organizationId])
 }
