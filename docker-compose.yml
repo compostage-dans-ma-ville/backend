@@ -1,0 +1,48 @@
+version: "3.5"
+
+services:
+  db-dev-composte:
+    image: postgres:15
+    container_name: db-dev-composte
+    restart: always
+    cap_add:
+      - SYS_NICE
+    volumes:
+      - ./var/lib/my-postgres-db-db:/var/lib/postgresql/data
+    ports:
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DATABASE: ${POSTGRES_DATABASE}
+      TZ: "Europe/Paris"
+    healthcheck:
+        test: ["CMD", "curl", "-f", "http://POSTGRES_HOST:POSTGRES_PORT"]
+        interval: 30s
+        timeout: 10s
+        retries: 5
+
+  api-dev-composte:
+    image: node:16.14.2
+    working_dir: /app
+    restart: always
+    container_name: api-dev-composte
+    links:
+      - db-dev-composte:${POSTGRES_HOST}
+    depends_on:
+      - db-dev-composte
+    ports:
+      - "${PORT_SERVER}:${PORT}"
+    volumes:
+      - ./:/app
+      - ./node_modules:/app/node_modules
+      - ./var/log/apache2:/var/log/apache2
+    expose:
+      - "${PORT_SERVER}"
+    command: sh -c "npm install -g @nestjs/cli &&
+             npm install --legacy-peer-deps &&
+             npm run start:dev"
+    env_file: .env
+    environment:
+      - TZ=Europe/Paris
+
