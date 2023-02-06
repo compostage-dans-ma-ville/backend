@@ -13,7 +13,7 @@ services:
       - .env
 
   postgres:
-    image: postgres:12
+    image: postgres:15.1
     container_name: postgres
     restart: always
     ports:
@@ -22,7 +22,12 @@ services:
       - .env
     volumes:
       - postgres:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB:?err}
+      - POSTGRES_USER=${POSTGRES_USER:?err}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?err}
 
+    
 volumes:
   postgres:
     name: nest-db
