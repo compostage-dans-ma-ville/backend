@@ -43,6 +43,7 @@ model Site {
   Images         ImageSiteRelation[]
   Organization   Organization?       @relation(fields: [organizationId], references: [id])
   organizationId Int?
+  schedules      Schedule[]
 }
 
 model ImageSiteRelation {
@@ -111,4 +112,16 @@ model UserOrganizationRelation {
   organizationId Int
 
   @@id([userId, organizationId])
+}
+
+model Schedule {
+  id Int @id @default(autoincrement())
+
+  site   Site @relation(fields: [siteId], references: [id])
+  siteId Int
+
+  dayOfWeek Int // beetween 1 and 7
+
+  open  String? // like 19:00
+  close String? // like 19:30
 }
