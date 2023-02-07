@@ -39,4 +39,7 @@ lerna-debug.log*
 .pnp.cjs
 .pnp.loader.mjs
 
+# pnpm
+.pnpm-lock.yaml
+
 .env
