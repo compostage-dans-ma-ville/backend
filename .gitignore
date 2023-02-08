@@ -35,6 +35,11 @@ lerna-debug.log*
 !.vscode/extensions.json
 
 # yarn
-.yarn/
+.yarn
+.pnp.cjs
+.pnp.loader.mjs
+
+# pnpm
+.pnpm-lock.yaml
 
 .env

@@ -10,41 +10,21 @@
 $ yarn install
 ```
 
-## Running the app
+### Set up a local docker compose
 
-```bash
-# development
-$ yarn run start
-
-# watch mode
-$ yarn run start:dev
-
-# production mode
-$ yarn run start:prod
+Put this in a .env.docker:
 ```
-
-## Test
-
-```bash
-# unit tests
-$ yarn run test
-
-# e2e tests
-$ yarn run test:e2e
-
-# test coverage
-$ yarn run test:cov
+POSTGRES_USER=admin
+POSTGRES_PASSWORD=admin
+POSTGRES_DB=compostage_dev
+DATABASE_URL="postgresql://admin:admin@db:5432/compostage_dev"
 ```
+and `docker-compose up` !
 
-## Support
+## DB Schema
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+A graphical representation of the schema can be obtained by running a `prisma generate`. It generates a `~/prisma/dbml/schema.dbml`.
+Paste the content in https://dbdiagram.io/d.
 
 ## License
 
