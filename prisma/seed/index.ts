@@ -21,7 +21,9 @@ const seedUser = async (): Promise<void> => {
 }
 
 const main = async (): Promise<void> => {
-  dotenv.config()
+  dotenv.config({
+    path: '.env.docker'
+  })
   console.log('Seeding...')
   await seedUser()
 }
