@@ -29,6 +29,7 @@ Table Site {
   Images ImageSiteRelation [not null]
   Organization Organization
   organizationId Int
+  schedules Schedule [not null]
 }
 
 Table ImageSiteRelation {
@@ -90,6 +91,15 @@ Table UserOrganizationRelation {
   }
 }
 
+Table Schedule {
+  id Int [pk, increment]
+  site Site [not null]
+  siteId Int [not null]
+  dayOfWeek Int [not null]
+  open String
+  close String
+}
+
 Enum OrganizationRole {
   MEMBER
   ADMIN
@@ -110,3 +120,5 @@ Ref: Organization.imageId > Image.id
 Ref: UserOrganizationRelation.userId > User.id
 
 Ref: UserOrganizationRelation.organizationId > Organization.id
+
+Ref: Schedule.siteId > Site.id
