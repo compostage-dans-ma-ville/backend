@@ -33,6 +33,8 @@ Nest is [MIT licensed](LICENSE).
 
 ## Set up local database
 
+* Replace the values in the .env as expected
+* 
 ```
 docker run --name MY_DOCKER_INSTANCE_NAME -p 5432:5432  -e POSTGRES_PASSWORD=MY_PWD  -e POSTGRES_USER=MY_USER  -e POSTGRES_DB=MY_DB_NAME -v my-postgres-db-db:/var/lib/postgresql/data -d postgres:15
 ```
