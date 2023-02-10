@@ -23,10 +23,10 @@ services:
     volumes:
       - postgres:/var/lib/postgresql/data
     environment:
-      - POSTGRES_DB=${POSTGRES_DB:?err}
+      - POSTGRES_DB=$${POSTGRES_DB:?err}
       - POSTGRES_HOST_AUTH_METHOD=trust
-      - POSTGRES_USER=${POSTGRES_USER:?err}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?err}
+      - POSTGRES_USER=$${POSTGRES_USER:?err}
+      - POSTGRES_PASSWORD=$${POSTGRES_PASSWORD:?err}
 
     
 volumes:
