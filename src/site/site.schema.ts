@@ -18,7 +18,7 @@ export class SiteSchema implements Site {
 
   @Factory(faker => ({
     houseNumber: faker?.address.buildingNumber(),
-    streetName: faker?.address.streetName(),
+    streetName: faker?.address.street(),
     zipCode: faker?.address.zipCode(),
     city: faker?.address.cityName(),
     longitude: faker?.address.longitude(),
