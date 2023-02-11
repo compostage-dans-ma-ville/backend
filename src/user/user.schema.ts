@@ -5,7 +5,10 @@ export class UserSchema {
     firstname: string
 
   @Factory(faker => faker?.name.lastName())
-    latname: string
+    lastname: string
+
+  @Factory(faker => faker?.internet.password())
+    password: string
 
   @Factory(faker => faker?.internet.email())
     email: string
