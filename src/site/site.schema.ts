@@ -26,5 +26,7 @@ export class SiteSchema implements Site {
   }))
     address: Address
 
+  addressId: number
+
   organizationId: number | null
 }
