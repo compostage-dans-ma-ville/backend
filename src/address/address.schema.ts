@@ -10,7 +10,7 @@ export class AddressSchema implements Address {
   @Factory(faker => faker?.address.street())
     streetName: string
 
-  @Factory(faker => faker?.address.zipCode())
+  @Factory(() => Math.floor(Math.random() * 90000) + 10000)
     zipCode: number
 
   @Factory(faker => faker?.address.city())
