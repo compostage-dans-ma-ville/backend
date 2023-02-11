@@ -11,10 +11,10 @@ export class AddressSeeder implements Seeder {
   async seed(): Promise<void> {
     const addresses = DataFactory.createForClass(AddressSchema)
       .generate(10) as Prisma.AddressCreateInput[]
-    this.prisma.address.createMany({ data: addresses })
+    await this.prisma.address.createMany({ data: addresses })
   }
 
   async drop(): Promise<void> {
-    this.prisma.address.deleteMany()
+    await this.prisma.address.deleteMany()
   }
 }

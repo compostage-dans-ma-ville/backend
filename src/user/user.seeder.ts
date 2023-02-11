@@ -11,10 +11,10 @@ export class UserSeeder implements Seeder {
   async seed(): Promise<void> {
     const users = DataFactory.createForClass(UserSchema)
       .generate(10) as Prisma.UserCreateManyInput[]
-    this.prisma.user.createMany({ data: users })
+    await this.prisma.user.createMany({ data: users })
   }
 
   async drop(): Promise<void> {
-    this.prisma.user.deleteMany()
+    await this.prisma.user.deleteMany()
   }
 }

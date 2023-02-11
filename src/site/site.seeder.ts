@@ -11,10 +11,10 @@ export class SiteSeeder implements Seeder {
   async seed(): Promise<void> {
     const sites = DataFactory.createForClass(SiteSchema)
       .generate(10) as Prisma.SiteCreateManyInput[]
-    this.prisma.site.createMany({ data: sites })
+    await this.prisma.site.createMany({ data: sites })
   }
 
   async drop(): Promise<void> {
-    this.prisma.site.deleteMany()
+    await this.prisma.site.deleteMany()
   }
 }
