@@ -7,7 +7,7 @@ export class AddressSchema implements Address {
   @Factory(faker => faker?.address.buildingNumber().toString())
     houseNumber: string
 
-  @Factory(faker => faker?.address.streetName())
+  @Factory(faker => faker?.address.street())
     streetName: string
 
   @Factory(faker => faker?.address.zipCode())
