@@ -19,7 +19,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "prisma:generate": "prisma generate",
     "db:start": "docker run --env-file .env -p 5432:5432 -v compostage_dev_db:/var/lib/postgresql/data -d postgres:15.1",
-    "db:sh": ". .env && psql -h localhost -p 5432 -U $POSTGRES_USER $POSTGRES_DB",
+    "db:sh": "psql -h localhost -p 5432 -U admin compostage_dev",
     "db:seed": "ts-node src/seeder",
     "db:seed:refresh": "ts-node src/seeder --refresh"
   },
