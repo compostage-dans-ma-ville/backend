@@ -1,15 +1,19 @@
 import { Injectable } from '@nestjs/common'
-import { CreateSiteDto } from './dto/create-site.dto'
-import { UpdateSiteDto } from './dto/update-site.dto'
+import type { CreateSiteDto } from './dto/create-site.dto'
+import type { UpdateSiteDto } from './dto/update-site.dto'
+import { PrismaService } from '~/prisma/prisma.service'
+import { Site } from '@prisma/client'
 
 @Injectable()
 export class SiteService {
+  constructor(private readonly prisma: PrismaService) {}
+
   create(createSiteDto: CreateSiteDto) {
     return 'This action adds a new site'
   }
 
-  findAll() {
-    return `This action returns all site`
+  findAll(): Promise<Site[]> {
+    return this.prisma.site.findMany()
   }
 
   findOne(id: number) {
