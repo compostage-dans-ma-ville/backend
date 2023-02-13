@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { Prisma } from '@prisma/client'
 import { Seeder, DataFactory } from 'nestjs-seeder'
-import { PrismaService } from '../prisma/prisma.service'
+import { PrismaService } from '~/prisma/prisma.service'
 import { AddressSchema } from './address.schema'
 
 @Injectable()
