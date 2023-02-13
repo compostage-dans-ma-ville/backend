@@ -1,1 +1,8 @@
-c
+{
+  "conventionalCommits.scopes": [
+    "App",
+    "site",
+    ".vscode",
+    "package.json"
+  ]
+}
