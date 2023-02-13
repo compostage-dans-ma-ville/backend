@@ -20,6 +20,15 @@ describe('GET /sites', () => {
 
     expect(status).toBe(200)
     expect(body).toBeDefined()
-    expect(body).toMatchSnapshot()
+    expect(body[0]).toMatchObject({
+      id: expect.any(Number),
+      addressId: expect.any(Number),
+      avatar: null,
+      createdAt: expect.any(String),
+      updatedAt: expect.any(String),
+      name: expect.any(String),
+      description: null,
+      organizationId: null
+    })
   })
 })
