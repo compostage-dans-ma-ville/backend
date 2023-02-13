@@ -4,8 +4,9 @@ import {
 import { SiteService } from './site.service'
 import { CreateSiteDto } from './dto/create-site.dto'
 import { UpdateSiteDto } from './dto/update-site.dto'
+import { Site } from '.prisma/client'
 
-@Controller('site')
+@Controller('sites')
 export class SiteController {
   constructor(private readonly siteService: SiteService) {}
 
@@ -15,7 +16,7 @@ export class SiteController {
   }
 
   @Get()
-  findAll() {
+  findAll(): Promise<Site[]> {
     return this.siteService.findAll()
   }
 
