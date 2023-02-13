@@ -31,7 +31,6 @@ model User {
   UserOrganizationRelation UserOrganizationRelation[]
 }
 
-// TODO: add opening hours
 model Site {
   id             Int                 @id @default(autoincrement())
   createdAt      DateTime            @default(now())
@@ -39,11 +38,12 @@ model Site {
   name           String
   description    String?
   avatar         String?
-  Addresses      Address? // TODO: should always be defined
   Images         ImageSiteRelation[]
+  Schedules      Schedule[]
+  Address        Address             @relation(fields: [addressId], references: [id])
+  addressId      Int
   Organization   Organization?       @relation(fields: [organizationId], references: [id])
   organizationId Int?
-  schedules      Schedule[]
 }
 
 model ImageSiteRelation {
@@ -78,8 +78,7 @@ model Address {
   latitude    String
   longitude   String
 
-  site   Site @relation(fields: [siteId], references: [id])
-  siteId Int  @unique
+  site Site[]
 }
 
 model Organization {

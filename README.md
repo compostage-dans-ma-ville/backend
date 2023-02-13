@@ -1,4 +1,4 @@
-# compostage-dans-ma-ville Backend
+# Compostage dans ma ville - Backend
 
 ## Description
 
@@ -7,7 +7,22 @@
 ## Installation
 
 ```bash
-$ yarn install
+yarn
+```
+
+### Set up the local database
+
+1. `cp .env.example .env`
+2. `npm run start`
+
+#### Local seeding
+
+```bash
+npm run db:seed
+```
+or reset the data with:
+```bash
+npm run db:seed:refresh
 ```
 
 ### Set up a local docker compose
@@ -29,13 +44,6 @@ Paste the content in https://dbdiagram.io/d.
 ## License
 
 Nest is [MIT licensed](LICENSE).
-
-
-## Set up local database
-
-```
-docker run --name MY_DOCKER_INSTANCE_NAME -p 5432:5432  -e POSTGRES_PASSWORD=MY_PWD  -e POSTGRES_USER=MY_USER  -e POSTGRES_DB=MY_DB_NAME -v my-postgres-db-db:/var/lib/postgresql/data -d postgres:15
-```
 
 ## Start local smtp server
 

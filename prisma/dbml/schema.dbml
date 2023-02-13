@@ -25,8 +25,10 @@ Table Site {
   name String [not null]
   description String
   avatar String
-  Addresses Address
   Images ImageSiteRelation [not null]
+  Schedules Schedule [not null]
+  Address Address [not null]
+  addressId Int [not null]
   Organization Organization
   organizationId Int
 }
@@ -61,7 +63,6 @@ Table Address {
   latitude String [not null]
   longitude String [not null]
   site Site [not null]
-  siteId Int [unique, not null]
 }
 
 Table Organization {
@@ -90,6 +91,15 @@ Table UserOrganizationRelation {
   }
 }
 
+Table Schedule {
+  id Int [pk, increment]
+  site Site [not null]
+  siteId Int [not null]
+  dayOfWeek Int [not null]
+  open String
+  close String
+}
+
 Enum OrganizationRole {
   MEMBER
   ADMIN
@@ -97,16 +107,18 @@ Enum OrganizationRole {
 
 Ref: User.imageId > Image.id
 
+Ref: Site.addressId > Address.id
+
 Ref: Site.organizationId > Organization.id
 
 Ref: ImageSiteRelation.siteId > Site.id
 
 Ref: ImageSiteRelation.imageId > Image.id
 
-Ref: Address.siteId - Site.id
-
 Ref: Organization.imageId > Image.id
 
 Ref: UserOrganizationRelation.userId > User.id
 
 Ref: UserOrganizationRelation.organizationId > Organization.id
+
+Ref: Schedule.siteId > Site.id
