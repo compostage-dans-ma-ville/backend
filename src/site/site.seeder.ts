@@ -12,12 +12,11 @@ export class SiteSeeder implements Seeder {
     const sites = DataFactory.createForClass(SiteSchema)
       .generate(10) //
     const siteCreations = await Promise.all(sites.map(async (s) => {
-      const data = s.address as Prisma.AddressCreateInput
-      const address = await this.prisma.address.create({ data })
+      const { address } = s as unknown as SiteSchema
+      const { id } = await this.prisma.address.create({ data: address })
       return {
         ...s as Prisma.SiteCreateInput,
-        addressId: address.id,
-        address: undefined
+        addressId: id
       }
     }))
     await this.prisma.site.createMany({ data: siteCreations })
