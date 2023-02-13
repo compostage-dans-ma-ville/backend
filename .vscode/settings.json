@@ -3,6 +3,7 @@
     "App",
     "site",
     ".vscode",
-    "package.json"
+    "package.json",
+    "jest"
   ]
 }
