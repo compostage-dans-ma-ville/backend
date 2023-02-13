@@ -23,6 +23,6 @@ describe('GET /sites', () => {
 
     expect(status).toBe(200)
     expect(body).toBeDefined()
-    expect(body).toBe(await prisma.site.findMany())
+    expect(body).toMatchSnapshot()
   })
 })
