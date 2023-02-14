@@ -25,6 +25,13 @@ or reset the data with:
 npm run db:seed:refresh
 ```
 
+### Set up .env
+Copy .env.example content into a .env file and modify it whith your settings
+
+Generate a secret for the JWT_SECRET_KEY field in .env
+You can use this site for example :
+https://www.grc.com/passwords.htm
+
 ### Set up a local docker compose
 
 Put this in a .env.docker:
