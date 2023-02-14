@@ -10,6 +10,7 @@ async function bootstrap(): Promise<void> {
     .setTitle('Composte Application API')
     .setDescription('The composte application API description')
     .setVersion('1.0')
+    .addBearerAuth()
     .build()
   const document = SwaggerModule.createDocument(app, config)
   SwaggerModule.setup('doc', app, document)
