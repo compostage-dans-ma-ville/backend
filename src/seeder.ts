@@ -1,8 +1,8 @@
 import { seeder } from 'nestjs-seeder'
 import { PrismaModule } from './prisma/prisma.module'
-import { AddressSeeder } from './address/address.seeder'
-import { UserSeeder } from './user/user.seeder'
-import { SiteSeeder } from './site/site.seeder'
+import { AddressSeeder } from './entities/address/address.seeder'
+import { UserSeeder } from './entities/user/user.seeder'
+import { SiteSeeder } from './entities/site/site.seeder'
 import * as dotenv from 'dotenv' // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
 dotenv.config()
 
