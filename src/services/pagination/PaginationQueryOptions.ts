@@ -2,14 +2,6 @@ import { ApiPropertyOptional } from '@nestjs/swagger'
 
 export class PaginationQueryOptions {
   @ApiPropertyOptional({
-    description: 'Filter the result for the given property values',
-    type: 'string',
-    example: 'property=value1,value2',
-    default: 'No filter'
-  })
-    filter?: string
-
-  @ApiPropertyOptional({
     description: 'The requested page of the list of existing resources',
     type: 'string',
     example: '1',
