@@ -50,6 +50,7 @@
     "@faker-js/faker": "^7.6.0",
     "@nestjs/cli": "^9.0.0",
     "@nestjs/schematics": "^9.0.0",
+    "@nestjs/swagger": "^6.2.1",
     "@nestjs/testing": "^9.0.0",
     "@prisma/client": "^4.10.1",
     "@types/bcrypt": "^5.0.0",
