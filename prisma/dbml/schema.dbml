@@ -32,7 +32,6 @@ Table Site {
   addressId Int [not null]
   Organization Organization
   organizationId Int
-  schedules Schedule [not null]
 }
 
 Table ImageSiteRelation {
