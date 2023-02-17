@@ -6,7 +6,7 @@ Table User {
   id Int [pk, increment]
   email String [unique, not null]
   createdAt DateTime [default: `now()`, not null]
-  updatedAt DateTime [not null]
+  updatedAt DateTime [default: `now()`, not null]
   firstname String [not null]
   lastname String [not null]
   description String
@@ -14,6 +14,7 @@ Table User {
   isEmailConfirmed Boolean [not null, default: false]
   avatar Image
   imageId String
+  role Role [not null, default: 'USER']
   Organization Organization [not null]
   UserOrganizationRelation UserOrganizationRelation [not null]
 }
@@ -31,6 +32,7 @@ Table Site {
   addressId Int [not null]
   Organization Organization
   organizationId Int
+  schedules Schedule [not null]
 }
 
 Table ImageSiteRelation {
@@ -98,6 +100,12 @@ Table Schedule {
   dayOfWeek Int [not null]
   open String
   close String
+}
+
+Enum Role {
+  USER
+  OWNER
+  ADMIN
 }
 
 Enum OrganizationRole {
