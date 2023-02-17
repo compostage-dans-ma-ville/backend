@@ -3,5 +3,6 @@
     "App",
     "site",
     ".vscode"
-  ]
+  ],
+  "files.eol": "\n",
 }

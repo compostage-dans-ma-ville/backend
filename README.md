@@ -13,16 +13,16 @@ yarn
 ### Set up the local database
 
 1. `cp .env.example .env`
-2. `npm run start`
+2. `yarn start`
 
 #### Local seeding
 
 ```bash
-npm run db:seed
+yarn db:seed
 ```
 or reset the data with:
 ```bash
-npm run db:seed:refresh
+yarn db:seed:refresh
 ```
 
 ### Set up .env
