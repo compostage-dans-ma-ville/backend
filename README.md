@@ -13,7 +13,7 @@ yarn
 ### Set up the local database
 
 1. `cp .env.example .env`
-2. `yarn start`
+2. `yarn db:start`
 
 #### Local seeding
 
@@ -51,13 +51,3 @@ Paste the content in https://dbdiagram.io/d.
 ## License
 
 Nest is [MIT licensed](LICENSE).
-
-## Start local smtp server
-
-Run the docker image:
-
-```bash
-docker run --name STRAPI_SMTP_PROVIDER -p 3000:80 -p 2525:25 rnwood/smtp4dev
-```
-
-The TCP port is `2525` and you can open the app at http://localhost:3000.
