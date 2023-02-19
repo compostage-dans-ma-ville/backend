@@ -41,8 +41,8 @@ export class SiteController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.siteService.findOne(+id)
+  findOne(@Param('id', ParseIntPipe) id: number): ReturnType<SiteService['findOne']> {
+    return this.siteService.findOne(id)
   }
 
   @Patch(':id')
