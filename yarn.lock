@@ -2205,6 +2205,7 @@ color-convert@^2.0.1:
     color-name "~1.1.4"
 
 color-name@1.1.3, color-support@^1.1.2:
+  name color-support
   version "1.1.3"
   resolved "https://registry.yarnpkg.com/color-support/-/color-support-1.1.3.tgz#93834379a1cc9a0c61f82f52f0d04322251bd5a2"
   integrity sha512-qiBjkpbMLO/HL68y+lh4q0/O1MZFj2RX6X/KmMa3+gJD3z+WwI1ZzDHysvqHGS3mP6mznPckpXmw1nI9cJjyRg==
@@ -5814,18 +5815,18 @@ tsconfig-paths-webpack-plugin@4.0.0:
     enhanced-resolve "^5.7.0"
     tsconfig-paths "^4.0.0"
 
-tsconfig-paths@4.1.1:
-  version "4.1.1"
-  resolved "https://registry.npmjs.org/tsconfig-paths/-/tsconfig-paths-4.1.1.tgz"
-  integrity sha512-VgPrtLKpRgEAJsMj5Q/I/mXouC6A/7eJ/X4Nuk6o0cRPwBtznYxTCU4FodbexbzH9somBPEXYi0ZkUViUpJ21Q==
-  dependencies:
-    json5 "^2.2.1"
-    minimist "^1.2.6"
-    strip-bom "^3.0.0"
-
 tsconfig-paths@4.1.2, tsconfig-paths@^4.0.0:
   version "4.1.2"
   resolved "https://registry.npmjs.org/tsconfig-paths/-/tsconfig-paths-4.1.2.tgz"
+  integrity sha512-uhxiMgnXQp1IR622dUXI+9Ehnws7i/y6xvpZB9IbUVOPy0muvdvgXeZOn88UcGPiT98Vp3rJPTa8bFoalZ3Qhw==
+  dependencies:
+    json5 "^2.2.2"
+    minimist "^1.2.6"
+    strip-bom "^3.0.0"
+
+tsconfig-paths@^4.1.2:
+  version "4.1.2"
+  resolved "https://registry.yarnpkg.com/tsconfig-paths/-/tsconfig-paths-4.1.2.tgz#4819f861eef82e6da52fb4af1e8c930a39ed979a"
   integrity sha512-uhxiMgnXQp1IR622dUXI+9Ehnws7i/y6xvpZB9IbUVOPy0muvdvgXeZOn88UcGPiT98Vp3rJPTa8bFoalZ3Qhw==
   dependencies:
     json5 "^2.2.2"
