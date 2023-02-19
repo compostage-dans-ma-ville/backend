@@ -21,21 +21,21 @@ export class SiteController {
 
   @Get()
   async findAll(
+    @Req() req: Request,
     @Query('items', ItemsQueryPipe) items: number,
     @Query('page', PageQueryPipe) page: number,
-    @Req() req: Request
   ): Promise<PaginatedData<Site>> {
     const sites = await this.siteService.findAll({
       skip: page * items,
       take: items
     })
-    const totalSites = await this.siteService.count()
+    const totalItemCount = await this.siteService.count()
 
     return createPaginationData<Site>({
       url: req.url,
       items: sites,
       queryOptions: { items, page },
-      totalItemCount: totalSites
+      totalItemCount
     })
   }
 
