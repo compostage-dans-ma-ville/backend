@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 import type { CreateSiteDto } from './dto/create-site.dto'
 import type { UpdateSiteDto } from './dto/update-site.dto'
 import { PrismaService } from '~/prisma/prisma.service'
-import { Site } from '@prisma/client'
+import { Prisma, Site } from '@prisma/client'
 
 @Injectable()
 export class SiteService {
@@ -12,8 +12,15 @@ export class SiteService {
     return 'This action adds a new site'
   }
 
-  findAll(): Promise<Site[]> {
-    return this.prisma.site.findMany()
+  findAll({ skip, take }: Prisma.SiteFindManyArgs): Promise<Site[]> {
+    return this.prisma.site.findMany({
+      skip,
+      take
+    })
+  }
+
+  count(): Promise<number> {
+    return this.prisma.site.count()
   }
 
   findOne(id: number) {
