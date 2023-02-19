@@ -4,8 +4,8 @@ import { AppService } from '~/app.service'
 import { PrismaModule } from '~/prisma/prisma.module'
 import { ConfigModule } from '@nestjs/config'
 import { AuthModule } from './auth/auth.module'
-import { UserModule } from './entities/user/user.module'
-import { SiteModule } from '~/entities/site/site.module'
+import { UserModule } from '~/user/user.module'
+import { SiteModule } from '~/site/site.module'
 import { AddressModule } from '~/address/address.module'
 
 @Module({
