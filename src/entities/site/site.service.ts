@@ -2,7 +2,9 @@ import { Injectable } from '@nestjs/common'
 import type { CreateSiteDto } from './dto/create-site.dto'
 import type { UpdateSiteDto } from './dto/update-site.dto'
 import { PrismaService } from '~/prisma/prisma.service'
-import { Prisma, Site } from '@prisma/client'
+import {
+  Address, ImageSiteRelation, Organization, Prisma, Schedule, Site
+} from '@prisma/client'
 
 @Injectable()
 export class SiteService {
@@ -23,8 +25,18 @@ export class SiteService {
     return this.prisma.site.count()
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} site`
+  findOne(id: number): Prisma.Prisma__SiteClient<(Site & {
+    Schedules: Schedule[];
+    Images: ImageSiteRelation[];
+    Address: Address;
+    Organization: Organization | null;
+}) | null, null> {
+    return this.prisma.site.findUnique({
+      include: {
+        Schedules: true, Images: true, Address: true, Organization: true
+      },
+      where: { id }
+    })
   }
 
   update(id: number, updateSiteDto: UpdateSiteDto) {
