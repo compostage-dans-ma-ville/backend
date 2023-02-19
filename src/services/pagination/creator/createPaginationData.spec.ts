@@ -1,13 +1,11 @@
-import { ListQueryHandler } from '../query-param-handling-service'
-import { SortOrder } from '../SortOrder'
 import { createPaginationData } from './createPaginationData'
 
 describe('createLinks', () => {
   it('return the 2 items from the first page', () => {
     const data = ['a', 'b', 'c']
     const paginatedData = createPaginationData({
-      baseUrl: new URL('https://example.com'),
-      queryOptions: { sortOrder: SortOrder.ASC, items: 2, page: 1 } as ListQueryHandler,
+      url: new URL('https://example.com'),
+      queryOptions: { sortOrder: 'ASC', items: 2, page: 1 },
       items: data,
       totalItemCount: 50
     })
@@ -26,8 +24,8 @@ describe('createLinks', () => {
   it('return the 3 items in the first page', () => {
     const data = ['a', 'b', 'c', 'd']
     const paginatedData = createPaginationData({
-      baseUrl: new URL('https://example.com'),
-      queryOptions: { sortOrder: SortOrder.ASC, items: 3, page: 1 } as ListQueryHandler,
+      url: new URL('https://example.com'),
+      queryOptions: { sortOrder: 'ASC', items: 3, page: 1 },
       items: data,
       totalItemCount: 50
     })
@@ -46,8 +44,8 @@ describe('createLinks', () => {
   it('return the all 3 items', () => {
     const data = ['a', 'b', 'c']
     const paginatedData = createPaginationData({
-      baseUrl: new URL('https://example.com'),
-      queryOptions: { sortOrder: SortOrder.ASC, items: 10, page: 1 } as ListQueryHandler,
+      url: new URL('https://example.com'),
+      queryOptions: { sortOrder: 'ASC', items: 10, page: 1 },
       items: data,
       totalItemCount: data.length
     })
@@ -65,8 +63,8 @@ describe('createLinks', () => {
   it('return all 6 items', () => {
     const items = ['a', 'b', 'c', 'd', 'e', 'f', 'g']
     const paginatedData = createPaginationData({
-      baseUrl: new URL('https://example.com'),
-      queryOptions: { sortOrder: SortOrder.ASC, items: 10, page: 1 } as ListQueryHandler,
+      url: new URL('https://example.com'),
+      queryOptions: { sortOrder: 'ASC', items: 10, page: 1 },
       items,
       totalItemCount: items.length
     })

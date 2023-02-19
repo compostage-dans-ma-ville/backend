@@ -1,17 +1,20 @@
-import { URL } from 'url'
+import type { PaginatedData } from '../dto/PaginationData'
+import { SortOrder } from '../dto/SortOrder'
 import { createLinks } from './createLinks'
-import { PaginatedData } from '../dto/PaginationData'
-import { ListQueryHandler } from '../query-param-handling-service'
 
 interface CreatePagindationDataParams<T> {
-  baseUrl: URL,
-  queryOptions: ListQueryHandler,
+  url: URL | string,
+  queryOptions: { page: number, items: number, sortOrder?: SortOrder },
   items: T[]
   totalItemCount: number,
 }
 
+const getEndpointOnly = (rawUrl: string | URL): URL => {
+  const url = new URL(rawUrl.toString())
+  return new URL(`${url.origin}${url.pathname}`)
+}
 export const createPaginationData = <T>({
-  baseUrl,
+  url,
   queryOptions,
   items,
   totalItemCount
@@ -27,7 +30,7 @@ export const createPaginationData = <T>({
     },
     data: items,
     links: createLinks({
-      baseUrl,
+      baseUrl: getEndpointOnly(url),
       currentPage: pageNumber,
       itemCountPerPage: queryOptions.items,
       totalItemCount: totalItems,

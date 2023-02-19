@@ -1,5 +1,5 @@
 import { Links } from '../dto/Links'
-import { SortOrder } from '../SortOrder'
+import type { SortOrder } from '../dto/SortOrder'
 
 const getLinkUrl = (baseUrl: URL, page: number): string => {
   const url = new URL(baseUrl)
@@ -25,7 +25,7 @@ export const createLinks = ({
 
   const url = new URL(baseUrl)
   url.searchParams.append('items', itemCountPerPage.toString())
-  if (sortOrder === SortOrder.ASC) {
+  if (sortOrder === 'ASC') {
     url.searchParams.append('sortOrder', 'ASC')
   }
 

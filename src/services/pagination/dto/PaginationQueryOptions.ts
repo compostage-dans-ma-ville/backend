@@ -17,19 +17,19 @@ export class PaginationQueryOptions {
   })
     items?: string
 
-  @ApiPropertyOptional({
-    description:
-      'Sort order of the returned objects, either "ASC" or "DESC", defaults to "DESC"',
-    type: 'string',
-    default: 'DESC'
-  })
-    sortOrder?: string
+  // @ApiPropertyOptional({
+  //   description:
+  //     'Sort order of the returned objects, either "ASC" or "DESC", defaults to "DESC"',
+  //   type: 'string',
+  //   default: 'DESC'
+  // })
+  //   sortOrder?: string
 
-  @ApiPropertyOptional({
-    description: 'Sort data by the given property',
-    type: 'string',
-    example: 'id',
-    default: 'id'
-  })
-    sortBy?: string
+  // @ApiPropertyOptional({
+  //   description: 'Sort data by the given property',
+  //   type: 'string',
+  //   example: 'id',
+  //   default: 'id'
+  // })
+  //   sortBy?: string
 }
