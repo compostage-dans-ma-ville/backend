@@ -1,5 +1,5 @@
 import {
-  Controller, Get, Post, Body, Patch, Param, Delete, Query, Req
+  Controller, Get, Post, Body, Patch, Param, Delete, Query, Req, ParseIntPipe
 } from '@nestjs/common'
 import type { Request } from 'express'
 import { SiteService } from './site.service'
