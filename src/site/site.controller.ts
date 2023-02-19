@@ -6,10 +6,10 @@ import { SiteService } from './site.service'
 import { CreateSiteDto } from './dto/create-site.dto'
 import { UpdateSiteDto } from './dto/update-site.dto'
 import { Site } from '.prisma/client'
-import { ItemsQueryPipe } from '~/services/pagination/pipes/ItemsQueryPipe'
-import { PageQueryPipe } from '~/services/pagination/pipes/PageQueryPipe'
-import { PaginatedData } from '~/services/pagination/dto/PaginationData'
-import { createPaginationData } from '~/services/pagination/creator/createPaginationData'
+import { ItemsQueryPipe } from '~/api-services/pagination/pipes/ItemsQueryPipe'
+import { PageQueryPipe } from '~/api-services/pagination/pipes/PageQueryPipe'
+import { PaginatedData } from '~/api-services/pagination/dto/PaginationData'
+import { createPaginationData } from '~/api-services/pagination/creator/createPaginationData'
 
 @Controller('sites')
 export class SiteController {
