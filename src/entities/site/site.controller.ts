@@ -1,6 +1,7 @@
 import {
   Controller, Get, Post, Body, Patch, Param, Delete, Query, Req
 } from '@nestjs/common'
+import type { Request } from 'express'
 import { SiteService } from './site.service'
 import { CreateSiteDto } from './dto/create-site.dto'
 import { UpdateSiteDto } from './dto/update-site.dto'
@@ -32,7 +33,7 @@ export class SiteController {
     const totalItemCount = await this.siteService.count()
 
     return createPaginationData<Site>({
-      url: req.url,
+      url: `${req.protocol}://${req.get('Host')}${req.url}`,
       items: sites,
       queryOptions: { items, page },
       totalItemCount
