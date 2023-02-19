@@ -6,7 +6,7 @@ import { ConfigModule } from '@nestjs/config'
 import { AuthModule } from './auth/auth.module'
 import { UserModule } from './entities/user/user.module'
 import { SiteModule } from '~/entities/site/site.module'
-import { AddressModule } from '~/entities/address/address.module'
+import { AddressModule } from '~/address/address.module'
 
 @Module({
   imports: [
