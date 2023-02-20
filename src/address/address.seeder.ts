@@ -15,6 +15,10 @@ export class AddressSeeder implements Seeder {
   }
 
   async drop(): Promise<void> {
-    await this.prisma.address.deleteMany()
+    await this.prisma.address.deleteMany({
+      where: {
+        site: undefined
+      }
+    })
   }
 }
