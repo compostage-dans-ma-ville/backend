@@ -28,7 +28,7 @@ describe('GET /sites', () => {
       pagination: {
         pageNumber: 1,
         pageSize: 0,
-        totalCount: 0
+        totalCount: 20
       },
       data: expect.any(Array)
       // data: {
