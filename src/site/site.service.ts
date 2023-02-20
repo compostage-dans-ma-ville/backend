@@ -43,7 +43,7 @@ export class SiteService {
     return `This action updates a #${id} site`
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} site`
+  remove(id: number): Prisma.Prisma__SiteClient<Site> {
+    return this.prisma.site.delete({ where: { id } })
   }
 }
