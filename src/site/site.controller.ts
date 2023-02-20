@@ -11,7 +11,9 @@ import { PageQueryPipe } from '~/api-services/pagination/pipes/PageQueryPipe'
 import { PaginatedData } from '~/api-services/pagination/dto/PaginationData'
 import { createPaginationData } from '~/api-services/pagination/creator/createPaginationData'
 import { Prisma } from '@prisma/client'
+import { ApiTags } from '@nestjs/swagger'
 
+@ApiTags('sites')
 @Controller('sites')
 export class SiteController {
   constructor(private readonly siteService: SiteService) {}
