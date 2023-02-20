@@ -27,20 +27,33 @@ describe('GET /sites', () => {
       },
       pagination: {
         pageNumber: 1,
-        pageSize: 0,
+        pageSize: 20,
         totalCount: 20
       },
       data: expect.any(Array)
-      // data: {
-      //   id: expect.any(Number),
-      //   addressId: expect.any(Number),
-      //   avatar: null,
-      //   createdAt: expect.any(String),
-      //   updatedAt: expect.any(String),
-      //   name: expect.any(String),
-      //   description: null,
-      //   organizationId: null
-      // }
     })
+  })
+
+  it('return a first site', async () => {
+    const { body } = await request(app.getHttpServer()).get('/sites')
+
+    expect(body.data[0]).toEqual(
+      {
+        id: expect.any(Number),
+        addressId: expect.any(Number),
+        avatar: null,
+        createdAt: expect.any(String),
+        updatedAt: expect.any(String),
+        name: expect.any(String),
+        description: null,
+        organizationId: null
+      }
+    )
+  })
+
+  it('return the expected amount of site', async () => {
+    const { body } = await request(app.getHttpServer()).get('/sites?items=10')
+
+    expect(body.data.length).toEqual(10)
   })
 })
