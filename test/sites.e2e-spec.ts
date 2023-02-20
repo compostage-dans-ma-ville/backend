@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { INestApplication } from '@nestjs/common'
 import * as request from 'supertest'
-import { SiteModule } from '~/entities/site/site.module'
+import { SiteModule } from '~/site/site.module'
 
 describe('GET /sites', () => {
   let app: INestApplication

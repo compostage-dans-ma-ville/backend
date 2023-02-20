@@ -7,7 +7,7 @@ import {
   ApiParam, ApiSecurity, ApiTags
 } from '@nestjs/swagger'
 import { User } from '@prisma/client'
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
+import { JwtAuthGuard } from '~/auth/jwt-auth.guard'
 import { UpdatePasswordDto } from './dto/updatePassword.dto'
 import { UserService } from './user.service'
 
