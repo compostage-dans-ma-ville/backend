@@ -48,7 +48,7 @@ and `docker-compose up` !
 Run the docker image:
 
 ```bash
-docker run --name STRAPI_SMTP_PROVIDER -p 3000:80 -p 2525:25 rnwood/smtp4dev
+docker run --name DEV_SMTP_PROVIDER -p 3000:80 -p 2525:25 rnwood/smtp4dev
 ```
 
 The TCP port is `2525` and you can open the app at http://localhost:3000.
