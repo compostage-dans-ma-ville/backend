@@ -22,8 +22,8 @@
     "prisma:generate": "prisma generate",
     "db:start": "docker run --env-file .env -p 5432:5432 -v compostage_dev_db:/var/lib/postgresql/data -d postgres:15.1",
     "db:sh": "psql -h localhost -p 5432 -U admin compostage_dev",
-    "db:seed": "ts-node -P tsconfig.json src/seeder",
-    "db:seed:refresh": "ts-node -P tsconfig.json src/seeder --refresh"
+    "db:seed": "ts-node src/seeder",
+    "db:seed:refresh": "ts-node src/seeder --refresh"
   },
   "dependencies": {
     "@nestjs/common": "^9.0.0",
