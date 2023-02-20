@@ -9,7 +9,7 @@ export class SiteSeeder implements Seeder {
 
   async seed(): Promise<void> {
     const sites = DataFactory.createForClass(SiteSchema)
-      .generate(10) //
+      .generate(20)
     const siteCreations = await Promise.all(sites.map(async (s) => {
       const { address, ...site } = s as unknown as SiteSchema
       const { id } = await this.prisma.address.create({ data: address })
