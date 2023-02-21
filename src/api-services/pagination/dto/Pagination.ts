@@ -2,13 +2,13 @@ import { ApiProperty } from '@nestjs/swagger'
 
 export class Pagination {
   @ApiProperty({
-    description: 'Page within the complete list returned by the call',
+    description: 'Current page returned by the call',
     example: 1
   })
     pageNumber: number
 
   @ApiProperty({
-    description: 'Size of the page returned by the call',
+    description: 'Amount of items in the page returned by the call',
     example: 10
   })
     pageSize: number
