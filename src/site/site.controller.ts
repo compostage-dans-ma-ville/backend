@@ -1,29 +1,31 @@
 import {
-  Controller, Get, Post, Body, Patch, Param, Delete, Query, Req, ParseIntPipe
+  Controller, Get, Param, Delete, Query, Req, ParseIntPipe
 } from '@nestjs/common'
 import type { Request } from 'express'
 import { SiteService } from './site.service'
-import { CreateSiteDto } from './dto/create-site.dto'
-import { UpdateSiteDto } from './dto/update-site.dto'
 import { Site } from '.prisma/client'
 import { ItemsQueryPipe } from '~/api-services/pagination/pipes/ItemsQueryPipe'
 import { PageQueryPipe } from '~/api-services/pagination/pipes/PageQueryPipe'
 import { PaginatedData } from '~/api-services/pagination/dto/PaginationData'
 import { createPaginationData } from '~/api-services/pagination/creator/createPaginationData'
 import { Prisma } from '@prisma/client'
-import { ApiTags } from '@nestjs/swagger'
+import { ApiExtraModels, ApiTags } from '@nestjs/swagger'
+import { ApiPaginatedResponse } from '~/api-services/pagination/ApiPaginationResponse'
+import { GetSiteDto } from './dto/get-site.dto'
 
-@ApiTags('sites')
 @Controller('sites')
+@ApiTags('sites')
+@ApiExtraModels(PaginatedData)
 export class SiteController {
   constructor(private readonly siteService: SiteService) {}
 
-  @Post()
-  create(@Body() createSiteDto: CreateSiteDto) {
-    return this.siteService.create(createSiteDto)
-  }
+  // @Post()
+  // create(@Body() createSiteDto: CreateSiteDto) {
+  //   return this.siteService.create(createSiteDto)
+  // }
 
   @Get()
+  @ApiPaginatedResponse(GetSiteDto)
   async findAll(
     @Req() req: Request,
     @Query('items', ItemsQueryPipe) items: number,
@@ -48,10 +50,10 @@ export class SiteController {
     return this.siteService.findOne(id)
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateSiteDto: UpdateSiteDto) {
-    return this.siteService.update(+id, updateSiteDto)
-  }
+  // @Patch(':id')
+  // update(@Param('id') id: string, @Body() updateSiteDto: UpdateSiteDto) {
+  //   return this.siteService.update(+id, updateSiteDto)
+  // }
 
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number): Prisma.Prisma__SiteClient<Site> {
