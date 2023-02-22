@@ -25,7 +25,6 @@ Table Site {
   updatedAt DateTime [not null]
   name String [not null]
   description String
-  avatar String
   Images ImageSiteRelation [not null]
   Schedules Schedule [not null]
   Address Address [not null]
