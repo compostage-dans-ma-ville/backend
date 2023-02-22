@@ -44,7 +44,6 @@ model Site {
   updatedAt      DateTime            @updatedAt
   name           String
   description    String?
-  avatar         String?
   Images         ImageSiteRelation[]
   Schedules      Schedule[]
   Address        Address             @relation(fields: [addressId], references: [id])
