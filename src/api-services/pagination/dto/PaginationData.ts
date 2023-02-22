@@ -9,10 +9,6 @@ export class PaginatedData<T> {
   })
     pagination: Pagination
 
-  @ApiProperty({
-    description: 'Resources of the returned page',
-    isArray: true
-  })
   readonly data: T[]
 
   @ApiProperty({
