@@ -96,8 +96,15 @@ Table Schedule {
   site Site [not null]
   siteId Int [not null]
   dayOfWeek Int [not null]
-  open String
-  close String
+  openings Opening [not null]
+}
+
+Table Opening {
+  id Int [pk, increment]
+  open String [not null]
+  close String [not null]
+  Schedule Schedule
+  scheduleId Int
 }
 
 Enum Role {
@@ -128,3 +135,5 @@ Ref: UserOrganizationRelation.userId > User.id
 Ref: UserOrganizationRelation.organizationId > Organization.id
 
 Ref: Schedule.siteId > Site.id
+
+Ref: Opening.scheduleId > Schedule.id

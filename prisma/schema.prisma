@@ -127,6 +127,15 @@ model Schedule {
 
   dayOfWeek Int // beetween 1 and 7
 
-  open  String? // like 19:00
-  close String? // like 19:30
+  openings Opening[]
+}
+
+model Opening {
+  id Int @id @default(autoincrement())
+
+  open  String // like 19:00
+  close String // like 19:30
+
+  Schedule   Schedule? @relation(fields: [scheduleId], references: [id])
+  scheduleId Int?
 }
