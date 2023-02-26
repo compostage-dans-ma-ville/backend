@@ -41,7 +41,6 @@ describe('sites', () => {
       expect(body.data[0]).toEqual({
         id: expect.any(Number),
         addressId: expect.any(Number),
-        avatar: null,
         createdAt: expect.any(String),
         updatedAt: expect.any(String),
         name: expect.any(String),
@@ -65,7 +64,6 @@ describe('sites', () => {
       expect(body).toMatchObject({
         id: 8,
         addressId: expect.any(Number),
-        avatar: null,
         createdAt: expect.any(String),
         updatedAt: expect.any(String),
         name: expect.any(String),
