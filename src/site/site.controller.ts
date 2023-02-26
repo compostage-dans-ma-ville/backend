@@ -15,6 +15,7 @@ import {
 } from '@nestjs/swagger'
 import { ApiPaginatedResponse } from '~/api-services/pagination/ApiPaginationResponse'
 import { GetSiteDto } from './dto/get-site.dto'
+import { getEndpoint } from '~/api-services/getEndpoint'
 
 @Controller('sites')
 @ApiTags('Sites')
@@ -41,7 +42,7 @@ export class SiteController {
     const totalItemCount = await this.siteService.count()
 
     return createPaginationData<Site>({
-      url: `${req.protocol}://${req.get('Host')}${req.url}`,
+      url: getEndpoint(req),
       items: sites,
       queryOptions: { items, page },
       totalItemCount
