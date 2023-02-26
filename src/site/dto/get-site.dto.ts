@@ -31,12 +31,6 @@ export class GetSiteDto implements Site {
     description: string | null
 
   @ApiProperty({
-    description: 'A basic summary of this site.',
-    example: new Date()
-  })
-    avatar: string | null
-
-  @ApiProperty({
     description: 'The address or location of this site.',
     example: 1
   })
