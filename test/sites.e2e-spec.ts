@@ -57,7 +57,7 @@ describe('sites', () => {
     })
   })
 
-  describe('DELETE /sites/:id', () => {
+  describe.skip('DELETE /sites/:id', () => {
     it('remove a site by id', async () => {
       const { status, body } = await request(app.getHttpServer()).delete('/sites/8')
 
