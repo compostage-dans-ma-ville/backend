@@ -1,5 +1,5 @@
 import {
-  Controller, Get, Param, Delete, Query, Req, ParseIntPipe
+  Controller, Get, Param, Delete, Query, Req, ParseIntPipe, HttpException, HttpStatus
 } from '@nestjs/common'
 import type { Request } from 'express'
 import { SiteService } from './site.service'
@@ -9,12 +9,15 @@ import { PageQueryPipe } from '~/api-services/pagination/pipes/PageQueryPipe'
 import { PaginatedData } from '~/api-services/pagination/dto/PaginationData'
 import { createPaginationData } from '~/api-services/pagination/creator/createPaginationData'
 import { Prisma } from '@prisma/client'
-import { ApiExtraModels, ApiTags } from '@nestjs/swagger'
+import {
+  ApiBadRequestResponse, ApiExtraModels, ApiInternalServerErrorResponse,
+  ApiNotFoundResponse, ApiOkResponse, ApiTags
+} from '@nestjs/swagger'
 import { ApiPaginatedResponse } from '~/api-services/pagination/ApiPaginationResponse'
 import { GetSiteDto } from './dto/get-site.dto'
 
 @Controller('sites')
-@ApiTags('sites')
+@ApiTags('Sites')
 @ApiExtraModels(PaginatedData)
 export class SiteController {
   constructor(private readonly siteService: SiteService) {}
@@ -62,6 +65,10 @@ export class SiteController {
   // }
 
   @Delete(':id')
+  @ApiOkResponse({ description: 'The site is successfully deleted.', type: GetSiteDto })
+  @ApiBadRequestResponse({ description: 'The id is malformed.' })
+  @ApiNotFoundResponse({ description: 'No site with this id is found.' })
+  @ApiInternalServerErrorResponse()
   remove(@Param('id', ParseIntPipe) id: number): Prisma.Prisma__SiteClient<Site> {
     return this.siteService.remove(id)
   }
