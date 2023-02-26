@@ -35,7 +35,7 @@ export class SiteController {
     @Query('page', PageQueryPipe) page: number,
   ): Promise<PaginatedData<Site>> {
     const sites = await this.siteService.findAll({
-      skip: page * items,
+      skip: (page - 1) * items,
       take: items
     })
     const totalItemCount = await this.siteService.count()
