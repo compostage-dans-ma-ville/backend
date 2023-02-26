@@ -113,11 +113,11 @@ Enum OrganizationRole {
 
 Ref: User.imageId > Image.id
 
-Ref: Site.addressId > Address.id
+Ref: Site.addressId > Address.id [delete: Cascade]
 
 Ref: Site.organizationId > Organization.id
 
-Ref: ImageSiteRelation.siteId > Site.id
+Ref: ImageSiteRelation.siteId > Site.id [delete: Cascade]
 
 Ref: ImageSiteRelation.imageId > Image.id
 
@@ -127,4 +127,4 @@ Ref: UserOrganizationRelation.userId > User.id
 
 Ref: UserOrganizationRelation.organizationId > Organization.id
 
-Ref: Schedule.siteId > Site.id
+Ref: Schedule.siteId > Site.id [delete: Cascade]
