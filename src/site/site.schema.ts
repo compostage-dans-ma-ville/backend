@@ -11,7 +11,7 @@ export class SiteSchema implements Site {
   @Factory(faker => faker?.animal.rabbit())
     name: string
 
-  @Factory(faker => Math.random() > 0.5 ? faker?.lorem.paragraphs(5) : null)
+  @Factory(faker => faker?.lorem.paragraphs(5))
     description: string | null
 
   avatar: string | null
