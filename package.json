@@ -64,11 +64,9 @@
     "@typescript-eslint/parser": "^5.0.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
-    "eslint": "^8.34.0",
+    "eslint": "^8.35.0",
     "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-plugin-jest-extended": "^2.0.0",
     "jest": "29.3.1",
-    "jest-extended": "^3.2.4",
     "nestjs-seeder": "^0.3.0",
     "prisma-dbml-generator": "^0.10.0",
     "source-map-support": "^0.5.20",
@@ -90,9 +88,6 @@
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
-    "setupFilesAfterEnv": [
-      "./testSetup.js"
-    ],
     "moduleNameMapper": {
       "^~/(.*)": "<rootDir>/$1"
     },
