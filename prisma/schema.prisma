@@ -46,14 +46,14 @@ model Site {
   description    String?
   Images         ImageSiteRelation[]
   Schedules      Schedule[]
-  Address        Address             @relation(fields: [addressId], references: [id])
+  Address        Address             @relation(fields: [addressId], references: [id], onDelete: Cascade)
   addressId      Int
   Organization   Organization?       @relation(fields: [organizationId], references: [id])
   organizationId Int?
 }
 
 model ImageSiteRelation {
-  site   Site @relation(fields: [siteId], references: [id])
+  site   Site @relation(fields: [siteId], references: [id], onDelete: Cascade)
   siteId Int
 
   order Int
@@ -122,7 +122,7 @@ model UserOrganizationRelation {
 model Schedule {
   id Int @id @default(autoincrement())
 
-  site   Site @relation(fields: [siteId], references: [id])
+  site   Site @relation(fields: [siteId], references: [id], onDelete: Cascade)
   siteId Int
 
   dayOfWeek Int // beetween 1 and 7
