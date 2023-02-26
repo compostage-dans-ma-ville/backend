@@ -22,6 +22,7 @@
     "prisma:generate": "prisma generate",
     "db:start": "docker run --name compostage_dev_db --env-file .env -p 5432:5432 -v compostage_dev_db:/var/lib/postgresql/data -d postgres:15.1",
     "db:stop": "docker container stop compostage_dev_db && docker container rm compostage_dev_db",
+    "db:init": "yarn prisma migrate reset",
     "db:sh": "psql -h localhost -p 5432 -U admin compostage_dev",
     "db:seed": "ts-node src/seeder",
     "db:seed:refresh": "ts-node src/seeder --refresh"
