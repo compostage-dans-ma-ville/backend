@@ -46,8 +46,14 @@ export class SiteController {
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number): ReturnType<SiteService['findOne']> {
-    return this.siteService.findOne(id)
+  @ApiOkResponse({ description: 'The site is successfully retrieved.', type: GetSiteDto })
+  @ApiNotFoundResponse({ description: 'The site is not found.' })
+  findOne(@Param('id', ParseIntPipe) id: number): ReturnType<SiteService['findOne']> | HttpException {
+    const site = this.siteService.findOne(id)
+    if(!site) {
+      return new HttpException('The site is not found.', HttpStatus.NOT_FOUND)
+    }
+    return site
   }
 
   // @Patch(':id')
