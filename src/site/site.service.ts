@@ -1,26 +1,49 @@
 import { Injectable } from '@nestjs/common'
-import { CreateSiteDto } from './dto/create-site.dto'
-import { UpdateSiteDto } from './dto/update-site.dto'
+// import type { CreateSiteDto } from './dto/create-site.dto'
+// import type { UpdateSiteDto } from './dto/update-site.dto'
+import { PrismaService } from '~/prisma/prisma.service'
+import {
+  Address, ImageSiteRelation, Organization, Prisma, Schedule, Site
+} from '@prisma/client'
 
 @Injectable()
 export class SiteService {
-  create(createSiteDto: CreateSiteDto) {
-    return 'This action adds a new site'
+  constructor(private readonly prisma: PrismaService) {}
+
+  // create(createSiteDto: CreateSiteDto) {
+  //   return 'This action adds a new site'
+  // }
+
+  findAll({ skip, take }: Prisma.SiteFindManyArgs): Promise<Site[]> {
+    return this.prisma.site.findMany({
+      skip,
+      take
+    })
   }
 
-  findAll() {
-    return `This action returns all site`
+  count(): Promise<number> {
+    return this.prisma.site.count()
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} site`
+  findOne(id: number): Prisma.Prisma__SiteClient<(Site & {
+    Schedules: Schedule[];
+    Images: ImageSiteRelation[];
+    Address: Address;
+    Organization: Organization | null;
+}) | null, null> {
+    return this.prisma.site.findUnique({
+      include: {
+        Schedules: true, Images: true, Address: true, Organization: true
+      },
+      where: { id }
+    })
   }
 
-  update(id: number, updateSiteDto: UpdateSiteDto) {
-    return `This action updates a #${id} site`
-  }
+  // update(id: number, updateSiteDto: UpdateSiteDto) {
+  //   return `This action updates a #${id} site`
+  // }
 
-  remove(id: number) {
-    return `This action removes a #${id} site`
+  remove(id: number): Prisma.Prisma__SiteClient<Site> {
+    return this.prisma.site.delete({ where: { id } })
   }
 }

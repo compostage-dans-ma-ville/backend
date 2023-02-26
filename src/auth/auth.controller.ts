@@ -7,8 +7,8 @@ import {
 } from '@nestjs/common'
 import { AuthService, RegistrationStatus } from './auth.service'
 import { ApiTags } from '@nestjs/swagger'
-import { CreateUserDto } from 'src/user/dto/create.dto'
-import { LoginUserDto } from 'src/user/dto/login.dto'
+import { CreateUserDto } from '~/user/dto/create.dto'
+import { LoginUserDto } from '~/user/dto/login.dto'
 
 @ApiTags('auth')
 @Controller('auth')

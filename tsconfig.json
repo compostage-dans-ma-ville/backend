@@ -8,6 +8,9 @@
     "allowSyntheticDefaultImports": true,
     "target": "es2017",
     "sourceMap": true,
+    "paths": {
+      "~/*": ["./src/*"]
+    },
     "outDir": "./dist",
     "baseUrl": "./",
     "incremental": true,
@@ -17,5 +20,8 @@
     "strictBindCallApply": true,
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true
+  },
+  "ts-node": {
+    "require": ["tsconfig-paths/register"]
   }
 }

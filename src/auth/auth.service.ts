@@ -2,10 +2,10 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { JwtPayload } from './jwt.strategy'
 import { User } from '@prisma/client'
-import { PrismaService } from 'src/prisma/prisma.service'
-import { UserService } from 'src/user/user.service'
-import { CreateUserDto } from 'src/user/dto/create.dto'
-import { LoginUserDto } from 'src/user/dto/login.dto'
+import { PrismaService } from '~/prisma/prisma.service'
+import { UserService } from '~/user/user.service'
+import { CreateUserDto } from '~/user/dto/create.dto'
+import { LoginUserDto } from '~/user/dto/login.dto'
 
 export interface RegistrationStatus{
     success: boolean;
