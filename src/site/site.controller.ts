@@ -66,8 +66,9 @@ export class SiteController {
   @Delete(':id')
   @ApiOkResponse({ description: 'The site is successfully deleted.', type: GetSiteDto })
   @ApiBadRequestResponse({ description: 'The id is malformed.' })
-  @ApiNotFoundResponse({ description: 'No site with this id is found.' })
-  @ApiInternalServerErrorResponse()
+  @ApiInternalServerErrorResponse({ description: 'Internal server error.' })
+  @ApiNotFoundResponse({ description: 'The site is not found.' })
+  @UseInterceptors(new NotFoundInterceptor('The site is not found.'))
   remove(@Param('id', ParseIntPipe) id: number): Prisma.Prisma__SiteClient<Site> {
     return this.siteService.remove(id)
   }
