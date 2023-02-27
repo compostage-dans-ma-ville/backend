@@ -1,5 +1,6 @@
 import {
-  Controller, Get, Param, Delete, Query, Req, ParseIntPipe, HttpException, HttpStatus
+  Controller, Get, Param, Delete,
+  Query, Req, ParseIntPipe, HttpException, UseInterceptors
 } from '@nestjs/common'
 import type { Request } from 'express'
 import { SiteService } from './site.service'
@@ -16,6 +17,7 @@ import {
 import { ApiPaginatedResponse } from '~/api-services/pagination/ApiPaginationResponse'
 import { GetSiteDto } from './dto/get-site.dto'
 import { getEndpoint } from '~/api-services/getEndpoint'
+import { NotFoundInterceptor } from '~/api-services/NotFoundInterceptor'
 
 @Controller('sites')
 @ApiTags('Sites')
@@ -51,13 +53,9 @@ export class SiteController {
 
   @Get(':id')
   @ApiOkResponse({ description: 'The site is successfully retrieved.', type: GetSiteDto })
-  @ApiNotFoundResponse({ description: 'The site is not found.' })
+  @UseInterceptors(new NotFoundInterceptor('The site is not found.'))
   findOne(@Param('id', ParseIntPipe) id: number): ReturnType<SiteService['findOne']> | HttpException {
-    const site = this.siteService.findOne(id)
-    if(!site) {
-      return new HttpException('The site is not found.', HttpStatus.NOT_FOUND)
-    }
-    return site
+    return this.siteService.findOne(id)
   }
 
   // @Patch(':id')
