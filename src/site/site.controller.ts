@@ -69,7 +69,7 @@ export class SiteController {
   @ApiInternalServerErrorResponse({ description: 'Internal server error.' })
   @ApiNotFoundResponse({ description: 'The site is not found.' })
   @UseInterceptors(new NotFoundInterceptor('The site is not found.'))
-  remove(@Param('id', ParseIntPipe) id: number): Prisma.Prisma__SiteClient<Site> {
+  async remove(@Param('id', ParseIntPipe) id: number): Promise<Prisma.Prisma__SiteClient<Site>> {
     return this.siteService.remove(id)
   }
 }
