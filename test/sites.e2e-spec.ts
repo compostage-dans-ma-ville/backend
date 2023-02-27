@@ -72,10 +72,19 @@ describe('sites', () => {
       })
     })
 
-    it('throws a 404 if the site is not found', async () => {
+    it('throw a 404 if the site is not found', async () => {
       const { status, body } = await request(app.getHttpServer()).delete('/sites/20230227')
 
       expect(status).toBe(404)
+      expect(body).toMatchObject({
+        message: expect.any(String)
+      })
+    })
+
+    it('throw a 400 if the id is malformed', async () => {
+      const { status, body } = await request(app.getHttpServer()).delete('/sites/abcd')
+
+      expect(status).toBe(400)
       expect(body).toMatchObject({
         message: expect.any(String)
       })
