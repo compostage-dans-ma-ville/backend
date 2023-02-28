@@ -120,14 +120,14 @@ model UserOrganizationRelation {
 }
 
 model Schedule {
-  id Int @id @default(autoincrement())
-
   site   Site @relation(fields: [siteId], references: [id], onDelete: Cascade)
   siteId Int
 
   dayOfWeek Int // beetween 1 and 7
 
   openings Opening[]
+
+  @@id([siteId, dayOfWeek])
 }
 
 model Opening {
@@ -136,6 +136,8 @@ model Opening {
   open  String // like 19:00
   close String // like 19:30
 
-  Schedule   Schedule? @relation(fields: [scheduleId], references: [id])
-  scheduleId Int?
+  scheduleId        Int?
+  Schedule          Schedule? @relation(fields: [scheduleSiteId, scheduleDayOfWeek], references: [siteId, dayOfWeek])
+  scheduleSiteId    Int?
+  scheduleDayOfWeek Int?
 }
