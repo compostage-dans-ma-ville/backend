@@ -53,6 +53,7 @@ export class SiteController {
 
   @Get(':id')
   @ApiOkResponse({ description: 'The site is successfully retrieved.', type: GetSiteDto })
+  @ApiNotFoundResponse({ description: 'The site is not found.' })
   @UseInterceptors(new NotFoundInterceptor('The site is not found.'))
   findOne(@Param('id', ParseIntPipe) id: number): ReturnType<SiteService['findOne']> | HttpException {
     return this.siteService.findOne(id)
