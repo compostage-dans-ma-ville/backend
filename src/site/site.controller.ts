@@ -1,5 +1,6 @@
 import {
-  Controller, Get, Param, Delete, Query, Req, ParseIntPipe, HttpException, HttpStatus
+  Controller, Get, Param, Delete,
+  Query, Req, ParseIntPipe, HttpException, UseInterceptors
 } from '@nestjs/common'
 import type { Request } from 'express'
 import { SiteService } from './site.service'
@@ -16,6 +17,7 @@ import {
 import { ApiPaginatedResponse } from '~/api-services/pagination/ApiPaginationResponse'
 import { GetSiteDto } from './dto/get-site.dto'
 import { getEndpoint } from '~/api-services/getEndpoint'
+import { NotFoundInterceptor } from '~/api-services/NotFoundInterceptor'
 
 @Controller('sites')
 @ApiTags('Sites')
@@ -52,12 +54,9 @@ export class SiteController {
   @Get(':id')
   @ApiOkResponse({ description: 'The site is successfully retrieved.', type: GetSiteDto })
   @ApiNotFoundResponse({ description: 'The site is not found.' })
+  @UseInterceptors(new NotFoundInterceptor('The site is not found.'))
   findOne(@Param('id', ParseIntPipe) id: number): ReturnType<SiteService['findOne']> | HttpException {
-    const site = this.siteService.findOne(id)
-    if(!site) {
-      return new HttpException('The site is not found.', HttpStatus.NOT_FOUND)
-    }
-    return site
+    return this.siteService.findOne(id)
   }
 
   // @Patch(':id')
@@ -68,9 +67,10 @@ export class SiteController {
   @Delete(':id')
   @ApiOkResponse({ description: 'The site is successfully deleted.', type: GetSiteDto })
   @ApiBadRequestResponse({ description: 'The id is malformed.' })
-  @ApiNotFoundResponse({ description: 'No site with this id is found.' })
-  @ApiInternalServerErrorResponse()
-  remove(@Param('id', ParseIntPipe) id: number): Prisma.Prisma__SiteClient<Site> {
+  @ApiInternalServerErrorResponse({ description: 'Internal server error.' })
+  @ApiNotFoundResponse({ description: 'The site is not found.' })
+  @UseInterceptors(new NotFoundInterceptor('The site is not found.'))
+  async remove(@Param('id', ParseIntPipe) id: number): Promise<Prisma.Prisma__SiteClient<Site>> {
     return this.siteService.remove(id)
   }
 }
