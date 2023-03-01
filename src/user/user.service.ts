@@ -6,10 +6,6 @@ import { CreateUserDto } from './dto/create.dto'
 import { LoginUserDto } from './dto/login.dto'
 import { UpdatePasswordDto } from './dto/updatePassword.dto'
 
-interface FormatLogin extends Partial<User> {
-  email: string
-}
-
 @Injectable()
 export class UserService {
   constructor(private prisma: PrismaService) { }
@@ -22,7 +18,7 @@ export class UserService {
     })
   }
 
-  async findByLogin({ email, password }: LoginUserDto): Promise<FormatLogin> {
+  async findByLogin({ email, password }: LoginUserDto): Promise<User> {
     const user = await this.prisma.user.findFirst({
       where: { email }
     })
@@ -30,7 +26,7 @@ export class UserService {
     if (!user) {
       throw new HttpException(
         'invalid credentials',
-        HttpStatus.UNAUTHORIZED
+        HttpStatus.FORBIDDEN
       )
     }
 
@@ -39,14 +35,11 @@ export class UserService {
     if (!areEqual) {
       throw new HttpException(
         'invalid credentials',
-        HttpStatus.UNAUTHORIZED
+        HttpStatus.FORBIDDEN
       )
     }
-    // deso pas le choix sauf si on trouve le moyen de faire
-    // une sorte de select = false dans le schema prisma pour le password
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password: p, ...rest } = user
-    return rest
+
+    return user
   }
 
   async findByPayload({ email }: {email: string}): Promise<User | null> {

@@ -19,7 +19,7 @@ module.exports = {
   rules: {
     'class-methods-use-this': 'off',
     'indent': [
-      'warn',
+      'error',
       2
     ],
     'no-empty-function': ['error', { 'allow': ['constructors'] }],

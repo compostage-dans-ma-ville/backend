@@ -6,6 +6,7 @@ import { PrismaService } from '~/prisma/prisma.service'
 import { UserService } from '~/user/user.service'
 import { CreateUserDto } from '~/user/dto/create.dto'
 import { LoginUserDto } from '~/user/dto/login.dto'
+import { LoginResponseDto } from './dto/login-response.dto'
 
 export interface RegistrationStatusFailed {
     success: false;
@@ -33,31 +34,17 @@ export class AuthService {
         private readonly userService: UserService,
   ) {}
 
-  async register(userDto: CreateUserDto): Promise<RegistrationStatus<CreateUserDto>> {
-    let status: RegistrationStatus<CreateUserDto> = {
-      success: true,
-      message: 'ACCOUNT_CREATE_SUCCESS',
-      data: {} as CreateUserDto
-    }
-
-    try {
-      status.data = await this.userService.createUser(userDto)
-    } catch (err) {
-      status = {
-        success: false,
-        message: err
-      }
-    }
-    return status
+  async register(userDto: CreateUserDto): Promise<User> {
+    return this.userService.createUser(userDto)
   }
 
-  async login(loginUserDto: LoginUserDto): Promise<{}> {
+  async login(loginUserDto: LoginUserDto): Promise<LoginResponseDto> {
     const user = await this.userService.findByLogin(loginUserDto)
 
     const token = this.createToken(user)
 
     return {
-      ...token,
+      token: token.Authorization,
       data: user
     }
   }

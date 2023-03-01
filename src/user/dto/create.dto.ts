@@ -1,25 +1,3 @@
-import { ApiProperty } from '@nestjs/swagger'
-import { IsEmail, IsNotEmpty } from 'class-validator'
-import { Expose } from 'class-transformer'
+import { UserDto } from './user.dto'
 
-export class CreateUserDto {
-  @ApiProperty()
-  @IsNotEmpty()
-  @Expose()
-    firstname: string
-
-  @ApiProperty()
-  @IsNotEmpty()
-  @Expose()
-    lastname: string
-
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsEmail()
-  @Expose()
-    email: string
-
-  @ApiProperty()
-  @IsNotEmpty()
-    password: string
-}
+export class CreateUserDto extends UserDto {}
