@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
-import { User, Prisma } from '@prisma/client'
+import { User, Prisma, UserRole } from '@prisma/client'
 import { compare, hash } from 'bcrypt'
 import { PrismaService } from '~/prisma/prisma.service'
 import { CreateUserDto } from './dto/create.dto'
@@ -78,15 +78,18 @@ export class UserService {
     const userInDb = await this.prisma.user.findFirst({
       where: { email: userDto.email }
     })
+
     if (userInDb) {
       throw new HttpException(
         'user already exist',
         HttpStatus.CONFLICT
       )
-    } return this.prisma.user.create({
+    }
+
+    return this.prisma.user.create({
       data: {
         ...(userDto),
-        role: 'USER' as const,
+        role: UserRole.USER,
         password: await hash(userDto.password, 10)
       }
     })

@@ -11,8 +11,8 @@ import { JwtAuthGuard } from '~/auth/jwt-auth.guard'
 import { UpdatePasswordDto } from './dto/updatePassword.dto'
 import { UserService } from './user.service'
 
-@ApiTags('user')
-@Controller('user')
+@ApiTags('Users')
+@Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) { }
 
