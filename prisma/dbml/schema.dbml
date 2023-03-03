@@ -14,7 +14,7 @@ Table User {
   isEmailConfirmed Boolean [not null, default: false]
   avatar Image
   imageId String
-  role Role [not null, default: 'USER']
+  role UserRole [not null, default: 'USER']
   Organization Organization [not null]
   UserOrganizationRelation UserOrganizationRelation [not null]
 }
@@ -112,7 +112,7 @@ Table Opening {
   scheduleDayOfWeek Int
 }
 
-Enum Role {
+Enum UserRole {
   USER
   OWNER
   ADMIN

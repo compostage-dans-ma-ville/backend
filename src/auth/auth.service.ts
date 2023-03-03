@@ -6,12 +6,20 @@ import { PrismaService } from '~/prisma/prisma.service'
 import { UserService } from '~/user/user.service'
 import { CreateUserDto } from '~/user/dto/create.dto'
 import { LoginUserDto } from '~/user/dto/login.dto'
+import { LoginResponseDto } from './dto/login-response.dto'
 
-export interface RegistrationStatus{
-    success: boolean;
+export interface RegistrationStatusFailed {
+    success: false;
     message: string;
-    data?: User;
 }
+
+export interface RegistrationStatusSuccess <T>{
+  success: true;
+  message: string;
+  data: T;
+}
+export type RegistrationStatus<T> = RegistrationStatusFailed | RegistrationStatusSuccess<T>
+
 export interface RegistrationSeederStatus {
     success: boolean;
     message: string;
@@ -26,35 +34,23 @@ export class AuthService {
         private readonly userService: UserService,
   ) {}
 
-  async register(userDto: CreateUserDto): Promise<RegistrationStatus> {
-    let status: RegistrationStatus = {
-      success: true,
-      message: 'ACCOUNT_CREATE_SUCCESS'
-    }
-
-    try {
-      status.data = await this.userService.createUser(userDto)
-    } catch (err) {
-      status = {
-        success: false,
-        message: err
-      }
-    }
-    return status
+  async register(userDto: CreateUserDto): Promise<User> {
+    return this.userService.createUser(userDto)
   }
 
-  async login(loginUserDto: LoginUserDto): Promise<{}> {
+  async login(loginUserDto: LoginUserDto): Promise<LoginResponseDto> {
     const user = await this.userService.findByLogin(loginUserDto)
 
     const token = this.createToken(user)
 
     return {
-      ...token,
+      token: token.Authorization,
       data: user
     }
   }
 
-  private createToken({ email }: {email: string}): {} {
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+  createToken({ email }: {email: string}) {
     const user: JwtPayload = { email }
     const Authorization = this.jwtService.sign(user, {
       secret: process.env.JWT_SECRET_KEY, expiresIn: process.env.JWT_EXPIRES_IN

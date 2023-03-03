@@ -1,16 +1,19 @@
 import {
   Body,
   Controller,
-  HttpException,
-  HttpStatus,
+  HttpCode,
   Post
 } from '@nestjs/common'
-import { AuthService, RegistrationStatus } from './auth.service'
-import { ApiTags } from '@nestjs/swagger'
+import { AuthService } from './auth.service'
+import {
+  ApiBadRequestResponse, ApiForbiddenResponse, ApiOkResponse, ApiTags
+} from '@nestjs/swagger'
 import { CreateUserDto } from '~/user/dto/create.dto'
 import { LoginUserDto } from '~/user/dto/login.dto'
+import { plainToClass } from '~/utils/dto'
+import { LoginResponseDto } from './dto/login-response.dto'
 
-@ApiTags('auth')
+@ApiTags('Authentification')
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -18,19 +21,31 @@ export class AuthController {
   ) {}
 
   @Post('register')
-  public async register(@Body() createUserDto: CreateUserDto,): Promise<RegistrationStatus> {
-    const result: RegistrationStatus = await this.authService.register(createUserDto)
-    if (!result.success) {
-      throw new HttpException(
-        result.message,
-        HttpStatus.BAD_REQUEST
-      )
-    }
-    return result
+  @HttpCode(200)
+  @ApiOkResponse({ description: 'User created successfully', type: LoginResponseDto })
+  @ApiBadRequestResponse()
+  public async register(
+    @Body() createUserDto: CreateUserDto
+  ): Promise<LoginResponseDto> {
+    const user = await this.authService.register(createUserDto)
+
+    return plainToClass(
+      LoginResponseDto,
+      {
+        data: user,
+        token: this.authService.createToken({ email: createUserDto.email }).Authorization
+      }
+    )
   }
 
   @Post('login')
-  public async login(@Body() loginUserDto: LoginUserDto): Promise<{}> {
-    return this.authService.login(loginUserDto)
+  @HttpCode(200)
+  @ApiOkResponse({ description: 'User logged in successfully', type: LoginResponseDto })
+  @ApiForbiddenResponse({ description: 'Invalid credentials provided' })
+  public async login(@Body() loginUserDto: LoginUserDto): Promise<LoginResponseDto> {
+    return plainToClass(
+      LoginResponseDto,
+      await this.authService.login(loginUserDto)
+    )
   }
 }
