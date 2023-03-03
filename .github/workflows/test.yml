@@ -18,5 +18,6 @@ jobs:
       - name: Run tests
         run: |
           yarn install
+          yarn prisma generate
           yarn lint
           yarn test:types
