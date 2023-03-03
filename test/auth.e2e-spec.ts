@@ -32,7 +32,7 @@ describe('auth', () => {
   })
 
   describe('POST /auth/register', () => {
-    it('should create an user', async () => {
+    it('should create a user', async () => {
       const { status, body } = await request(app.getHttpServer()).post('/auth/register').send(userData)
 
       expect(status).toBe(200)
