@@ -2,13 +2,15 @@ import { Test, TestingModule } from '@nestjs/testing'
 import { INestApplication } from '@nestjs/common'
 import * as request from 'supertest'
 import { SiteModule } from '~/site/site.module'
+import { DailyScheduleModule } from '~/dailySchedule/DailySchedule.module'
+import 'jest-extended';
 
 describe('sites', () => {
   let app: INestApplication
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [SiteModule]
+      imports: [SiteModule, DailyScheduleModule]
     }).compile()
 
     app = moduleFixture.createNestApplication()
@@ -31,7 +33,7 @@ describe('sites', () => {
           pageSize: 20,
           totalCount: 20
         },
-        data: expect.any(Array)
+        data: expect.toBeArray()
       })
     })
 
@@ -45,7 +47,17 @@ describe('sites', () => {
         updatedAt: expect.any(String),
         name: expect.any(String),
         description: expect.any(String),
-        organizationId: null
+        organizationId: null,
+        schedule: expect.toIncludeAnyMembers([
+          expect.arrayContaining([
+            {
+              open: expect.toBeString(),
+              close: expect.toBeString()
+            }
+          ]),
+          [],
+          null
+        ])
       })
     })
 

@@ -27,7 +27,7 @@ Table Site {
   name String [not null]
   description String
   Images ImageSiteRelation [not null]
-  Schedules Schedule [not null]
+  DailySchedules DailySchedule [not null]
   Address Address [not null]
   addressId Int [not null]
   Organization Organization
@@ -92,7 +92,7 @@ Table UserOrganizationRelation {
   }
 }
 
-Table Schedule {
+Table DailySchedule {
   site Site [not null]
   siteId Int [not null]
   dayOfWeek Int [not null]
@@ -104,13 +104,15 @@ Table Schedule {
 }
 
 Table Opening {
-  id Int [pk, increment]
-  open String [not null]
-  close String [not null]
-  scheduleId Int
-  Schedule Schedule
-  scheduleSiteId Int
-  scheduleDayOfWeek Int
+  open Int [not null]
+  close Int [not null]
+  DailySchedule DailySchedule [not null]
+  DailyScheduleSiteId Int [not null]
+  DailyScheduleDayOfWeek Int [not null]
+
+  indexes {
+    (DailyScheduleSiteId, DailyScheduleDayOfWeek, open) [pk]
+  }
 }
 
 Enum UserRole {
@@ -140,6 +142,6 @@ Ref: UserOrganizationRelation.userId > User.id
 
 Ref: UserOrganizationRelation.organizationId > Organization.id
 
-Ref: Schedule.siteId > Site.id [delete: Cascade]
+Ref: DailySchedule.siteId > Site.id [delete: Cascade]
 
-Ref: Opening.(scheduleSiteId, scheduleDayOfWeek) > Schedule.(siteId, dayOfWeek)
+Ref: Opening.(DailyScheduleSiteId, DailyScheduleDayOfWeek) > DailySchedule.(siteId, dayOfWeek)

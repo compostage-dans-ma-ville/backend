@@ -46,7 +46,7 @@ model Site {
   name           String
   description    String?
   Images         ImageSiteRelation[]
-  Schedules      Schedule[]
+  DailySchedules DailySchedule[]
   Address        Address             @relation(fields: [addressId], references: [id], onDelete: Cascade)
   addressId      Int
   Organization   Organization?       @relation(fields: [organizationId], references: [id])
@@ -120,11 +120,12 @@ model UserOrganizationRelation {
   @@id([userId, organizationId])
 }
 
-model Schedule {
+model DailySchedule {
   site   Site @relation(fields: [siteId], references: [id], onDelete: Cascade)
   siteId Int
 
-  dayOfWeek Int // beetween 1 and 7
+  // between 0 and 6. 0 is Monday
+  dayOfWeek Int
 
   openings Opening[]
 
@@ -132,13 +133,15 @@ model Schedule {
 }
 
 model Opening {
-  id Int @id @default(autoincrement())
+  // between 0 and the amount of minutes in a day (1440)
+  open  Int
+  // between open and the amount of minutes in a day (1440)
+  // close must be > open
+  close Int
 
-  open  String // like 19:00
-  close String // like 19:30
+  DailySchedule          DailySchedule @relation(fields: [DailyScheduleSiteId, DailyScheduleDayOfWeek], references: [siteId, dayOfWeek])
+  DailyScheduleSiteId    Int
+  DailyScheduleDayOfWeek Int
 
-  scheduleId        Int?
-  Schedule          Schedule? @relation(fields: [scheduleSiteId, scheduleDayOfWeek], references: [siteId, dayOfWeek])
-  scheduleSiteId    Int?
-  scheduleDayOfWeek Int?
+  @@id([DailyScheduleSiteId, DailyScheduleDayOfWeek, open])
 }

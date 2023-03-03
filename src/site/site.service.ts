@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common'
 // import type { UpdateSiteDto } from './dto/update-site.dto'
 import { PrismaService } from '~/prisma/prisma.service'
 import {
-  Address, ImageSiteRelation, Organization, Prisma, Schedule, Site
+  Prisma, DailySchedule, Site, Opening
 } from '@prisma/client'
 
 @Injectable()
@@ -14,8 +14,17 @@ export class SiteService {
   //   return 'This action adds a new site'
   // }
 
-  findAll({ skip, take }: Prisma.SiteFindManyArgs): Promise<Site[]> {
+  findAll({ skip, take }: Prisma.SiteFindManyArgs): Promise<(Site & {
+    DailySchedules: (DailySchedule & { openings: Opening[] })[]
+  })[]> {
     return this.prisma.site.findMany({
+      include: {
+        DailySchedules: {
+          include: {
+            openings: true
+          }
+        }
+      },
       skip,
       take
     })
@@ -25,15 +34,18 @@ export class SiteService {
     return this.prisma.site.count()
   }
 
-  findOne(id: number): Prisma.Prisma__SiteClient<(Site & {
-    Schedules: Schedule[];
-    Images: ImageSiteRelation[];
-    Address: Address;
-    Organization: Organization | null;
-}) | null, null> {
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+  findOne(id: number) {
     return this.prisma.site.findUnique({
       include: {
-        Schedules: true, Images: true, Address: true, Organization: true
+        Address: true,
+        DailySchedules: {
+          include: {
+            openings: true
+          }
+        },
+        Images: true,
+        Organization: true
       },
       where: { id }
     })

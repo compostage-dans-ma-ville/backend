@@ -1,5 +1,6 @@
 import { Address, Site } from '@prisma/client'
 import { Factory } from 'nestjs-seeder'
+import { DailyScheduleSchema } from '~/seeder/DailySchedule.schema'
 
 export class SiteSchema implements Site {
   id: number
@@ -27,6 +28,8 @@ export class SiteSchema implements Site {
     latitude: faker?.address.latitude()
   }))
     address: Address
+
+  Schedules: DailyScheduleSchema[]
 
   addressId: number
 

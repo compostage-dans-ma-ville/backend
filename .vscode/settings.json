@@ -4,6 +4,12 @@
     "site",
     ".vscode",
     "package.json",
-    "jest"
+    "jest",
+    "prisma",
+    "schedule.schema.ts",
+    "schedule.seeder.ts",
+    "WeekTime",
+    "settings.json",
+    "site.seeder.ts"
   ]
 }

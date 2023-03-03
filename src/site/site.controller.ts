@@ -1,6 +1,6 @@
 import {
   Controller, Get, Param, Delete,
-  Query, Req, ParseIntPipe, HttpException, UseInterceptors
+  Query, Req, ParseIntPipe, UseInterceptors
 } from '@nestjs/common'
 import type { Request } from 'express'
 import { SiteService } from './site.service'
@@ -15,15 +15,19 @@ import {
   ApiNotFoundResponse, ApiOkResponse, ApiTags
 } from '@nestjs/swagger'
 import { ApiPaginatedResponse } from '~/api-services/pagination/ApiPaginationResponse'
-import { GetSiteDto } from './dto/get-site.dto'
+import { GetSiteDto } from './dto/GetSite.dto'
 import { getEndpoint } from '~/api-services/getEndpoint'
 import { NotFoundInterceptor } from '~/api-services/NotFoundInterceptor'
+import { DailyScheduleService } from '~/dailySchedule/DailySchedule.service'
 
 @Controller('sites')
 @ApiTags('Sites')
 @ApiExtraModels(PaginatedData)
 export class SiteController {
-  constructor(private readonly siteService: SiteService) {}
+  constructor(
+    private readonly siteService: SiteService,
+    private readonly scheduleService: DailyScheduleService
+  ) {}
 
   // @Post()
   // create(@Body() createSiteDto: CreateSiteDto) {
@@ -36,16 +40,20 @@ export class SiteController {
     @Req() req: Request,
     @Query('items', ItemsQueryPipe) items: number,
     @Query('page', PageQueryPipe) page: number,
-  ): Promise<PaginatedData<Site>> {
+  ): Promise<PaginatedData<GetSiteDto>> {
+    const totalItemCount = await this.siteService.count()
     const sites = await this.siteService.findAll({
       skip: (page - 1) * items,
       take: items
     })
-    const totalItemCount = await this.siteService.count()
+    const formattedSites = sites.map(({ DailySchedules, ...s }) => ({
+      ...s,
+      schedule: this.scheduleService.toDto(DailySchedules)
+    }))
 
-    return createPaginationData<Site>({
+    return createPaginationData<GetSiteDto>({
       url: getEndpoint(req),
-      items: sites,
+      items: formattedSites,
       queryOptions: { items, page },
       totalItemCount
     })
@@ -55,8 +63,21 @@ export class SiteController {
   @ApiOkResponse({ description: 'The site is successfully retrieved.', type: GetSiteDto })
   @ApiNotFoundResponse({ description: 'The site is not found.' })
   @UseInterceptors(new NotFoundInterceptor('The site is not found.'))
-  findOne(@Param('id', ParseIntPipe) id: number): ReturnType<SiteService['findOne']> | HttpException {
-    return this.siteService.findOne(id)
+  async findOne(@Param('id', ParseIntPipe) id: number): Promise<GetSiteDto | undefined> {
+    const site = await this.siteService.findOne(id)
+
+    if (!site) return undefined
+
+    const { DailySchedules, ...s } = site
+    const formattedSite = {
+      ...s,
+      schedule: this.scheduleService.toDto(DailySchedules)
+    }
+
+    return plainToClass(
+      GetSiteDto,
+      formattedSite
+    )
   }
 
   // @Patch(':id')
