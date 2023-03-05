@@ -9,6 +9,7 @@
     "schedule.schema.ts",
     "schedule.seeder.ts",
     "WeekTime",
-    "settings.json"
+    "settings.json",
+    "site.seeder.ts"
   ]
 }
