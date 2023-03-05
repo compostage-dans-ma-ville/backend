@@ -51,7 +51,6 @@ export class SiteSeeder implements Seeder {
         .flat()
         .filter((x: ScheduleSchema | undefined): x is ScheduleSchema => x !== undefined)
 
-      console.log({ id: i, schedules })
       await this.prisma.site.create({
         data: {
           ...site,
