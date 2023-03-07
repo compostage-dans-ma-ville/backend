@@ -45,7 +45,8 @@ describe('sites', () => {
         updatedAt: expect.any(String),
         name: expect.any(String),
         description: expect.any(String),
-        organizationId: null
+        organizationId: null,
+        schedules: expect.any(Array)
       })
     })
 

@@ -14,8 +14,9 @@ export class SiteService {
   //   return 'This action adds a new site'
   // }
 
-  findAll({ skip, take }: Prisma.SiteFindManyArgs): Promise<Site[]> {
+  findAll({ skip, take }: Prisma.SiteFindManyArgs): Promise<(Site & { Schedules: Schedule[] })[]> {
     return this.prisma.site.findMany({
+      include: { Schedules: true },
       skip,
       take
     })

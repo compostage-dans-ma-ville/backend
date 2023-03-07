@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { Site } from '@prisma/client'
+import { GetScheduleDto } from '~/schedule/dto/get-schedule.dto'
 
 export class GetSiteDto implements Site {
   @ApiProperty({
@@ -41,4 +42,6 @@ export class GetSiteDto implements Site {
     example: 1
   })
     organizationId: number | null
+
+  schedules: GetScheduleDto
 }
