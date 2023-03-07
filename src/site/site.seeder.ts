@@ -7,8 +7,8 @@ import { ScheduleSchema } from '~/schedule/schedule.schema'
 import { SiteSchema } from './site.schema'
 
 const DAYS_IN_WEEK = 7
-const getRandomOpeningInDay = (fromMin?: number): ScheduleSchema => {
-  const open = randomInRange(fromMin ?? 0, MINUTES_IN_DAY - 1)
+const getRandomOpeningInDay = (fromMin: number): ScheduleSchema => {
+  const open = randomInRange(fromMin, MINUTES_IN_DAY - 1)
   const close = randomInRange(open + 1, MINUTES_IN_DAY)
   return { open, close }
 }
@@ -30,7 +30,7 @@ export class SiteSeeder implements Seeder {
           if (isClosedToday) return undefined
           const hasManyOpeningsToday = Math.random() > 0.7
           const amountOfOpenings = hasManyOpeningsToday ? randomInRange(2, 3) : 1
-          const scheduleStart = dayIndex * MINUTES_IN_DAY
+          const dayStart = dayIndex * MINUTES_IN_DAY
           return new Array(amountOfOpenings).fill(undefined)
             .reduce<ScheduleSchema[]>((acc, __, i) => {
               let newItem: ScheduleSchema
@@ -38,12 +38,12 @@ export class SiteSeeder implements Seeder {
                 newItem = getRandomOpeningInDay(0)
               } else {
                 const previousItem = acc[i - 1]
-                const fromMin = previousItem.close + 1
+                const fromMin = previousItem.close - dayStart + 1
                 newItem = getRandomOpeningInDay(fromMin)
               }
               acc.push({
-                open: scheduleStart + newItem.open,
-                close: scheduleStart + newItem.close
+                open: dayStart + newItem.open,
+                close: dayStart + newItem.close
               })
               return acc
             }, [])
