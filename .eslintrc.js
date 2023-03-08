@@ -32,6 +32,8 @@ module.exports = {
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     'no-plusplus': 'off',
     '@typescript-eslint/no-explicit-any': 'error',
-    '@typescript-eslint/no-unused-vars': 'error'
+    '@typescript-eslint/no-unused-vars': 'error',
+    "no-shadow": "off",
+    "@typescript-eslint/no-shadow": "warn"
   },
 };
