@@ -123,11 +123,23 @@ model Schedule {
   site   Site @relation(fields: [siteId], references: [id], onDelete: Cascade)
   siteId Int
 
-  // between 0 and the amount of minutes in a week (10079)
-  open  Int
-  // between 0 and the amount of minutes in a week (10079)
-  // close must be > open
-  close Int
+  dayOfWeek Int // beetween 0 and 6
 
-  @@id([siteId, open])
+  openings Opening[]
+
+  @@id([siteId, dayOfWeek])
+}
+
+model Opening {
+  id Int @id @default(autoincrement())
+
+  // between 0 and the amount of minutes in a day (1440)
+  open  Int // like 19:00
+  // between open and the amount of minutes in a day (1440)
+  // close must be > open
+  close Int // like 19:30
+
+  Schedule          Schedule? @relation(fields: [scheduleSiteId, scheduleDayOfWeek], references: [siteId, dayOfWeek])
+  scheduleSiteId    Int?
+  scheduleDayOfWeek Int?
 }

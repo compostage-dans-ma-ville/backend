@@ -94,12 +94,21 @@ Table UserOrganizationRelation {
 Table Schedule {
   site Site [not null]
   siteId Int [not null]
-  open Int [not null]
-  close Int [not null]
+  dayOfWeek Int [not null]
+  openings Opening [not null]
 
   indexes {
-    (siteId, open) [pk]
+    (siteId, dayOfWeek) [pk]
   }
+}
+
+Table Opening {
+  id Int [pk, increment]
+  open Int [not null]
+  close Int [not null]
+  Schedule Schedule
+  scheduleSiteId Int
+  scheduleDayOfWeek Int
 }
 
 Enum UserRole {
@@ -130,3 +139,5 @@ Ref: UserOrganizationRelation.userId > User.id
 Ref: UserOrganizationRelation.organizationId > Organization.id
 
 Ref: Schedule.siteId > Site.id [delete: Cascade]
+
+Ref: Opening.(scheduleSiteId, scheduleDayOfWeek) > Schedule.(siteId, dayOfWeek)
