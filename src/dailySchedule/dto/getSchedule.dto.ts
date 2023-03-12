@@ -2,8 +2,6 @@ import { ApiProperty } from "@nestjs/swagger";
 import { Expose } from "class-transformer";
 import { GetOpeningDto } from "~/opening/dto/GetOpening.dto";
 
-export class GetDailyScheduleDto extends Array<GetOpeningDto> {}
-
 export class GetScheduleDto {
   @ApiProperty()
   @Expose()
