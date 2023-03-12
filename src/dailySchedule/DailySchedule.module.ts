@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common'
-import { ScheduleService } from './DailySchedule.service'
+import { PrismaService } from '~/prisma/prisma.service'
+import { DailyScheduleService } from './DailySchedule.service'
 
 @Module({
-  providers: [ScheduleService],
-  exports: [ScheduleService]
+  providers: [DailyScheduleService, PrismaService],
+  exports: [DailyScheduleService]
 })
-export class ScheduleModule {}
+export class DailyScheduleModule {}

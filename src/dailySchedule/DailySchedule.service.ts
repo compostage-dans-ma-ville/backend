@@ -5,7 +5,7 @@ import { PrismaService } from '~/prisma/prisma.service'
 import { GetDailyScheduleDto, GetScheduleDto } from './dto/getSchedule.dto';
 
 @Injectable()
-export class ScheduleService {
+export class DailyScheduleService {
   constructor(private readonly prisma: PrismaService) {}
 
   findAll({ siteId }: Prisma.DailyScheduleWhereInput): Prisma.PrismaPromise<(DailySchedule & {

@@ -18,7 +18,7 @@ import { ApiPaginatedResponse } from '~/api-services/pagination/ApiPaginationRes
 import { GetSiteDto } from './dto/get-site.dto'
 import { getEndpoint } from '~/api-services/getEndpoint'
 import { NotFoundInterceptor } from '~/api-services/NotFoundInterceptor'
-import { ScheduleService } from '~/dailySchedule/DailySchedule.service'
+import { DailyScheduleService } from '~/dailySchedule/DailySchedule.service'
 
 @Controller('sites')
 @ApiTags('Sites')
@@ -26,7 +26,7 @@ import { ScheduleService } from '~/dailySchedule/DailySchedule.service'
 export class SiteController {
   constructor(
     private readonly siteService: SiteService,
-    private readonly scheduleService: ScheduleService
+    private readonly scheduleService: DailyScheduleService
   ) {}
 
   // @Post()

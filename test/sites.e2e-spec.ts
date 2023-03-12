@@ -2,13 +2,14 @@ import { Test, TestingModule } from '@nestjs/testing'
 import { INestApplication } from '@nestjs/common'
 import * as request from 'supertest'
 import { SiteModule } from '~/site/site.module'
+import { DailyScheduleModule } from '~/dailySchedule/DailySchedule.module'
 
 describe('sites', () => {
   let app: INestApplication
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [SiteModule]
+      imports: [SiteModule, DailyScheduleModule]
     }).compile()
 
     app = moduleFixture.createNestApplication()
@@ -46,7 +47,7 @@ describe('sites', () => {
         name: expect.any(String),
         description: expect.any(String),
         organizationId: null,
-        schedules: expect.any(Array)
+        schedule: expect.any(Array)
       })
     })
 
