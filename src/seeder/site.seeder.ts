@@ -35,15 +35,33 @@ export class SiteSeeder implements Seeder {
         .flat()
         .filter((x: DailyScheduleSchema | undefined): x is DailyScheduleSchema => x !== undefined)
 
-      await this.prisma.site.create({
+      const siteRecord = await this.prisma.site.create({
         data: {
           ...site,
-          Schedules: {
-            create: schedules
-          },
           addressId: id
         }
       })
+      // populate the dailySchedule for this site
+      // await this.prisma.dailySchedule.createMany({
+      //   data: schedules.map(({ openings, ...s }) => ({
+      //       siteId: siteRecord.id,
+      //       ...s,
+      //     }))
+      // })
+      // we need a for loop here because
+      // prisma does not support the nested writes for the openings
+      for(const dailySchedule of schedules) {
+        await this.prisma.dailySchedule.create({
+          data: {
+            siteId: siteRecord.id,
+            dayOfWeek: dailySchedule.dayOfWeek,
+            openings: { 
+              create: dailySchedule.openings
+            }
+          }
+        })
+        console.log(dailySchedule)
+      }
     })
   }
 
