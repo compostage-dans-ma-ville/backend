@@ -3,11 +3,11 @@ import { Seeder, DataFactory } from 'nestjs-seeder'
 import { randomInRange } from '~/api-services/utils'
 import { MINUTES_IN_DAY } from '~/api-services/DailyTime'
 import { PrismaService } from '~/prisma/prisma.service'
-import { ScheduleSchema } from '~/seeder/DailySchedule.schema'
+import { DailyScheduleSchema } from '~/seeder/DailySchedule.schema'
 import { SiteSchema } from './site.schema'
 
 const DAYS_IN_WEEK = 7
-const getRandomOpeningInDay = (fromMin: number): ScheduleSchema => {
+const getRandomOpeningInDay = (fromMin: number): DailyScheduleSchema => {
   const open = randomInRange(fromMin, MINUTES_IN_DAY - 1)
   const close = randomInRange(open + 1, MINUTES_IN_DAY)
   return { open, close }
@@ -29,7 +29,7 @@ export class SiteSeeder implements Seeder {
           const isClosedToday = Math.random() > 0.7
           if (isClosedToday) return undefined
           const hasManyOpeningsToday = Math.random() > 0.7
-          const amountOfOpenings = hasManyOpeningsToday ? randomInRange(2, 3) : 1
+          const amountOfOpenings = hasManyOpeningsToday ? randomInRange(1, 3) : ß
           const dayStart = dayIndex * MINUTES_IN_DAY
           return new Array(amountOfOpenings).fill(undefined)
             .reduce<ScheduleSchema[]>((acc, __, i) => {
