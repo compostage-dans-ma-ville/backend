@@ -22,6 +22,7 @@ module.exports = {
       'error',
       2
     ],
+    "@typescript-eslint/consistent-type-definitions": ["type", "warn"],
     'no-empty-function': ['error', { 'allow': ['constructors'] }],
     'no-unused-vars': 'off',
     'semi': [
