@@ -18,7 +18,7 @@ import { ApiPaginatedResponse } from '~/api-services/pagination/ApiPaginationRes
 import { GetSiteDto } from './dto/get-site.dto'
 import { getEndpoint } from '~/api-services/getEndpoint'
 import { NotFoundInterceptor } from '~/api-services/NotFoundInterceptor'
-import { ScheduleService } from '~/schedule/schedule.service'
+import { ScheduleService } from '~/dailySchedule/DailySchedule.service'
 
 @Controller('sites')
 @ApiTags('Sites')
@@ -46,9 +46,9 @@ export class SiteController {
       skip: (page - 1) * items,
       take: items
     })
-    const formattedSites = sites.map(({ Schedules, ...s }) => ({
+    const formattedSites = sites.map(({ DailySchedules, ...s }) => ({
       ...s,
-      schedules: this.scheduleService.toDto(Schedules)
+      schedule: this.scheduleService.toDto(DailySchedules)
     }))
 
     return createPaginationData<GetSiteDto>({
@@ -68,10 +68,10 @@ export class SiteController {
 
     if (!site) return undefined
 
-    const { Schedules, ...s } = site
+    const { DailySchedules, ...s } = site
     const formattedSite = {
       ...s,
-      schedules: this.scheduleService.toDto(Schedules)
+      schedule: this.scheduleService.toDto(DailySchedules)
     }
 
     return formattedSite

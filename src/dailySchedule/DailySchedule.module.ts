@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common'
-import { ScheduleService } from './schedule.service'
+import { ScheduleService } from './DailySchedule.service'
 
 @Module({
   providers: [ScheduleService],

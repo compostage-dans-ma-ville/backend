@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { PrismaService } from '~/prisma/prisma.service'
-import { ScheduleModule } from '~/schedule/schedule.module'
+import { ScheduleModule } from '~/dailySchedule/DailySchedule.module'
 import { SiteController } from './site.controller'
 import { SiteService } from './site.service'
 
