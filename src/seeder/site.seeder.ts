@@ -8,11 +8,6 @@ import { SiteSchema } from './site.schema'
 import { DailyScheduleSeeder } from './DailySchedule.seeder'
 
 const DAYS_IN_WEEK = 7
-const getRandomOpeningInDay = (fromMin: number): DailyScheduleSchema => {
-  const open = randomInRange(fromMin, MINUTES_IN_DAY - 1)
-  const close = randomInRange(open + 1, MINUTES_IN_DAY)
-  return { open, close }
-}
 
 @Injectable()
 export class SiteSeeder implements Seeder {
