@@ -2,8 +2,9 @@ import { Injectable } from '@nestjs/common'
 import { Opening, Prisma, DailySchedule } from '@prisma/client'
 import { DailyTime } from '~/api-services/DailyTime';
 import { PrismaService } from '~/prisma/prisma.service'
-import { GetDailyScheduleDto, GetScheduleDto } from './dto/getSchedule.dto';
+import { GetScheduleDto } from './dto/getSchedule.dto';
 
+const formatHHMM = ([hours, minutes]: [number, number]) => `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`
 @Injectable()
 export class DailyScheduleService {
   constructor(private readonly prisma: PrismaService) {}
@@ -34,11 +35,11 @@ export class DailyScheduleService {
         scheduleDto[dayOfWeek] = []
       } else {
         scheduleDto[dayOfWeek] = openings.map(o => {
-          const [openHours, openMinutes] = DailyTime.fromMinutes(o.open)
-          const [closeHours, closeMinutes] = DailyTime.fromMinutes(o.close)
+          const open = DailyTime.fromMinutes(o.open)
+          const close = DailyTime.fromMinutes(o.close)
           const opening = {
-            open: `${openHours}:${openMinutes}`,
-            close: `${closeHours}:${closeMinutes}`
+            open: formatHHMM(open),
+            close: formatHHMM(close)
           }
           return opening
         })
