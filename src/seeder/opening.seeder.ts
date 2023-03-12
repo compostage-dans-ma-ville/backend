@@ -4,24 +4,22 @@ import { randomInRange } from '~/api-services/utils'
 import { OpeningSchema } from './opening.schema'
 
 type OpeningSeedParams = {
-  dayOfWeek: number
   openMin?: number
   openMax?: number
   closeMax?: number
 }
 
 @Injectable()
-export class OpeningSeedParamser {
+export class OpeningSeeder {
   constructor() {}
 
-  async seed(params: OpeningSeedParams): Promise<OpeningSchema> {
-    const { dayOfWeek, openMin, openMax, closeMax } = params
+  seed(params: OpeningSeedParams = {}): OpeningSchema {
+    const { openMin, openMax, closeMax } = params
 
     const open = randomInRange(openMin ?? 0, openMax ?? (MINUTES_IN_DAY - 61))
     const close = randomInRange(open, closeMax ?? (MINUTES_IN_DAY - 30))
     
     return {
-      dayOfWeek,
       open,
       close
     }

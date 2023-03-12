@@ -6,10 +6,10 @@ import { PrismaService } from '~/prisma/prisma.service'
 export class ScheduleService {
   constructor(private readonly prisma: PrismaService) {}
 
-  findAll({ siteId }: Prisma.ScheduleWhereInput): Prisma.PrismaPromise<(Schedule & {
+  findAll({ siteId }: Prisma.DailyScheduleWhereInput): Prisma.PrismaPromise<(Schedule & {
     openings: Opening[];
   })[]> {
-    return this.prisma.schedule.findMany({
+    return this.prisma.dailySchedule.findMany({
       include: { openings: true },
       where: {
         siteId
@@ -17,8 +17,8 @@ export class ScheduleService {
     })
   }
 
-  count({ siteId }: Prisma.ScheduleWhereInput): Prisma.PrismaPromise<number> {
-    return this.prisma.schedule.count({
+  count({ siteId }: Prisma.DailyScheduleWhereInput): Prisma.PrismaPromise<number> {
+    return this.prisma.dailySchedule.count({
       where: {
         siteId
       }

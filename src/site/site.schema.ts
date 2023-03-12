@@ -1,6 +1,6 @@
 import { Address, Site } from '@prisma/client'
 import { Factory } from 'nestjs-seeder'
-import { ScheduleSchema } from '~/schedule/schedule.schema'
+import { DailyScheduleSchema } from '~/seeder/DailySchedule.schema'
 
 export class SiteSchema implements Site {
   id: number
@@ -27,7 +27,7 @@ export class SiteSchema implements Site {
   }))
     address: Address
 
-  Schedules: ScheduleSchema[]
+  Schedules: DailyScheduleSchema[]
 
   addressId: number
 

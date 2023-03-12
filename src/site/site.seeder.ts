@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common'
 import { Seeder, DataFactory } from 'nestjs-seeder'
 import { randomInRange } from '~/api-services/utils'
-import { MINUTES_IN_DAY } from '~/api-services/weekTime'
+import { MINUTES_IN_DAY } from '~/api-services/DailyTime'
 import { PrismaService } from '~/prisma/prisma.service'
-import { ScheduleSchema } from '~/schedule/schedule.schema'
+import { ScheduleSchema } from '~/seeder/DailySchedule.schema'
 import { SiteSchema } from './site.schema'
 
 const DAYS_IN_WEEK = 7
