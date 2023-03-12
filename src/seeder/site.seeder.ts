@@ -5,6 +5,7 @@ import { MINUTES_IN_DAY } from '~/api-services/DailyTime'
 import { PrismaService } from '~/prisma/prisma.service'
 import { DailyScheduleSchema } from '~/seeder/DailySchedule.schema'
 import { SiteSchema } from './site.schema'
+import { DailyScheduleSeeder } from './DailySchedule.seeder'
 
 const DAYS_IN_WEEK = 7
 const getRandomOpeningInDay = (fromMin: number): DailyScheduleSchema => {
@@ -20,36 +21,24 @@ export class SiteSeeder implements Seeder {
   async seed(): Promise<void> {
     const siteSeeds = DataFactory.createForClass(SiteSchema)
       .generate(20)
+    const dailySechuleSeeder = new DailyScheduleSeeder()
+  
     siteSeeds.forEach(async (s) => {
       const { address, ...site } = s as unknown as SiteSchema
       const { id } = await this.prisma.address.create({ data: address })
 
-      const schedules: ScheduleSchema[] = new Array(DAYS_IN_WEEK).fill(undefined)
-        .map((_, dayIndex) => {
+      const schedules: DailyScheduleSchema[] = new Array(DAYS_IN_WEEK).fill(undefined)
+        .map((_, dayOfWeek) => {
           const isClosedToday = Math.random() > 0.7
           if (isClosedToday) return undefined
-          const hasManyOpeningsToday = Math.random() > 0.7
-          const amountOfOpenings = hasManyOpeningsToday ? randomInRange(1, 3) : ß
-          const dayStart = dayIndex * MINUTES_IN_DAY
-          return new Array(amountOfOpenings).fill(undefined)
-            .reduce<ScheduleSchema[]>((acc, __, i) => {
-              let newItem: ScheduleSchema
-              if (i === 0) {
-                newItem = getRandomOpeningInDay(0)
-              } else {
-                const previousItem = acc[i - 1]
-                const fromMin = previousItem.close - dayStart + 1
-                newItem = getRandomOpeningInDay(fromMin)
-              }
-              acc.push({
-                open: dayStart + newItem.open,
-                close: dayStart + newItem.close
-              })
-              return acc
-            }, [])
+          const amountOfOpenings = Math.random() > 0.7 ? randomInRange(1, 3) : 0
+          return dailySechuleSeeder.seed({
+            amountOfOpenings,
+            dayOfWeek
+          })
         })
         .flat()
-        .filter((x: ScheduleSchema | undefined): x is ScheduleSchema => x !== undefined)
+        .filter((x: DailyScheduleSchema | undefined): x is DailyScheduleSchema => x !== undefined)
 
       await this.prisma.site.create({
         data: {
