@@ -30,6 +30,9 @@ model User {
 
   Organization             Organization[]
   UserOrganizationRelation UserOrganizationRelation[]
+
+  sitesOwned       UsersOwnerOfSites[]
+  adheredSites     UsersMemberOfSites[]
 }
 
 enum UserRole {
@@ -50,6 +53,30 @@ model Site {
   addressId      Int
   Organization   Organization?       @relation(fields: [organizationId], references: [id])
   organizationId Int?
+  owners         UsersOwnerOfSites[]
+  members        UsersMemberOfSites[]
+}
+
+model UsersOwnerOfSites {
+  user           User     @relation(fields: [userId], references: [id])
+  userId         Int // relation scalar field (used in the `@relation` attribute above)
+  site           Site @relation(fields: [siteId], references: [id])
+  siteId         Int // relation scalar field (used in the `@relation` attribute above)
+  assignedAt     DateTime @default(now())
+  assignedBy     String
+
+  @@id([userId, siteId])
+}
+
+model UsersMemberOfSites {
+  user           User     @relation(fields: [userId], references: [id])
+  userId         Int // relation scalar field (used in the `@relation` attribute above)
+  site           Site @relation(fields: [siteId], references: [id])
+  siteId         Int // relation scalar field (used in the `@relation` attribute above)
+  assignedAt     DateTime @default(now())
+  assignedBy     String
+
+  @@id([userId, siteId])
 }
 
 model ImageSiteRelation {

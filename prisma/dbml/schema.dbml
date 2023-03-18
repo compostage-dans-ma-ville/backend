@@ -17,6 +17,8 @@ Table User {
   role UserRole [not null, default: 'USER']
   Organization Organization [not null]
   UserOrganizationRelation UserOrganizationRelation [not null]
+  sitesOwned UsersOwnerOfSites [not null]
+  adheredSites UsersMemberOfSites [not null]
 }
 
 Table Site {
@@ -31,6 +33,34 @@ Table Site {
   addressId Int [not null]
   Organization Organization
   organizationId Int
+  owners UsersOwnerOfSites [not null]
+  members UsersMemberOfSites [not null]
+}
+
+Table UsersOwnerOfSites {
+  user User [not null]
+  userId Int [not null]
+  site Site [not null]
+  siteId Int [not null]
+  assignedAt DateTime [default: `now()`, not null]
+  assignedBy String [not null]
+
+  indexes {
+    (userId, siteId) [pk]
+  }
+}
+
+Table UsersMemberOfSites {
+  user User [not null]
+  userId Int [not null]
+  site Site [not null]
+  siteId Int [not null]
+  assignedAt DateTime [default: `now()`, not null]
+  assignedBy String [not null]
+
+  indexes {
+    (userId, siteId) [pk]
+  }
 }
 
 Table ImageSiteRelation {
@@ -128,6 +158,14 @@ Ref: User.imageId > Image.id
 Ref: Site.addressId > Address.id [delete: Cascade]
 
 Ref: Site.organizationId > Organization.id
+
+Ref: UsersOwnerOfSites.userId > User.id
+
+Ref: UsersOwnerOfSites.siteId > Site.id
+
+Ref: UsersMemberOfSites.userId > User.id
+
+Ref: UsersMemberOfSites.siteId > Site.id
 
 Ref: ImageSiteRelation.siteId > Site.id [delete: Cascade]
 
