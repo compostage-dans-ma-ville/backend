@@ -31,8 +31,8 @@ model User {
   Organization             Organization[]
   UserOrganizationRelation UserOrganizationRelation[]
 
-  sitesOwned       UsersOwnerOfSites[]
-  adheredSites     UsersMemberOfSites[]
+  sitesOwned   UsersOwnerOfSites[]
+  adheredSites UsersMemberOfSites[]
 }
 
 enum UserRole {
@@ -42,39 +42,39 @@ enum UserRole {
 }
 
 model Site {
-  id             Int                 @id @default(autoincrement())
-  createdAt      DateTime            @default(now())
-  updatedAt      DateTime            @updatedAt
+  id             Int                  @id @default(autoincrement())
+  createdAt      DateTime             @default(now())
+  updatedAt      DateTime             @updatedAt
   name           String
   description    String?
   Images         ImageSiteRelation[]
   Schedules      Schedule[]
-  Address        Address             @relation(fields: [addressId], references: [id], onDelete: Cascade)
+  Address        Address              @relation(fields: [addressId], references: [id], onDelete: Cascade)
   addressId      Int
-  Organization   Organization?       @relation(fields: [organizationId], references: [id])
+  Organization   Organization?        @relation(fields: [organizationId], references: [id])
   organizationId Int?
   owners         UsersOwnerOfSites[]
   members        UsersMemberOfSites[]
 }
 
 model UsersOwnerOfSites {
-  user           User     @relation(fields: [userId], references: [id])
-  userId         Int // relation scalar field (used in the `@relation` attribute above)
-  site           Site @relation(fields: [siteId], references: [id])
-  siteId         Int // relation scalar field (used in the `@relation` attribute above)
-  assignedAt     DateTime @default(now())
-  assignedBy     String
+  user       User     @relation(fields: [userId], references: [id])
+  userId     Int // relation scalar field (used in the `@relation` attribute above)
+  site       Site     @relation(fields: [siteId], references: [id])
+  siteId     Int // relation scalar field (used in the `@relation` attribute above)
+  assignedAt DateTime @default(now())
+  assignedBy String
 
   @@id([userId, siteId])
 }
 
 model UsersMemberOfSites {
-  user           User     @relation(fields: [userId], references: [id])
-  userId         Int // relation scalar field (used in the `@relation` attribute above)
-  site           Site @relation(fields: [siteId], references: [id])
-  siteId         Int // relation scalar field (used in the `@relation` attribute above)
-  assignedAt     DateTime @default(now())
-  assignedBy     String
+  user       User     @relation(fields: [userId], references: [id])
+  userId     Int // relation scalar field (used in the `@relation` attribute above)
+  site       Site     @relation(fields: [siteId], references: [id])
+  siteId     Int // relation scalar field (used in the `@relation` attribute above)
+  assignedAt DateTime @default(now())
+  assignedBy String
 
   @@id([userId, siteId])
 }
