@@ -20,6 +20,12 @@ export class GetSiteDto implements Site {
   })
     updatedAt: Date
 
+    @ApiProperty({
+      description: 'The date of commissioning.',
+      example: new Date()
+    })
+      launchDate: Date
+
   @ApiProperty({
     description: 'Human friendly name of this site.'
   })
