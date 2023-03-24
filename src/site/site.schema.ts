@@ -8,6 +8,8 @@ export class SiteSchema implements Site {
 
   updatedAt: Date
 
+  launchDate: Date
+
   @Factory(faker => faker?.animal.rabbit())
     name: string
 
