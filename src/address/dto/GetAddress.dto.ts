@@ -18,14 +18,14 @@ export class GetAddressDto implements Address {
 
   @Expose()
   @ApiProperty({
-    description: 'Last update date of this site.',
+    description: 'The name of the street',
     example: 'rue Lothaire'
   })
     streetName: string
 
   @Expose()
   @ApiProperty({
-    description: 'Human friendly name of this site.',
+    description: 'Postcode of the address',
     example: 67150
   })
     zipCode: number
@@ -39,14 +39,14 @@ export class GetAddressDto implements Address {
 
   @Expose()
   @ApiProperty({
-    description: 'the exact latitude in legal projection.',
+    description: 'the exact longitude in legal projection.',
     example: 1044994.79
   })
     longitude: number
 
   @Expose()
   @ApiProperty({
-    description: 'the exact longitude in legal projection.',
+    description: 'the exact latitude in legal projection.',
     example: 6824079.46
   })
     latitude: number
