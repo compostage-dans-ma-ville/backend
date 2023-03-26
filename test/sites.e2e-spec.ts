@@ -39,15 +39,14 @@ describe('sites', () => {
 
     it('return a first site', async () => {
       const { body } = await request(app.getHttpServer()).get('/sites')
+
       expect(body.data[0]).toEqual({
         id: expect.any(Number),
-        addressId: expect.any(Number),
         createdAt: expect.any(String),
         updatedAt: expect.any(String),
         launchDate: expect.any(null),
         name: expect.any(String),
         description: expect.any(String),
-        organizationId: null,
         schedule: expect.toIncludeAnyMembers([
           expect.arrayContaining([
             {
@@ -77,12 +76,10 @@ describe('sites', () => {
       expect(status).toBe(200)
       expect(body).toMatchObject({
         id,
-        addressId: expect.any(Number),
         createdAt: expect.any(String),
         updatedAt: expect.any(String),
         name: expect.any(String),
-        description: expect.any(String),
-        organizationId: null
+        description: expect.any(String)
       })
     })
 
