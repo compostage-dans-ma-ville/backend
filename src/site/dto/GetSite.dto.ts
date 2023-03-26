@@ -1,7 +1,9 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, getSchemaPath } from '@nestjs/swagger'
 import { Site } from '@prisma/client'
 import { Expose } from 'class-transformer'
 import { GetAddressDto } from '~/address/dto/GetAddress.dto'
+import { GetScheduleDto } from '~/dailySchedule/dto/getSchedule.dto'
+import { GetOpeningDto } from '~/opening/dto/GetOpening.dto'
 
 export class GetSiteDto implements Site {
   @Expose()
@@ -56,6 +58,20 @@ export class GetSiteDto implements Site {
     example: 1
   })
     address: GetAddressDto
+
+  @Expose()
+  @ApiProperty({
+    type: 'array',
+    items: {
+      type: 'array',
+      nullable: true,
+      description: 'There are 7 cells in the array. One for every day starting on Monday. Null represents a closed day, an empty array a 24-hour opening on this day.',
+      items: {
+        $ref: getSchemaPath(GetOpeningDto)
+      }
+    }
+  })
+    schedule: GetScheduleDto['schedules']
 
   @Expose()
   @ApiProperty({
