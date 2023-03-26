@@ -3,7 +3,7 @@ import { INestApplication } from '@nestjs/common'
 import * as request from 'supertest'
 import { SiteModule } from '~/site/site.module'
 import { DailyScheduleModule } from '~/dailySchedule/DailySchedule.module'
-import 'jest-extended';
+import 'jest-extended'
 
 describe('sites', () => {
   let app: INestApplication
