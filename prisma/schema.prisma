@@ -82,8 +82,8 @@ model Address {
   streetName  String
   zipCode     Int
   city        String
-  latitude    String
-  longitude   String
+  latitude    Float
+  longitude   Float
 
   site Site[]
 }
