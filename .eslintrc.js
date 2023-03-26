@@ -22,13 +22,14 @@ module.exports = {
       'error',
       2
     ],
+    "@typescript-eslint/consistent-type-definitions": ["off"],
+    "@typescript-eslint/no-extraneous-class": "off",
     'no-empty-function': ['error', { 'allow': ['constructors'] }],
     'no-unused-vars': 'off',
     'semi': [
       'error',
       'never'
     ],
-    '@typescript-eslint/explicit-function-return-type': 'error',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     'no-plusplus': 'off',
     '@typescript-eslint/no-explicit-any': 'error',
