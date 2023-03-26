@@ -1,5 +1,4 @@
 import { seeder } from 'nestjs-seeder'
-import { AddressSeeder } from '~/address/address.seeder'
 import { PrismaModule } from '~/prisma/prisma.module'
 import { SiteSeeder } from '~/seeder/site.seeder'
 import { UserSeeder } from '~/user/user.seeder'
@@ -11,4 +10,4 @@ seeder({
   imports: [
     PrismaModule
   ]
-}).run([AddressSeeder, UserSeeder, SiteSeeder])
+}).run([UserSeeder, SiteSeeder])

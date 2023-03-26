@@ -61,8 +61,8 @@ Table Address {
   streetName String [not null]
   zipCode Int [not null]
   city String [not null]
-  latitude String [not null]
-  longitude String [not null]
+  latitude Float [not null]
+  longitude Float [not null]
   site Site [not null]
 }
 
@@ -144,4 +144,4 @@ Ref: UserOrganizationRelation.organizationId > Organization.id
 
 Ref: DailySchedule.siteId > Site.id [delete: Cascade]
 
-Ref: Opening.(DailyScheduleSiteId, DailyScheduleDayOfWeek) > DailySchedule.(siteId, dayOfWeek)
+Ref: Opening.(DailyScheduleSiteId, DailyScheduleDayOfWeek) > DailySchedule.(siteId, dayOfWeek) [delete: Cascade]

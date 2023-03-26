@@ -15,6 +15,7 @@ export class SiteService {
   findAll({ skip, take }: Prisma.SiteFindManyArgs) {
     return this.prisma.site.findMany({
       include: {
+        Address: true,
         DailySchedules: {
           include: {
             openings: true
@@ -39,9 +40,7 @@ export class SiteService {
           include: {
             openings: true
           }
-        },
-        Images: true,
-        Organization: true
+        }
       },
       where: { id }
     })

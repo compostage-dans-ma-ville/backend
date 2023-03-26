@@ -16,9 +16,9 @@ export class AddressSchema implements Address {
   @Factory(faker => faker?.address.city())
     city: string
 
-  @Factory(faker => faker?.address.longitude())
-    longitude: string
+  @Factory(faker => Number(faker?.address.longitude()))
+    longitude: number
 
-  @Factory(faker => faker?.address.latitude())
-    latitude: string
+  @Factory(faker => Number(faker?.address.latitude()))
+    latitude: number
 }

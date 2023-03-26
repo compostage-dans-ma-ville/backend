@@ -1,16 +1,16 @@
-import { ApiProperty } from "@nestjs/swagger"
-import { Expose } from "class-transformer"
+import { ApiProperty } from '@nestjs/swagger'
+import { Expose } from 'class-transformer'
 
 export class GetOpeningDto {
+  @Expose()
   @ApiProperty({
     example: '08:00'
   })
+    open: string
+
   @Expose()
-  open: string
-  
   @ApiProperty({
     example: '10:00'
   })
-  @Expose()
-  close: string
+    close: string
 }

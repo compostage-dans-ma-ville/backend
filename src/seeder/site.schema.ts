@@ -24,8 +24,8 @@ export class SiteSchema implements Site {
     streetName: faker?.address.street(),
     zipCode: Number(faker?.address.zipCode('#####')),
     city: faker?.address.cityName(),
-    longitude: faker?.address.longitude(),
-    latitude: faker?.address.latitude()
+    longitude: Number(faker?.address.longitude()),
+    latitude: Number(faker?.address.latitude())
   }))
     address: Address
 
