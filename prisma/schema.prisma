@@ -139,7 +139,7 @@ model Opening {
   // close must be > open
   close Int
 
-  DailySchedule          DailySchedule @relation(fields: [DailyScheduleSiteId, DailyScheduleDayOfWeek], references: [siteId, dayOfWeek])
+  DailySchedule          DailySchedule @relation(fields: [DailyScheduleSiteId, DailyScheduleDayOfWeek], references: [siteId, dayOfWeek], onDelete: Cascade)
   DailyScheduleSiteId    Int
   DailyScheduleDayOfWeek Int
 

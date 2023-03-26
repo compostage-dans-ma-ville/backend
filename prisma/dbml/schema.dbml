@@ -144,4 +144,4 @@ Ref: UserOrganizationRelation.organizationId > Organization.id
 
 Ref: DailySchedule.siteId > Site.id [delete: Cascade]
 
-Ref: Opening.(DailyScheduleSiteId, DailyScheduleDayOfWeek) > DailySchedule.(siteId, dayOfWeek)
+Ref: Opening.(DailyScheduleSiteId, DailyScheduleDayOfWeek) > DailySchedule.(siteId, dayOfWeek) [delete: Cascade]
