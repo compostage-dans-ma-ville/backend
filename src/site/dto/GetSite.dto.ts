@@ -49,7 +49,15 @@ export class GetSiteDto implements Omit<Site, 'organizationId' | 'addressId'> {
   @Expose()
   @ApiProperty({
     description: 'The address or location of this site.',
-    example: 1
+    example: {
+      id: 1,
+      houseNumber: '6 ter',
+      streetName: 'rue Lothaire',
+      zipCode: 67150,
+      city: 'Ersteing',
+      latitude: 48.42523,
+      longitude: 7.66600
+    }
   })
     Address: GetAddressDto
 
