@@ -39,15 +39,15 @@ export class GetAddressDto implements Address {
 
   @Expose()
   @ApiProperty({
-    description: 'the exact longitude in legal projection.',
-    example: 1044994.79
+    description: 'the exact longitude in decimal degree',
+    example: 7.66600
   })
     longitude: number
 
   @Expose()
   @ApiProperty({
-    description: 'the exact latitude in legal projection.',
-    example: 6824079.46
+    description: 'the exact latitude in decimal degree',
+    example: 48.42523
   })
     latitude: number
 }
