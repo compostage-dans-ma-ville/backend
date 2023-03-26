@@ -4,7 +4,7 @@ import { Expose } from 'class-transformer'
 
 export class GetAddressDto implements Address {
   @ApiProperty({
-    description: 'Unique identifier of an adress.',
+    description: 'Unique identifier of an address.',
     example: 1
   })
     id: number
