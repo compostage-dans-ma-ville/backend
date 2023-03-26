@@ -47,6 +47,8 @@ describe('sites', () => {
         launchDate: null,
         name: expect.any(String),
         description: expect.any(String),
+        accessConditions: expect.any(String),
+        isPublic: expect.any(Boolean),
         Address: {
           id: expect.any(Number),
           houseNumber: expect.any(String),
