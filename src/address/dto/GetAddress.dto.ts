@@ -20,17 +20,17 @@ export class GetAddressDto implements Address {
   })
     streetName: string
 
-    @ApiProperty({
-      description: 'The city or village name of the address.',
-      example: 'Erstein'
-    })
-      city: string
-
   @ApiProperty({
     description: 'Human friendly name of this site.',
     example: 67150
   })
     zipCode: number
+
+    @ApiProperty({
+      description: 'The city or village name of the address.',
+      example: 'Erstein'
+    })
+      city: string
 
   @ApiProperty({
     description: 'the exact latitude in legal projection.',
