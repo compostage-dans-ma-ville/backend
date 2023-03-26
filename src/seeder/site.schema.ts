@@ -17,6 +17,12 @@ export class SiteSchema implements Site {
   @Factory(faker => faker?.lorem.paragraphs(5))
     description: string | null
 
+  @Factory(() => Math.random() > 0.2)
+    isPublic: boolean
+
+  @Factory(faker => faker?.lorem.paragraphs(3))
+    accessConditions: string
+
   avatar: string | null
 
   @Factory(faker => ({
