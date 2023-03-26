@@ -5,7 +5,7 @@ import { GetAddressDto } from '~/address/dto/GetAddress.dto'
 import { GetScheduleDto } from '~/dailySchedule/dto/getSchedule.dto'
 import { GetOpeningDto } from '~/opening/dto/GetOpening.dto'
 
-export class GetSiteDto implements Site {
+export class GetSiteDto implements Omit<Site, 'organizationId' | 'addressId'> {
   @Expose()
   @ApiProperty({
     description: 'Unique identifier of a site.',
@@ -46,12 +46,6 @@ export class GetSiteDto implements Site {
   })
     description: string | null
 
-  @ApiProperty({
-    description: 'The address or location of this site.',
-    example: 1
-  })
-    addressId: number
-
   @Expose()
   @ApiProperty({
     description: 'The address or location of this site.',
@@ -72,11 +66,4 @@ export class GetSiteDto implements Site {
     }
   })
     schedule: GetScheduleDto['schedules']
-
-  @Expose()
-  @ApiProperty({
-    description: 'The organization id related to this site.',
-    example: 1
-  })
-    organizationId: number | null
 }
