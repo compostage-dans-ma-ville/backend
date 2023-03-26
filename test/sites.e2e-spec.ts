@@ -1,9 +1,9 @@
+import 'jest-extended'
 import { Test, TestingModule } from '@nestjs/testing'
 import { INestApplication } from '@nestjs/common'
 import * as request from 'supertest'
 import { SiteModule } from '~/site/site.module'
 import { DailyScheduleModule } from '~/dailySchedule/DailySchedule.module'
-import 'jest-extended'
 
 describe('sites', () => {
   let app: INestApplication
@@ -44,9 +44,18 @@ describe('sites', () => {
         id: expect.any(Number),
         createdAt: expect.any(String),
         updatedAt: expect.any(String),
-        launchDate: expect.any(null),
+        launchDate: null,
         name: expect.any(String),
         description: expect.any(String),
+        Address: {
+          id: expect.any(Number),
+          houseNumber: expect.any(String),
+          streetName: expect.any(String),
+          zipCode: expect.any(Number),
+          city: expect.any(String),
+          latitude: expect.any(Number),
+          longitude: expect.any(Number)
+        },
         schedule: expect.toIncludeAnyMembers([
           expect.arrayContaining([
             {
