@@ -19,6 +19,7 @@ import { GetSiteDto } from './dto/GetSite.dto'
 import { getEndpoint } from '~/api-services/getEndpoint'
 import { NotFoundInterceptor } from '~/api-services/NotFoundInterceptor'
 import { DailyScheduleService } from '~/dailySchedule/DailySchedule.service'
+import { plainToClass } from '~/utils/dto'
 
 @Controller('sites')
 @ApiTags('Sites')
@@ -46,10 +47,12 @@ export class SiteController {
       skip: (page - 1) * items,
       take: items
     })
-    const formattedSites = sites.map(({ DailySchedules, ...s }) => ({
-      ...s,
-      schedule: this.scheduleService.toDto(DailySchedules)
-    }))
+    const formattedSites = sites
+      .map(({ DailySchedules, ...s }) => ({
+        ...s,
+        schedule: this.scheduleService.toDto(DailySchedules)
+      }))
+      .map(s => plainToClass(GetSiteDto, s))
 
     return createPaginationData<GetSiteDto>({
       url: getEndpoint(req),
