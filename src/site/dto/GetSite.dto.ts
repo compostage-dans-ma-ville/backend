@@ -48,6 +48,20 @@ export class GetSiteDto implements Omit<Site, 'organizationId' | 'addressId'> {
 
   @Expose()
   @ApiProperty({
+    description: 'Describe if the site is available for general public.',
+    example: true
+  })
+    isPublic: boolean
+
+  @Expose()
+  @ApiProperty({
+    description: 'Describe if the site is available for general public.',
+    example: 'You must live at the residence les mimosas to be able to use our composters. This one is locked by a padlock. Ask our janitor for the code.'
+  })
+    accessConditions: string
+
+  @Expose()
+  @ApiProperty({
     description: 'The address or location of this site.',
     example: {
       id: 1,

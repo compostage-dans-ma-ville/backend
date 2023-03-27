@@ -39,18 +39,20 @@ enum UserRole {
 }
 
 model Site {
-  id             Int                 @id @default(autoincrement())
-  createdAt      DateTime            @default(now())
-  updatedAt      DateTime            @updatedAt
-  launchDate     DateTime?
-  name           String
-  description    String?
-  Images         ImageSiteRelation[]
-  DailySchedules DailySchedule[]
-  Address        Address             @relation(fields: [addressId], references: [id], onDelete: Cascade)
-  addressId      Int
-  Organization   Organization?       @relation(fields: [organizationId], references: [id])
-  organizationId Int?
+  id               Int                 @id @default(autoincrement())
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+  launchDate       DateTime?
+  name             String
+  description      String?
+  isPublic         Boolean             @default(true)
+  accessConditions String?
+  Images           ImageSiteRelation[]
+  DailySchedules   DailySchedule[]
+  Address          Address             @relation(fields: [addressId], references: [id], onDelete: Cascade)
+  addressId        Int
+  Organization     Organization?       @relation(fields: [organizationId], references: [id])
+  organizationId   Int?
 }
 
 model ImageSiteRelation {
