@@ -1,9 +1,3 @@
-export type BoundedBy ={
-  Box: {
-    coordinates: string
-  }
-}
-
 type Quantity = 'inf_5_t' | '5_a_10_t' | '11_a_20_t' | '21_a_30_t' | '31_a_52_t' | 'ne_sait_pas'
 
 type SiteType = 'autre_dechets_verts' | 'autre_etablissement' | 'autre_partage' | 'EHPAD' | 'etab_touristique' | 'ferme' | 'milieu_hospitalier' | 'ne sait pas' | null | 'pied_immeuble' | 'plateforme_communale' | 'quartier' | 'resto_administratif' | 'resto_entreprise' | 'scolaire' | 'vermicompostage'
@@ -39,7 +33,7 @@ export type SiteCompostage ={
   acteur: string // also a mess
   /** YYYY-MM-DD */
   date_maj_fiche: string
-  date_mise_en_route: string
+  date_mise_en_route: string | number
   photo: string
   condition_acces: string
   fonctionnement_site: string
