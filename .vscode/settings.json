@@ -10,6 +10,7 @@
     "schedule.seeder.ts",
     "WeekTime",
     "settings.json",
-    "site.seeder.ts"
+    "site.seeder.ts",
+    "ActivateurSeeder.ts"
   ]
 }

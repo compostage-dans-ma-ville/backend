@@ -18,7 +18,7 @@ export type SiteCompostage ={
   libelle: string
   type: SiteType
   adresse: string
-  ville: string
+  ville: string | number
   code_postal: number
   is_public: 'oui' | 'non' | 'ne sait pas' | 'ne_sait_pas'
   is_signataire_charte: string
