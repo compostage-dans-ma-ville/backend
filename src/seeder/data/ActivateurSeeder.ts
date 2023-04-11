@@ -9,7 +9,7 @@ import { parseConditionAccess } from './parser/parseConditionAccess'
 import { UNPARSABLE } from './parser/const'
 import { Result, isErr, isOk } from './parser/Result'
 import { parseAddress } from './parser/parseAdress'
-import { UseFilters } from '@nestjs/common'
+import { parseContact } from './parser/parseContact'
 
 const rules: Validator.Rules = {
   boundedBy: 'present',
@@ -99,10 +99,11 @@ getSites().forEach(site => {
   const address = parseAddress(site)
   if(isErr(address)) { sites.invalid.push(address.err); return }
 
+  const contact = parseContact(site)
+  if(isErr(contact)) { sites.invalid.push(contact.err); return }
+
   sites.valid.push({
     ...parsedSite.ok,
     Address: { create: address.ok }
   })
 })
-
-console.log(sites.valid)
