@@ -25,8 +25,9 @@
     "db:stop": "docker container stop compostage_dev_db && docker container rm compostage_dev_db",
     "db:init": "yarn prisma migrate reset",
     "db:sh": "psql -h localhost -p 5432 -U admin compostage_dev",
-    "db:seed": "ts-node src/seeder",
-    "db:seed:refresh": "ts-node src/seeder --refresh"
+    "seed:fake": "ts-node src/seeder",
+    "seed:fake:refresh": "ts-node src/seeder --refresh",
+    "seed:real": "ts-node src/seeder/data/ActivateurSeeder.ts"
   },
   "dependencies": {
     "@casl/ability": "^6.3.3",
