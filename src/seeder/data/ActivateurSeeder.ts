@@ -87,7 +87,6 @@ const parseSite = (site: SiteCompostage): Result<ParsedSite, ParsedError> => {
   }
 }
 
-
 const sites: ParseResult<Prisma.SiteCreateInput, ParsedError> = {
   valid: [],
   invalid: []
@@ -104,6 +103,16 @@ getSites().forEach(site => {
 
   sites.valid.push({
     ...parsedSite.ok,
-    Address: { create: address.ok }
+    Address: { create: address.ok },
+    Organization: {
+      connectOrCreate: {
+        create: {
+          ...contact.ok
+        },
+        where: {
+          name: contact.ok.name
+        }
+      }
+    }
   })
 })
