@@ -10,6 +10,7 @@ import { UNPARSABLE } from './parser/const'
 import { Result, isErr, isOk } from './parser/Result'
 import { parseAddress } from './parser/parseAdress'
 import { parseContact } from './parser/parseContact'
+import { parseDailySchedule } from './parser/parseDailySchedule'
 
 const rules: Validator.Rules = {
   boundedBy: 'present',
@@ -101,6 +102,9 @@ getSites().forEach(site => {
   const contact = parseContact(site)
   if(isErr(contact)) { sites.invalid.push(contact.err); return }
 
+  const dailySchedules = parseDailySchedule(site)
+  if(isErr(dailySchedules)) { sites.invalid.push(dailySchedules.err); return }
+
   sites.valid.push({
     ...parsedSite.ok,
     Address: { create: address.ok },
@@ -113,6 +117,7 @@ getSites().forEach(site => {
           name: contact.ok.name
         }
       }
-    }
+    },
+    DailySchedules: dailySchedules.ok
   })
 })
