@@ -1,13 +1,13 @@
-import { Prisma, Site } from '@prisma/client'
+import { Prisma, PrismaClient, Site } from '@prisma/client'
 import { SiteCompostage } from './sourceActivateurs'
-import sourceActivateurs from './sourceActivateurs.json'
+import * as sourceActivateurs from './sourceActivateurs.json'
 import * as Validator from 'validatorjs'
 import { parseLaunchDate } from './parser/parseLaunchDate'
 import { parseName } from './parser/parseName'
 import { parseIsPublic } from './parser/parseIsPublic'
 import { parseConditionAccess } from './parser/parseConditionAccess'
 import { UNPARSABLE } from './parser/const'
-import { Result, isErr, isOk } from './parser/Result'
+import { Result, isErr } from './parser/Result'
 import { parseAddress } from './parser/parseAdress'
 import { parseContact } from './parser/parseContact'
 import { parseDailySchedule } from './parser/parseDailySchedule'
@@ -57,8 +57,7 @@ export type ParsedError = { id: number | string, reason: string }
 
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const getSites = (): SiteCompostage[] => (sourceActivateurs as any)
-  .FeatureCollection.featureMember
+const getSites = (): SiteCompostage[] => (sourceActivateurs as any).FeatureCollection.featureMember
   .map((f: { v_site_compostage_dept_3857: SiteCompostage}) => f.v_site_compostage_dept_3857)
 
 type ParsedSite = Omit<Site, 'id' | 'createdAt' | 'updatedAt' | 'addressId' | 'organizationId'>
@@ -88,10 +87,18 @@ const parseSite = (site: SiteCompostage): Result<ParsedSite, ParsedError> => {
   }
 }
 
+const seed = async (sites: Prisma.SiteCreateInput[] ) => {
+  const prisma = new PrismaClient()
+  for(const site of sites) {
+    await prisma.site.create({ data: site })
+  }
+}
+
 const sites: ParseResult<Prisma.SiteCreateInput, ParsedError> = {
   valid: [],
   invalid: []
 }
+
 getSites().forEach(site => {
   const parsedSite = parseSite(site)
   if(isErr(parsedSite)) { sites.invalid.push(parsedSite.err); return }
@@ -121,3 +128,5 @@ getSites().forEach(site => {
     DailySchedules: dailySchedules.ok
   })
 })
+
+seed(sites.valid)

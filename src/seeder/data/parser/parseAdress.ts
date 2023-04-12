@@ -2,7 +2,7 @@ import type { Result } from './Result'
 import type { SiteCompostage } from '../sourceActivateurs'
 import type { ParsedError } from '../ActivateurSeeder'
 import { Prisma } from '@prisma/client'
-import proj4 from 'proj4'
+import * as proj4 from 'proj4'
 
 const sourceCoordType = proj4.Proj('EPSG:3857')
 const destCoordType = proj4.Proj('WGS84')
