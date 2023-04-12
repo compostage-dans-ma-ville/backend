@@ -8,7 +8,7 @@ import { parseIsPublic } from './parser/parseIsPublic'
 import { parseConditionAccess } from './parser/parseConditionAccess'
 import { UNPARSABLE } from './parser/const'
 import { Result, isErr } from './parser/Result'
-import { parseAddress } from './parser/parseAdress'
+import { parseAddress } from './parser/parseAddress'
 import { parseContact } from './parser/parseContact'
 import { parseDailySchedule } from './parser/parseDailySchedule'
 
