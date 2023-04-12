@@ -27,7 +27,7 @@
     "db:sh": "psql -h localhost -p 5432 -U admin compostage_dev",
     "seed:fake": "ts-node src/seeder",
     "seed:fake:refresh": "ts-node src/seeder --refresh",
-    "seed:real": "ts-node src/seeder/data/ActivateurSeeder.ts"
+    "seed:real": "prisma migrate reset --force && ts-node src/seeder/data/ActivateurSeeder.ts"
   },
   "dependencies": {
     "@casl/ability": "^6.3.3",
