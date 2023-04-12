@@ -28,9 +28,12 @@ export const parseAddress = (site: SiteCompostage): Result<Prisma.AddressCreateI
   }
 
   const streetName = rawStreetName.trim()
-  if(streetName.length < 3 || streetName.includes('-')) {
+  if(streetName.length < 3 || streetName.includes('-')) {
     return { err: { id: site.id_site, reason: `The streetName "${site.adresse}" has an invalid format.` } }
   }
 
-  return { ok: { longitude, latitude, houseNumber, streetName, zipCode: site.code_postal, city } }
+  const zipCode = Number(site.code_postal.toString().replace(' ', ''))
+  if (Number.isNaN(zipCode) || zipCode === 0) return { err: { id: site.id_site, reason: `The zipCode "${site.code_postal}" has an invalid format.` } }
+
+  return { ok: { longitude, latitude, houseNumber, streetName, zipCode, city } }
 }

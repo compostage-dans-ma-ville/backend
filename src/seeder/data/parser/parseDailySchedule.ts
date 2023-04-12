@@ -8,10 +8,10 @@ export const parseDailySchedule = (site: SiteCompostage): Result<Prisma.SiteCrea
   const { fonctionnement_site } = site
 
   const dailySchedules = fonctionnement_site.match(/24h?\/24/) ? new Array(7).fill(undefined).map((_, i) => ({
-    dayOfWeek: i, openings: []
+    dayOfWeek: i, openings: { createMany: { data: [] } }
   })): []
 
   return { ok: { 
-    createMany: { data: dailySchedules },
+      create: dailySchedules
   } }
 }
