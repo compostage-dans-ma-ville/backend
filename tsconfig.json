@@ -12,6 +12,7 @@
       "~/*": ["./src/*"]
     },
     "outDir": "./dist",
+    "resolveJsonModule": true,
     "baseUrl": "./",
     "incremental": true,
     "skipLibCheck": true,

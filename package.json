@@ -25,8 +25,9 @@
     "db:stop": "docker container stop compostage_dev_db && docker container rm compostage_dev_db",
     "db:init": "yarn prisma migrate reset",
     "db:sh": "psql -h localhost -p 5432 -U admin compostage_dev",
-    "db:seed": "ts-node src/seeder",
-    "db:seed:refresh": "ts-node src/seeder --refresh"
+    "seed:fake": "ts-node src/seeder",
+    "seed:fake:refresh": "ts-node src/seeder --refresh",
+    "seed:real": "prisma migrate reset --force && ts-node src/seeder/data/ActivateurSeeder.ts"
   },
   "dependencies": {
     "@casl/ability": "^6.3.3",
@@ -49,7 +50,8 @@
     "prisma": "^4.10.1",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0",
-    "swagger-ui-express": "^4.6.0"
+    "swagger-ui-express": "^4.6.0",
+    "transform-coordinates": "^1.0.0"
   },
   "devDependencies": {
     "@faker-js/faker": "^7.6.0",
@@ -64,7 +66,10 @@
     "@types/node": "18.11.18",
     "@types/passport-jwt": "^3.0.8",
     "@types/passport-local": "^1.0.35",
+    "@types/proj4": "^2.5.2",
     "@types/supertest": "^2.0.11",
+    "@types/transform-coordinates": "^1.0.0",
+    "@types/validatorjs": "^3.15.0",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
     "class-transformer": "^0.5.1",
@@ -75,13 +80,15 @@
     "jest-extended": "^3.2.4",
     "nestjs-seeder": "^0.3.0",
     "prisma-dbml-generator": "^0.10.0",
+    "proj4": "^2.9.0",
     "source-map-support": "^0.5.20",
     "supertest": "^6.1.3",
     "ts-jest": "29.0.3",
     "ts-loader": "^9.2.3",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.1.2",
-    "typescript": "^4.7.4"
+    "typescript": "^4.7.4",
+    "validatorjs": "^3.22.1"
   },
   "jest": {
     "moduleFileExtensions": [
