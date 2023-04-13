@@ -29,6 +29,7 @@ export class DailyScheduleService {
   }
 
   toDto(schedules: (DailySchedule & { openings: Opening[] })[]): GetScheduleDto['schedules'] {
+    if (schedules.length === 0) return undefined
     const scheduleDto: GetScheduleDto['schedules'] = [null, null, null, null, null, null, null]
     schedules.forEach(({ dayOfWeek, openings }) => {
       if (openings.length === 0) {

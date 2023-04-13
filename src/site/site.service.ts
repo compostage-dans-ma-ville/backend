@@ -1,22 +1,46 @@
 import { Injectable } from '@nestjs/common'
-// import type { CreateSiteDto } from './dto/create-site.dto'
-// import type { UpdateSiteDto } from './dto/update-site.dto'
 import { PrismaService } from '~/prisma/prisma.service'
 import { Prisma, Site } from '@prisma/client'
 
+type ScheduleOption = (({ open: number, close: number })[] | null)[]
 @Injectable()
 export class SiteService {
   constructor(private readonly prisma: PrismaService) {}
 
-  // create(createSiteDto: CreateSiteDto) {
-  //   return 'This action adds a new site'
-  // }
+  async create(createSiteDto: Prisma.SiteCreateInput, options: { schedule?: ScheduleOption }) {
+    const site = await this.prisma.site.create({ data: createSiteDto })
+    
+    const { schedule: createSchedule } = options
+    let schedule;
+    if(createSchedule) {
+      const scheduleRequests = createSchedule.map(async (dailySchedule, dayOfWeek) => {
+        if(dailySchedule === null) return null
+        return (await this.prisma.dailySchedule.create({
+          select: {
+            openings: { select: { open: true, close: true } }
+          },
+          data: {
+            siteId: site.id,
+            dayOfWeek,
+            openings: {
+              createMany: { data: dailySchedule }
+            }
+          }
+        })).openings
+      })
+      schedule = await Promise.all(scheduleRequests)
+    }
+    return {
+      ...site,
+      schedule
+    }
+  }
 
   findAll({ skip, take }: Prisma.SiteFindManyArgs) {
     return this.prisma.site.findMany({
       include: {
-        Address: true,
-        DailySchedules: {
+        address: true,
+        dailySchedules: {
           include: {
             openings: true
           }
@@ -35,8 +59,8 @@ export class SiteService {
   findOne(id: number) {
     return this.prisma.site.findUnique({
       include: {
-        Address: true,
-        DailySchedules: {
+        address: true,
+        dailySchedules: {
           include: {
             openings: true
           }

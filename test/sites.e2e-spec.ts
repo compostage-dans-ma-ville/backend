@@ -4,6 +4,8 @@ import { INestApplication } from '@nestjs/common'
 import * as request from 'supertest'
 import { SiteModule } from '~/site/site.module'
 import { DailyScheduleModule } from '~/dailySchedule/DailySchedule.module'
+import { CreateSiteDto } from '~/site/dto/CreateSite.dto'
+import { GetOpeningDto } from '~/opening/dto/GetOpening.dto'
 
 describe('sites', () => {
   let app: INestApplication
@@ -49,7 +51,7 @@ describe('sites', () => {
         description: expect.any(String),
         accessConditions: expect.toSatisfy(e => e === null || typeof e === 'string'),
         isPublic: expect.any(Boolean),
-        Address: {
+        address: {
           id: expect.any(Number),
           houseNumber: expect.any(String),
           streetName: expect.any(String),
@@ -58,16 +60,11 @@ describe('sites', () => {
           latitude: expect.any(Number),
           longitude: expect.any(Number)
         },
-        schedule: expect.toIncludeAnyMembers([
-          expect.arrayContaining([
-            {
-              open: expect.toBeString(),
-              close: expect.toBeString()
-            }
-          ]),
-          [],
-          null
-        ])
+        schedule: expect.toSatisfy(e => e === undefined
+          || (e.length === 7
+            && e.every((daily: null | GetOpeningDto[]) => daily === null
+              || daily.length === 0
+              || daily.every((opening: GetOpeningDto) => opening.open && opening.close))))
       })
     })
 
@@ -75,6 +72,88 @@ describe('sites', () => {
       const { body } = await request(app.getHttpServer()).get('/sites?items=10')
 
       expect(body.data.length).toEqual(10)
+    })
+  })
+
+  describe('POST /sites', () => {
+    it('add a new basic site with its address', async () => {
+      const payload: CreateSiteDto = {
+        launchDate: new Date(),
+        name: 'A new site',
+        description: 'A fancy description',
+        isPublic: true, // it is always better
+        accessConditions: 'Free4All',
+        address: {
+          houseNumber: '5',
+          streetName: 'chemin des carrières',
+          zipCode: 33150,
+          city: 'Cenon',
+          latitude: 44.8578807,
+          longitude: -0.5343909
+        }
+      }
+      const req = await request(app.getHttpServer())
+        .post('/sites')
+        .send(payload)
+
+      expect(req.ok).toBe(true)
+
+      await request(app.getHttpServer()).delete(`/sites/${req.body.id}`)
+    })
+
+    it('add a new site with schedule', async () => {
+      const payload: CreateSiteDto = {
+        launchDate: new Date(),
+        name: 'A new site',
+        description: 'A fancy description about this site',
+        isPublic: true, // it is always better
+        accessConditions: 'Free4All under the following openings',
+        address: {
+          houseNumber: '5',
+          streetName: 'chemin des carrières',
+          zipCode: 33150,
+          city: 'Cenon',
+          latitude: 44.8578807,
+          longitude: -0.5343909
+        },
+        schedule: [
+          null,
+          [{ open: '08:00', close: '12:00'}, { open: '13:00', close: '17:00'}],
+          null,
+          [{ open: '12:00', close: '16:00' }],
+          null,
+          null,
+          null
+        ]
+      }
+      const req = await request(app.getHttpServer())
+        .post('/sites')
+        .send(payload)
+
+      expect(req.ok).toBe(true)
+      expect(req.body).toEqual({
+        accessConditions: "Free4All under the following openings",
+        addressId: expect.any(Number),
+        createdAt: expect.any(String),
+        description: "A fancy description about this site",
+        id: expect.any(Number),
+        isPublic: true,
+        launchDate: expect.any(String),
+        name: "A new site",
+        organizationId: null,
+        schedule: [
+          null,
+          [{close: 720, open: 480}, {close: 1020, open: 780}],
+          null,
+          [{close: 960, open: 720}],
+          null,
+          null,
+          null
+        ],
+        updatedAt: expect.any(String)
+      })
+
+      await request(app.getHttpServer()).delete(`/sites/${req.body.id}`)
     })
   })
 

@@ -13,5 +13,5 @@ export class GetScheduleDto {
       GetOpeningDto[] | null,
       GetOpeningDto[] | null,
       GetOpeningDto[] | null,
-    ]
+    ] | undefined
 }

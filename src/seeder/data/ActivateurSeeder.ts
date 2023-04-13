@@ -1,3 +1,4 @@
+/* eslint-disable */ 
 import { Prisma, PrismaClient, Site } from '@prisma/client'
 import { SiteCompostage } from './sourceActivateurs'
 import * as sourceActivateurs from './sourceActivateurs.json'
@@ -51,10 +52,9 @@ const rules: Validator.Rules = {
 type ParseResult<T, U> = {
   valid: T[],
   invalid: U[]
-} 
+}
 
 export type ParsedError = { id: number | string, reason: string }
-
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getSites = (): SiteCompostage[] => (sourceActivateurs as any).FeatureCollection.featureMember
@@ -68,12 +68,12 @@ const parseSite = (site: SiteCompostage): Result<ParsedSite, ParsedError> => {
   // const description = site.fonctionnement_site ?? null
   const accessConditions = parseConditionAccess(site.condition_acces) ?? null
 
-  if(name === UNPARSABLE) {
+  if (name === UNPARSABLE) {
     return { err: { id: site.id_site, reason: 'Name is not found.' } }
   }
 
-  if(isPublic === UNPARSABLE) {
-    return { err: { id: site.id_site, reason: 'isPublic is unknown.' }}
+  if (isPublic === UNPARSABLE) {
+    return { err: { id: site.id_site, reason: 'isPublic is unknown.' } }
   }
 
   return {
@@ -87,9 +87,9 @@ const parseSite = (site: SiteCompostage): Result<ParsedSite, ParsedError> => {
   }
 }
 
-const seed = async (sites: Prisma.SiteCreateInput[] ) => {
+const seed = async (sites: Prisma.SiteCreateInput[]) => {
   const prisma = new PrismaClient()
-  for(const site of sites) {
+  for (const site of sites) {
     await prisma.site.create({ data: site })
   }
 }
@@ -101,21 +101,21 @@ const sites: ParseResult<Prisma.SiteCreateInput, ParsedError> = {
 
 getSites().forEach(site => {
   const parsedSite = parseSite(site)
-  if(isErr(parsedSite)) { sites.invalid.push(parsedSite.err); return }
+  if (isErr(parsedSite)) { sites.invalid.push(parsedSite.err); return }
 
   const address = parseAddress(site)
-  if(isErr(address)) { sites.invalid.push(address.err); return }
+  if (isErr(address)) { sites.invalid.push(address.err); return }
 
   const contact = parseContact(site)
-  if(isErr(contact)) { sites.invalid.push(contact.err); return }
+  if (isErr(contact)) { sites.invalid.push(contact.err); return }
 
   const dailySchedules = parseDailySchedule(site)
-  if(isErr(dailySchedules)) { sites.invalid.push(dailySchedules.err); return }
+  if (isErr(dailySchedules)) { sites.invalid.push(dailySchedules.err); return }
 
   sites.valid.push({
     ...parsedSite.ok,
-    Address: { create: address.ok },
-    Organization: {
+    address: { create: address.ok },
+    organization: {
       connectOrCreate: {
         create: {
           ...contact.ok
@@ -125,7 +125,7 @@ getSites().forEach(site => {
         }
       }
     },
-    DailySchedules: dailySchedules.ok
+    dailySchedules: dailySchedules.ok
   })
 })
 

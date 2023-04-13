@@ -6,5 +6,11 @@ const divmod = (x: number, y: number): [number, number] => ([Math.floor(x / y), 
 export const DailyTime = {
   fromMinutes: (rawMinutes: number): [number, number] => divmod(rawMinutes, MINUTES_IN_HOUR),
 
-  toMinutes: (hours: number, minutes: number): number => hours * MINUTES_IN_HOUR + minutes
+  toMinutes: (hours: number, minutes: number): number => hours * MINUTES_IN_HOUR + minutes,
+
+  /** Convert a HH:MM string to the total amound of minutes */
+  fromString: (s: string) => {
+    const [hours, minutes] = s.split(':').map(Number)
+    return DailyTime.toMinutes(hours, minutes)
+  }
 }

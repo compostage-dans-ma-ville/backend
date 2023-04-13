@@ -1,3 +1,4 @@
+/* eslint-disable */ 
 import type { Result } from './Result'
 import type { SiteCompostage } from '../sourceActivateurs'
 import type { ParsedError } from '../ActivateurSeeder'
@@ -9,7 +10,8 @@ const parseExploitantContact = (s: string) => {
   return matched?.at(0)
 }
 
-export const parseContact = (site: SiteCompostage): Result<Prisma.OrganizationCreateInput, ParsedError> => {
+export const parseContact = (site: SiteCompostage):
+  Result<Prisma.OrganizationCreateInput, ParsedError> => {
   const data = site.exploitant_nom.includes('@') ? {
     name: site.exploitant_structure,
     email: site.exploitant_nom,

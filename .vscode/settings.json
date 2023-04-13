@@ -11,6 +11,13 @@
     "WeekTime",
     "settings.json",
     "site.seeder.ts",
-    "ActivateurSeeder.ts"
+    "ActivateurSeeder.ts",
+    ".nvmrc",
+    "CreateSite.dto.ts",
+    "site.service.ts",
+    "CreateAddress.dto",
+    "GetSite.dto.ts",
+    "site.controller.ts",
+    "sites.e2e-spec.ts"
   ]
 }

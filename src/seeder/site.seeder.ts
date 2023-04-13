@@ -21,6 +21,13 @@ export class SiteSeeder implements Seeder {
       const { address, ...site } = s as unknown as SiteSchema
       const { id } = await this.prisma.address.create({ data: address })
 
+      const siteRecord = await this.prisma.site.create({
+        data: {
+          ...site,
+          addressId: id
+        }
+      })
+
       const schedules: DailyScheduleSchema[] = new Array(DAYS_IN_WEEK).fill(undefined)
         .map((_, dayOfWeek) => {
           const isClosedToday = Math.random() > 0.7
@@ -33,13 +40,6 @@ export class SiteSeeder implements Seeder {
         })
         .flat()
         .filter((x: DailyScheduleSchema | undefined): x is DailyScheduleSchema => x !== undefined)
-
-      const siteRecord = await this.prisma.site.create({
-        data: {
-          ...site,
-          addressId: id
-        }
-      })
 
       const results = schedules.map((dailySchedule) => this.prisma.dailySchedule.create({
         data: {

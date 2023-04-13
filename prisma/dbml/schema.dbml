@@ -28,11 +28,11 @@ Table Site {
   description String
   isPublic Boolean [not null, default: true]
   accessConditions String
-  Images ImageSiteRelation [not null]
-  DailySchedules DailySchedule [not null]
-  Address Address [not null]
+  images ImageSiteRelation [not null]
+  dailySchedules DailySchedule [not null]
+  address Address [not null]
   addressId Int [not null]
-  Organization Organization
+  organization Organization
   organizationId Int
 }
 

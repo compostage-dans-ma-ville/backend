@@ -73,7 +73,7 @@ export class GetSiteDto implements Omit<Site, 'organizationId' | 'addressId'> {
       longitude: 7.66600
     }
   })
-    Address: GetAddressDto
+    address: GetAddressDto
 
   @Expose()
   @ApiProperty({

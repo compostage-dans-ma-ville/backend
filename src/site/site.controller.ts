@@ -1,6 +1,6 @@
 import {
   Controller, Get, Param, Delete,
-  Query, Req, ParseIntPipe, UseInterceptors
+  Query, Req, ParseIntPipe, UseInterceptors, Body, Post
 } from '@nestjs/common'
 import type { Request } from 'express'
 import { SiteService } from './site.service'
@@ -20,6 +20,8 @@ import { getEndpoint } from '~/api-services/getEndpoint'
 import { NotFoundInterceptor } from '~/api-services/NotFoundInterceptor'
 import { DailyScheduleService } from '~/dailySchedule/DailySchedule.service'
 import { plainToClass } from '~/utils/dto'
+import { CreateSiteDto } from './dto/CreateSite.dto'
+import { DailyTime } from '~/api-services/DailyTime'
 
 @Controller('sites')
 @ApiTags('Sites')
@@ -30,10 +32,26 @@ export class SiteController {
     private readonly scheduleService: DailyScheduleService
   ) {}
 
-  // @Post()
-  // create(@Body() createSiteDto: CreateSiteDto) {
-  //   return this.siteService.create(createSiteDto)
-  // }
+  @Post()
+  @ApiOkResponse({ description: 'The site is successfully created.', type: GetSiteDto })
+  async create(@Body() createSiteDto: CreateSiteDto) {
+    const { schedule: scheduleDto, ...siteData } = createSiteDto
+    
+    const schedule = scheduleDto?.map((dailySchedule) => dailySchedule?.map((x) => ({
+          open: DailyTime.fromString(x.open),
+          close: DailyTime.fromString(x.close)
+        })) ?? null
+    ) ?? undefined
+  
+    const site = {
+      ...siteData,
+      address: {
+        create: createSiteDto.address
+      }
+    }
+
+    return this.siteService.create(site, { schedule })
+  }
 
   @Get()
   @ApiPaginatedResponse(GetSiteDto)
@@ -48,9 +66,9 @@ export class SiteController {
       take: items
     })
     const formattedSites = sites
-      .map(({ DailySchedules, ...s }) => ({
+      .map(({ dailySchedules, ...s }) => ({
         ...s,
-        schedule: this.scheduleService.toDto(DailySchedules)
+        schedule: this.scheduleService.toDto(dailySchedules)
       }))
       .map(s => plainToClass(GetSiteDto, s))
 
@@ -71,10 +89,10 @@ export class SiteController {
 
     if (!site) return undefined
 
-    const { DailySchedules, ...s } = site
+    const { dailySchedules, ...s } = site
     const formattedSite = {
       ...s,
-      schedule: this.scheduleService.toDto(DailySchedules)
+      schedule: this.scheduleService.toDto(dailySchedules)
     }
 
     return plainToClass(

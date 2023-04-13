@@ -47,11 +47,11 @@ model Site {
   description      String?
   isPublic         Boolean             @default(true)
   accessConditions String?
-  Images           ImageSiteRelation[]
-  DailySchedules   DailySchedule[]
-  Address          Address             @relation(fields: [addressId], references: [id], onDelete: Cascade)
+  images           ImageSiteRelation[]
+  dailySchedules   DailySchedule[]
+  address          Address             @relation(fields: [addressId], references: [id], onDelete: Cascade)
   addressId        Int
-  Organization     Organization?       @relation(fields: [organizationId], references: [id])
+  organization     Organization?       @relation(fields: [organizationId], references: [id])
   organizationId   Int?
 }
 
