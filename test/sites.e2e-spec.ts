@@ -118,7 +118,7 @@ describe('sites', () => {
         },
         schedule: [
           null,
-          [{ open: '08:00', close: '12:00'}, { open: '13:00', close: '17:00'}],
+          [{ open: '08:00', close: '12:00' }, { open: '13:00', close: '17:00' }],
           null,
           [{ open: '12:00', close: '16:00' }],
           null,
@@ -143,9 +143,9 @@ describe('sites', () => {
         organizationId: null,
         schedule: [
           null,
-          [{close: 720, open: 480}, {close: 1020, open: 780}],
+          [{ close: 720, open: 480 }, { close: 1020, open: 780 }],
           null,
-          [{close: 960, open: 720}],
+          [{ close: 960, open: 720 }],
           null,
           null,
           null
@@ -154,6 +154,56 @@ describe('sites', () => {
       })
 
       await request(app.getHttpServer()).delete(`/sites/${req.body.id}`)
+    })
+  })
+
+  describe('PUT /sites/:id', () => {
+    it('replace a new basic site with its address', async () => {
+      const sites = await request(app.getHttpServer())
+        .get('/sites')
+      const original = sites.body.data[0]
+
+      const payload: CreateSiteDto = {
+        launchDate: new Date(),
+        name: 'A new site',
+        description: 'A fancy description',
+        isPublic: true, // it is always better
+        accessConditions: 'Free4All',
+        address: {
+          houseNumber: '5',
+          streetName: 'chemin des carrières',
+          zipCode: 33150,
+          city: 'Cenon',
+          latitude: 44.8578807,
+          longitude: -0.5343909
+        }
+      }
+      const req = await request(app.getHttpServer())
+        .put(`/sites/${original.id}`)
+        .send(payload)
+
+      expect(req.ok).toBe(true)
+      expect(req.body).toEqual({
+        accessConditions: "Free4All",
+        address: {
+          id: original.address.id,
+          city: "Cenon",
+          houseNumber: "5",
+          latitude: 44.8578807,
+          longitude: -0.5343909,
+          streetName: "chemin des carrières",
+          zipCode: 33150,
+        },
+        addressId: original.address.id,
+        createdAt: expect.any(String),
+        description: "A fancy description",
+        id: original.id,
+        isPublic: true,
+        launchDate: expect.any(String),
+        name: "A new site",
+        organizationId: null,
+        updatedAt: expect.any(String),
+      })
     })
   })
 

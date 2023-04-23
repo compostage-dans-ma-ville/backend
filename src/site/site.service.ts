@@ -36,6 +36,45 @@ export class SiteService {
     }
   }
 
+  async replace(id: number, payload: Prisma.SiteUpdateInput, options: { schedule?: ScheduleOption } = {}) {
+    const site = await this.prisma.site.update({ include: { address: true }, data: payload, where: { id } })
+    
+    const { schedule: createSchedule } = options
+    let schedule;
+    if(createSchedule) {
+      const scheduleRequests = createSchedule.map(async (dailySchedule, dayOfWeek) => {
+        if(dailySchedule === null) {
+          await this.prisma.dailySchedule.delete({
+            where: {
+              siteId_dayOfWeek: {
+                siteId: site.id,
+                dayOfWeek
+              }
+            }
+          })
+          return null
+        }
+
+        return this.prisma.dailySchedule.updateMany({
+          data: {
+            ...dailySchedule
+          },
+          where: {
+            siteId: site.id,
+            dayOfWeek
+          }
+        })
+      })
+  
+      schedule = await Promise.all(scheduleRequests)
+    }
+  
+    return {
+      ...site,
+      schedule
+    }
+  }
+
   findAll({ skip, take }: Prisma.SiteFindManyArgs) {
     return this.prisma.site.findMany({
       include: {

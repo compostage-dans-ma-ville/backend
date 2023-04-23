@@ -1,6 +1,6 @@
 import {
   Controller, Get, Param, Delete,
-  Query, Req, ParseIntPipe, UseInterceptors, Body, Post
+  Query, Req, ParseIntPipe, UseInterceptors, Body, Post, Put
 } from '@nestjs/common'
 import type { Request } from 'express'
 import { SiteService } from './site.service'
@@ -51,6 +51,26 @@ export class SiteController {
     }
 
     return this.siteService.create(site, { schedule })
+  }
+
+  @Put(':id')
+  replace(@Param('id') id: string, @Body() updateSiteDto: CreateSiteDto) {
+    const { schedule: scheduleDto, ...siteData } = updateSiteDto
+    
+    const schedule = scheduleDto?.map((dailySchedule) => dailySchedule?.map((x) => ({
+          open: DailyTime.fromString(x.open),
+          close: DailyTime.fromString(x.close)
+        })) ?? null
+    ) ?? undefined
+  
+    const site: Prisma.SiteUpdateInput = {
+      ...siteData,
+      address: {
+        update: updateSiteDto.address
+      }
+    }
+
+    return this.siteService.replace(+id, site, { schedule })
   }
 
   @Get()
