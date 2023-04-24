@@ -157,6 +157,40 @@ describe('sites', () => {
     })
   })
 
+  describe('GET /sites/:id', () => {
+    it('returns the site with the expected id', async () => {
+      const { body: sitesBody } = await request(app.getHttpServer()).get('/sites')
+      const { id } = sitesBody.data[0]
+      const { status, body } = await request(app.getHttpServer()).get(`/sites/${id}`)
+
+      expect(status).toBe(200)
+      expect(body).toEqual({
+        id,
+        createdAt: expect.any(String),
+        updatedAt: expect.any(String),
+        launchDate: null,
+        name: expect.any(String),
+        description: expect.any(String),
+        accessConditions: expect.toSatisfy(e => e === null || typeof e === 'string'),
+        isPublic: expect.any(Boolean),
+        address: {
+          id: expect.any(Number),
+          houseNumber: expect.any(String),
+          streetName: expect.any(String),
+          zipCode: expect.any(Number),
+          city: expect.any(String),
+          latitude: expect.any(Number),
+          longitude: expect.any(Number)
+        },
+        schedule: expect.toSatisfy(e => e === undefined
+          || (e.length === 7
+            && e.every((daily: null | GetOpeningDto[]) => daily === null
+              || daily.length === 0
+              || daily.every((opening: GetOpeningDto) => opening.open && opening.close))))
+      })
+    })
+  })
+
   describe('PUT /sites/:id', () => {
     it('replace a new basic site with its address', async () => {
       const sites = await request(app.getHttpServer())
