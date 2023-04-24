@@ -44,6 +44,7 @@ model Site {
   updatedAt        DateTime            @updatedAt
   launchDate       DateTime?
   name             String
+  treatedWaste     Int?
   description      String?
   isPublic         Boolean             @default(true)
   accessConditions String?

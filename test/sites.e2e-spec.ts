@@ -64,7 +64,8 @@ describe('sites', () => {
           || (e.length === 7
             && e.every((daily: null | GetOpeningDto[]) => daily === null
               || daily.length === 0
-              || daily.every((opening: GetOpeningDto) => opening.open && opening.close))))
+              || daily.every((opening: GetOpeningDto) => opening.open && opening.close)))),
+        treatedWaste: expect.toSatisfy((x) => x === null || Number.isInteger(x))
       })
     })
 
@@ -150,6 +151,7 @@ describe('sites', () => {
           null,
           null
         ],
+        treatedWaste: null,
         updatedAt: expect.any(String)
       })
 
@@ -186,7 +188,8 @@ describe('sites', () => {
           || (e.length === 7
             && e.every((daily: null | GetOpeningDto[]) => daily === null
               || daily.length === 0
-              || daily.every((opening: GetOpeningDto) => opening.open && opening.close))))
+              || daily.every((opening: GetOpeningDto) => opening.open && opening.close)))),
+        treatedWaste: expect.toSatisfy((x) => x === null || Number.isInteger(x))
       })
     })
   })
@@ -203,6 +206,7 @@ describe('sites', () => {
         description: 'A fancy description',
         isPublic: true, // it is always better
         accessConditions: 'Free4All',
+        treatedWaste: 3000,
         address: {
           houseNumber: '5',
           streetName: 'chemin des carrières',
@@ -235,6 +239,7 @@ describe('sites', () => {
         isPublic: true,
         launchDate: expect.any(String),
         name: "A new site",
+        treatedWaste: 3000,
         organizationId: null,
         updatedAt: expect.any(String),
       })

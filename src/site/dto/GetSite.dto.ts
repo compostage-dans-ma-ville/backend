@@ -88,4 +88,13 @@ export class GetSiteDto implements Omit<Site, 'organizationId' | 'addressId'> {
     }
   })
     schedule: GetScheduleDto['schedules']
+
+
+  @Expose()
+  @ApiProperty({
+    description: 'Average quantity of compost produced after each collection',
+    nullable: true,
+    example: 5000
+  })
+    treatedWaste: number | null
 }

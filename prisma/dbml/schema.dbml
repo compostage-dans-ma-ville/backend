@@ -25,6 +25,7 @@ Table Site {
   updatedAt DateTime [not null]
   launchDate DateTime
   name String [not null]
+  treatedWaste Int
   description String
   isPublic Boolean [not null, default: true]
   accessConditions String

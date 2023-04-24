@@ -22,6 +22,7 @@ import { DailyScheduleService } from '~/dailySchedule/DailySchedule.service'
 import { plainToClass } from '~/utils/dto'
 import { CreateSiteDto } from './dto/CreateSite.dto'
 import { DailyTime } from '~/api-services/DailyTime'
+import { TREATED_WASTE_VALUES } from './dto/GetTreatedWaste.dto'
 
 @Controller('sites')
 @ApiTags('Sites')
@@ -98,6 +99,18 @@ export class SiteController {
       queryOptions: { items, page },
       totalItemCount
     })
+  }
+
+  @Get('units/treated-waste')
+  @ApiOkResponse({ 
+    isArray: true,
+    description: 'The current values for a treated waste',
+    schema: {
+      example: Object.values(TREATED_WASTE_VALUES)
+    }
+  })
+  async getTreatedWasteUnit() {
+    return TREATED_WASTE_VALUES
   }
 
   @Get(':id')

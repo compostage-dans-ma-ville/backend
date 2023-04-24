@@ -18,6 +18,7 @@
     "CreateAddress.dto",
     "GetSite.dto.ts",
     "site.controller.ts",
-    "sites.e2e-spec.ts"
+    "sites.e2e-spec.ts",
+    "site.schema.ts"
   ]
 }

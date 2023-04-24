@@ -1,5 +1,6 @@
 import { Address, Site } from '@prisma/client'
 import { Factory } from 'nestjs-seeder'
+import { TREATED_WASTE_VALUES } from '~/site/dto/GetTreatedWaste.dto'
 
 export class SiteSchema implements Site {
   id: number
@@ -37,4 +38,7 @@ export class SiteSchema implements Site {
   addressId: number
 
   organizationId: number | null
+
+  @Factory(faker => Math.random() > 0.25 ? faker?.helpers.arrayElement(TREATED_WASTE_VALUES.map(x => x.id)): null)
+  treatedWaste: number | null
 }
