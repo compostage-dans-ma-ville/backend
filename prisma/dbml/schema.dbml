@@ -17,6 +17,7 @@ Table User {
   role UserRole [not null, default: 'USER']
   Organization Organization [not null]
   UserOrganizationRelation UserOrganizationRelation [not null]
+  sites UserSiteRelation [not null]
 }
 
 Table Site {
@@ -35,6 +36,7 @@ Table Site {
   addressId Int [not null]
   organization Organization
   organizationId Int
+  members UserSiteRelation [not null]
 }
 
 Table ImageSiteRelation {
@@ -95,6 +97,18 @@ Table UserOrganizationRelation {
   }
 }
 
+Table UserSiteRelation {
+  User User [not null]
+  userId Int [not null]
+  role SiteRole [not null]
+  site Site [not null]
+  siteId Int [not null]
+
+  indexes {
+    (userId, siteId) [pk]
+  }
+}
+
 Table DailySchedule {
   site Site [not null]
   siteId Int [not null]
@@ -129,6 +143,12 @@ Enum OrganizationRole {
   ADMIN
 }
 
+Enum SiteRole {
+  MEMBER
+  ADMIN
+  REFEREE
+}
+
 Ref: User.imageId > Image.id
 
 Ref: Site.addressId > Address.id [delete: Cascade]
@@ -144,6 +164,10 @@ Ref: Organization.imageId > Image.id
 Ref: UserOrganizationRelation.userId > User.id
 
 Ref: UserOrganizationRelation.organizationId > Organization.id
+
+Ref: UserSiteRelation.userId > User.id
+
+Ref: UserSiteRelation.siteId > Site.id
 
 Ref: DailySchedule.siteId > Site.id [delete: Cascade]
 
