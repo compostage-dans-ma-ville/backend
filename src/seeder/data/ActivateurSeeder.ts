@@ -65,6 +65,7 @@ const parseSite = (site: SiteCompostage): Result<ParsedSite, ParsedError> => {
   const name = parseName(site.libelle)
   const launchDate = parseLaunchDate(site.date_mise_en_route) ?? null
   const isPublic = parseIsPublic(site.is_public)
+  const treatedWaste = null
   // const description = site.fonctionnement_site ?? null
   const accessConditions = parseConditionAccess(site.condition_acces) ?? null
 
@@ -82,7 +83,8 @@ const parseSite = (site: SiteCompostage): Result<ParsedSite, ParsedError> => {
       launchDate,
       isPublic,
       description: null,
-      accessConditions
+      accessConditions,
+      treatedWaste
     }
   }
 }
