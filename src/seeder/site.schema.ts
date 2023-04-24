@@ -37,4 +37,16 @@ export class SiteSchema implements Site {
   addressId: number
 
   organizationId: number | null
+
+  @Factory(faker => Math.random() > 0.25 ? faker?.helpers.arrayElement([
+    500,
+    1000,
+    2000,
+    3000,
+    5000,
+    10000,
+    20000,
+    30000
+  ]): null)
+  treatedWaste: number | null
 }
