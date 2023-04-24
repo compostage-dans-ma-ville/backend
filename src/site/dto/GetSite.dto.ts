@@ -92,7 +92,7 @@ export class GetSiteDto implements Omit<Site, 'organizationId' | 'addressId'> {
 
   @Expose()
   @ApiProperty({
-    description: 'The quantity of compost produced for every',
+    description: 'Average quantity of compost produced after each collection',
     nullable: true,
     example: 5000
   })
