@@ -15,8 +15,7 @@ Table User {
   avatar Image
   imageId String
   role UserRole [not null, default: 'USER']
-  Organization Organization [not null]
-  UserOrganizationRelation UserOrganizationRelation [not null]
+  organizations UserOrganizationRelation [not null]
   sites UserSiteRelation [not null]
 }
 
@@ -81,15 +80,14 @@ Table Organization {
   imageId String
   links String[] [not null]
   sites Site [not null]
-  members User [not null]
-  UserOrganizationRelation UserOrganizationRelation [not null]
+  members UserOrganizationRelation [not null]
 }
 
 Table UserOrganizationRelation {
-  User User [not null]
+  user User [not null]
   userId Int [not null]
   role OrganizationRole [not null]
-  Organization Organization [not null]
+  organization Organization [not null]
   organizationId Int [not null]
 
   indexes {
@@ -98,7 +96,7 @@ Table UserOrganizationRelation {
 }
 
 Table UserSiteRelation {
-  User User [not null]
+  user User [not null]
   userId Int [not null]
   role SiteRole [not null]
   site Site [not null]

@@ -28,9 +28,8 @@ model User {
   imageId          String?
   role             UserRole @default(USER)
 
-  Organization             Organization[]
-  UserOrganizationRelation UserOrganizationRelation[]
-  sites                    UserSiteRelation[]
+  organizations UserOrganizationRelation[]
+  sites         UserSiteRelation[]
 }
 
 enum UserRole {
@@ -103,9 +102,8 @@ model Organization {
   imageId     String?
   links       String[]
 
-  sites                    Site[]
-  members                  User[]
-  UserOrganizationRelation UserOrganizationRelation[]
+  sites   Site[]
+  members UserOrganizationRelation[]
 }
 
 enum OrganizationRole {
@@ -120,19 +118,19 @@ enum SiteRole {
 }
 
 model UserOrganizationRelation {
-  User   User @relation(fields: [userId], references: [id])
+  user   User @relation(fields: [userId], references: [id])
   userId Int
 
   role OrganizationRole
 
-  Organization   Organization @relation(fields: [organizationId], references: [id])
+  organization   Organization @relation(fields: [organizationId], references: [id])
   organizationId Int
 
   @@id([userId, organizationId])
 }
 
 model UserSiteRelation {
-  User   User @relation(fields: [userId], references: [id])
+  user   User @relation(fields: [userId], references: [id])
   userId Int
 
   role SiteRole

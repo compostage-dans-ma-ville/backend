@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { JwtPayload } from './jwt.strategy'
 import { User } from '@prisma/client'
@@ -55,20 +55,10 @@ export class AuthService {
     const Authorization = this.jwtService.sign(user, {
       secret: process.env.JWT_SECRET_KEY, expiresIn: process.env.JWT_EXPIRES_IN
     })
+
     return {
       JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN,
       Authorization
     }
-  }
-
-  async validateUser(payload: JwtPayload): Promise<User | null> {
-    const user = await this.userService.findByPayload(payload)
-    if (!user) {
-      throw new HttpException(
-        'INVALID_TOKEN',
-        HttpStatus.UNAUTHORIZED
-      )
-    }
-    return user
   }
 }

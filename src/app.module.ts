@@ -7,7 +7,6 @@ import { AuthModule } from './auth/auth.module'
 import { UserModule } from '~/user/user.module'
 import { SiteModule } from '~/site/site.module'
 import { AddressModule } from '~/address/address.module'
-import { CaslModule } from './casl/casl.module'
 
 @Module({
   imports: [
@@ -19,10 +18,11 @@ import { CaslModule } from './casl/casl.module'
     AuthModule,
     UserModule,
     PrismaModule,
-    SiteModule,
-    CaslModule
+    SiteModule
   ],
   controllers: [AppController],
-  providers: [AppService, PrismaModule]
+  providers: [
+    AppService
+  ]
 })
 export class AppModule {}
