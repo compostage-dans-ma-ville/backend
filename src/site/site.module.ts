@@ -3,10 +3,9 @@ import { SiteService } from './site.service'
 import { SiteController } from './site.controller'
 import { PrismaService } from '~/prisma/prisma.service'
 import { DailyScheduleModule } from '~/dailySchedule/DailySchedule.module'
-import { AbilityModule } from '~/ability/ability.module'
 
 @Module({
-  imports: [DailyScheduleModule, AbilityModule],
+  imports: [DailyScheduleModule],
   controllers: [SiteController],
   providers: [SiteService, PrismaService]
 })

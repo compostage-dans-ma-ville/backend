@@ -25,7 +25,7 @@ export type AppSubject = Subjects<{
 export type AppAbility = PureAbility<[UserAction, AppSubject], PrismaQuery>;
 
 @Injectable()
-export class AbilityFactory {
+export class AbilityService {
   createAbility(user: AuthenticatedUserType): PureAbility<[UserAction, AppSubject]> {
     const {
       can, cannot, build
@@ -33,14 +33,14 @@ export class AbilityFactory {
 
     can([UserAction.Read, UserAction.Create], 'all')
 
-    cannot(UserAction.Manage, 'organization').because('This user is not an administrator of this organization')
+    cannot([UserAction.Update, UserAction.Delete], 'organization').because('This user is not an administrator of this organization')
     user.organizations.forEach(({ role, organizationId }) => {
       if (role === OrganizationRole.ADMIN) {
         can(UserAction.Manage, 'organization', { id: organizationId })
       }
     })
 
-    cannot(UserAction.Manage, 'site').because('This user is not an administrator of this site')
+    cannot([UserAction.Update, UserAction.Delete], 'site').because('This user is not an administrator of this site')
     user.sites.forEach(({ role, siteId }) => {
       if (role === SiteRole.ADMIN) {
         can(UserAction.Manage, 'site', { id: siteId })

@@ -9,12 +9,12 @@ export class SiteService {
 
   async create(createSiteDto: Prisma.SiteCreateInput, options: { schedule?: ScheduleOption }) {
     const site = await this.prisma.site.create({ data: createSiteDto })
-    
+
     const { schedule: createSchedule } = options
-    let schedule;
-    if(createSchedule) {
+    let schedule
+    if (createSchedule) {
       const scheduleRequests = createSchedule.map(async (dailySchedule, dayOfWeek) => {
-        if(dailySchedule === null) return null
+        if (dailySchedule === null) return null
         return (await this.prisma.dailySchedule.create({
           select: {
             openings: { select: { open: true, close: true } }
@@ -36,14 +36,22 @@ export class SiteService {
     }
   }
 
-  async replace(id: number, payload: Prisma.SiteUpdateInput, options: { schedule?: ScheduleOption } = {}) {
-    const site = await this.prisma.site.update({ include: { address: true }, data: payload, where: { id } })
-    
+  async replace(
+    id: number,
+    payload: Prisma.SiteUpdateInput,
+    options: { schedule?: ScheduleOption } = {}
+  ) {
+    const site = await this.prisma.site.update({
+      include: { address: true },
+      data: payload,
+      where: { id }
+    })
+
     const { schedule: createSchedule } = options
-    let schedule;
-    if(createSchedule) {
+    let schedule
+    if (createSchedule) {
       const scheduleRequests = createSchedule.map(async (dailySchedule, dayOfWeek) => {
-        if(dailySchedule === null) {
+        if (dailySchedule === null) {
           await this.prisma.dailySchedule.delete({
             where: {
               siteId_dayOfWeek: {
@@ -65,10 +73,10 @@ export class SiteService {
           }
         })
       })
-  
+
       schedule = await Promise.all(scheduleRequests)
     }
-  
+
     return {
       ...site,
       schedule

@@ -10,8 +10,16 @@ import { PaginatedData } from '~/api-services/pagination/dto/PaginationData'
 import { createPaginationData } from '~/api-services/pagination/creator/createPaginationData'
 import { Prisma, Site } from '@prisma/client'
 import {
-  ApiBadRequestResponse, ApiExtraModels, ApiForbiddenResponse, ApiInternalServerErrorResponse,
-  ApiNotFoundResponse, ApiOkResponse, ApiTags, ApiSecurity, ApiUnauthorizedResponse
+  ApiBadRequestResponse,
+  ApiExtraModels,
+  ApiForbiddenResponse,
+  ApiInternalServerErrorResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiTags,
+  ApiSecurity,
+  ApiUnauthorizedResponse,
+  ApiCreatedResponse
 } from '@nestjs/swagger'
 import { ApiPaginatedResponse } from '~/api-services/pagination/ApiPaginationResponse'
 import { GetSiteDto } from './dto/GetSite.dto'
@@ -22,13 +30,12 @@ import { plainToInstance } from '~/utils/dto'
 import { CreateSiteDto } from './dto/CreateSite.dto'
 import { DailyTime } from '~/api-services/DailyTime'
 import { TREATED_WASTE_VALUES } from './dto/GetTreatedWaste.dto'
-import { AbilityGuard } from '~/ability/ability.guard'
-import { AbilityFactory, UserAction } from '~/ability/ability.factory'
+import { AbilityService, UserAction } from '~/ability/ability.service'
 import { CheckAbility } from '~/ability/ability.decorator'
 import { AuthenticatedUser } from '~/auth/authenticatedUser.decorator'
-import { JwtAuthGuard } from '~/auth/jwt-auth.guard'
 import { ForbiddenError, subject } from '@casl/ability'
 import { AuthenticatedUserType } from '~/user/user.service'
+import { JwtAuthGuard } from '~/auth/jwt-auth.guard'
 
 @Controller('sites')
 @ApiTags('Sites')
@@ -37,13 +44,12 @@ export class SiteController {
   constructor(
     private readonly siteService: SiteService,
     private readonly scheduleService: DailyScheduleService,
-    private readonly abilityFactory: AbilityFactory,
+    private readonly abilityService: AbilityService,
   ) {}
 
   @Post()
-  @UseGuards(AbilityGuard)
   @CheckAbility({ action: UserAction.Create, subject: 'site' })
-  @ApiOkResponse({ description: 'The site is successfully created.', type: GetSiteDto })
+  @ApiCreatedResponse({ description: 'The site is successfully created.', type: GetSiteDto })
   async create(
     @Body() createSiteDto: CreateSiteDto,
   ) {
@@ -165,7 +171,7 @@ export class SiteController {
     const site = await this.siteService.findOne(id)
     if (!site) throw new NotFoundException('The site is not found.')
 
-    const ability = this.abilityFactory.createAbility(user)
+    const ability = this.abilityService.createAbility(user)
     ForbiddenError.from(ability).throwUnlessCan(UserAction.Delete, subject('site', site))
 
     return this.siteService.remove(id)

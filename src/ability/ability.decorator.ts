@@ -1,5 +1,5 @@
 import { SetMetadata } from '@nestjs/common'
-import { AppSubject, UserAction } from './ability.factory'
+import { AppSubject, UserAction } from './ability.service'
 
 export const CHECK_ABILITY_KEY = 'check_ability'
 

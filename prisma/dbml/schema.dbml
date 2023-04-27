@@ -159,9 +159,9 @@ Ref: ImageSiteRelation.imageId > Image.id
 
 Ref: Organization.imageId > Image.id
 
-Ref: UserOrganizationRelation.userId > User.id
+Ref: UserOrganizationRelation.userId > User.id [delete: Cascade]
 
-Ref: UserOrganizationRelation.organizationId > Organization.id
+Ref: UserOrganizationRelation.organizationId > Organization.id [delete: Cascade]
 
 Ref: UserSiteRelation.userId > User.id
 

@@ -39,6 +39,10 @@ export class SiteSchema implements Site {
 
   organizationId: number | null
 
-  @Factory(faker => Math.random() > 0.25 ? faker?.helpers.arrayElement(TREATED_WASTE_VALUES.map(x => x.id)): null)
-  treatedWaste: number | null
+  @Factory(
+    faker => Math.random() > 0.25
+      ? faker?.helpers.arrayElement(TREATED_WASTE_VALUES.map(x => x.id))
+      : null
+  )
+    treatedWaste: number | null
 }

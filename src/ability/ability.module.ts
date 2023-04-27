@@ -1,8 +1,9 @@
-import { Module } from '@nestjs/common'
-import { AbilityFactory } from './ability.factory'
+import { Global, Module } from '@nestjs/common'
+import { AbilityService } from './ability.service'
 
+@Global()
 @Module({
-  providers: [AbilityFactory],
-  exports: [AbilityFactory]
+  providers: [AbilityService],
+  exports: [AbilityService]
 })
 export class AbilityModule {}
