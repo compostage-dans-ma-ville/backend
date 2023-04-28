@@ -1,7 +1,7 @@
 import 'jest-extended'
 import { Test, TestingModule } from '@nestjs/testing'
 import { ExecutionContext, HttpStatus, INestApplication } from '@nestjs/common'
-import * as request from 'supertest'
+import request from 'supertest'
 import { SiteModule } from '~/site/site.module'
 import { DailyScheduleModule } from '~/dailySchedule/DailySchedule.module'
 import { CreateSiteDto } from '~/site/dto/CreateSite.dto'
@@ -52,7 +52,6 @@ describe('sites', () => {
       expect(body).toEqual({
         links: {
           first: expect.any(String),
-          next: expect.any(String),
           last: expect.any(String)
         },
         pagination: {

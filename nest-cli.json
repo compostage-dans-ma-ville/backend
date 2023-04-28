@@ -8,6 +8,9 @@
       {
         "name": "@nestjs/swagger"
       }
+    ],
+    "assets": [
+      "**/*.hbs"
     ]
   }
 }
