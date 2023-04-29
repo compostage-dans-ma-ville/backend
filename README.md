@@ -63,15 +63,21 @@ and `docker-compose up` !
 Run the docker image:
 
 ```bash
-docker run --name DEV_SMTP_PROVIDER -p 3000:80 -p 2525:25 rnwood/smtp4dev
+docker run --name DEV_SMTP_PROVIDER -p 3003:80 -p 2525:25 rnwood/smtp4dev
 ```
 
-The TCP port is `2525` and you can open the app at http://localhost:3000.
+The TCP port is `2525` and you can open the app at http://localhost:3003.
 
 ## DB Schema
 
 A graphical representation of the schema can be obtained by running a `prisma generate`. It generates a `~/prisma/dbml/schema.dbml`.
 Paste the content in https://dbdiagram.io/d.
+
+## Emails
+
+The emails are sended using the `MailerService` in the [`mailer`](./src/mailer/) module. It's using [handlebars](https://handlebarsjs.com/) as the templating language, [mjml](https://mjml.io/) to create responsive emails and [nodemailer](https://nodemailer.com/about/) to send emails.
+
+In **development** mode, the templates are served from the `mailer.controller.ts` so you can check them in your browser.
 
 ## License
 

@@ -10,6 +10,7 @@ import { AddressModule } from '~/address/address.module'
 import { APP_GUARD } from '@nestjs/core'
 import { AbilityGuard } from './ability/ability.guard'
 import { AbilityModule } from './ability/ability.module'
+import { MailerModule } from './mailer/mailer.module'
 
 @Module({
   imports: [
@@ -22,7 +23,8 @@ import { AbilityModule } from './ability/ability.module'
     UserModule,
     PrismaModule,
     SiteModule,
-    AbilityModule
+    AbilityModule,
+    MailerModule
   ],
   controllers: [AppController],
   providers: [
