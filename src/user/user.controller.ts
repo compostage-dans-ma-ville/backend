@@ -1,32 +1,29 @@
 import {
   Body,
   ClassSerializerInterceptor,
-  Controller, Get, Param, Put, UseGuards, UseInterceptors
+  Controller, Get, Param, Put, UseInterceptors
 } from '@nestjs/common'
 import {
   ApiParam, ApiSecurity, ApiTags
 } from '@nestjs/swagger'
-import { User } from '@prisma/client'
-import { JwtAuthGuard } from '~/auth/jwt-auth.guard'
-import { CaslAbilityFactory } from '~/casl/casl-ability.factory'
+import { plainToInstance } from '~/utils/dto'
 import { UpdatePasswordDto } from './dto/updatePassword.dto'
-import { UserAction } from './user.action'
 import { UserService } from './user.service'
+import { UserDto } from './dto/user.dto'
 
 @ApiTags('Users')
 @Controller('users')
 export class UserController {
   constructor(
     private readonly userService: UserService,
-    private caslAbilityFactory: CaslAbilityFactory
   ) { }
 
   @Get()
-  findAll(): Promise<User[]> {
-    return this.userService.users({})
+  async findAll(): Promise<UserDto[]> {
+    const users = await this.userService.users({})
+    return plainToInstance(UserDto, users)
   }
 
-  @UseGuards(JwtAuthGuard)
   @ApiSecurity('access-token')
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiParam({ name: 'id', type: 'string' })
@@ -39,28 +36,5 @@ export class UserController {
     return {
       message: 'password update success'
     }
-  }
-
-  /**
-   * Uniquement pour le dev, pour tester les ability
-   * @param params
-   * @returns
-   */
-  @UseInterceptors(ClassSerializerInterceptor)
-  @ApiParam({ name: 'id', type: 'string' })
-  @Get('testAbility/:id')
-  public async testAbility(
-    @Param() params: {id: string},
-  ): Promise<{}> {
-    const user = await this.userService.user({ id: parseInt(params.id, 10) })
-
-    if (user) {
-      const ability = await this.caslAbilityFactory.createAbility(user)
-      return {
-        ReadAll: ability.can(UserAction.Read, 'all'),
-        CreateAll: ability.can(UserAction.Create, 'all')
-      }
-    }
-    return {}
   }
 }

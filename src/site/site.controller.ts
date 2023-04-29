@@ -1,28 +1,41 @@
 import {
   Controller, Get, Param, Delete,
-  Query, Req, ParseIntPipe, UseInterceptors, Body, Post, Put
+  Query, Req, ParseIntPipe, UseInterceptors, Body, Post, Put, UseGuards, NotFoundException
 } from '@nestjs/common'
 import type { Request } from 'express'
 import { SiteService } from './site.service'
-import { Site } from '.prisma/client'
 import { ItemsQueryPipe } from '~/api-services/pagination/pipes/ItemsQueryPipe'
 import { PageQueryPipe } from '~/api-services/pagination/pipes/PageQueryPipe'
 import { PaginatedData } from '~/api-services/pagination/dto/PaginationData'
 import { createPaginationData } from '~/api-services/pagination/creator/createPaginationData'
-import { Prisma } from '@prisma/client'
+import { Prisma, Site } from '@prisma/client'
 import {
-  ApiBadRequestResponse, ApiExtraModels, ApiInternalServerErrorResponse,
-  ApiNotFoundResponse, ApiOkResponse, ApiTags
+  ApiBadRequestResponse,
+  ApiExtraModels,
+  ApiForbiddenResponse,
+  ApiInternalServerErrorResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiTags,
+  ApiSecurity,
+  ApiUnauthorizedResponse,
+  ApiCreatedResponse
 } from '@nestjs/swagger'
 import { ApiPaginatedResponse } from '~/api-services/pagination/ApiPaginationResponse'
 import { GetSiteDto } from './dto/GetSite.dto'
 import { getEndpoint } from '~/api-services/getEndpoint'
 import { NotFoundInterceptor } from '~/api-services/NotFoundInterceptor'
 import { DailyScheduleService } from '~/dailySchedule/DailySchedule.service'
-import { plainToClass } from '~/utils/dto'
+import { plainToInstance } from '~/utils/dto'
 import { CreateSiteDto } from './dto/CreateSite.dto'
 import { DailyTime } from '~/api-services/DailyTime'
 import { TREATED_WASTE_VALUES } from './dto/GetTreatedWaste.dto'
+import { AbilityService, UserAction } from '~/ability/ability.service'
+import { CheckAbility } from '~/ability/ability.decorator'
+import { AuthenticatedUser } from '~/auth/authenticatedUser.decorator'
+import { ForbiddenError, subject } from '@casl/ability'
+import { AuthenticatedUserType } from '~/user/user.service'
+import { JwtAuthGuard } from '~/auth/jwt-auth.guard'
 
 @Controller('sites')
 @ApiTags('Sites')
@@ -30,20 +43,23 @@ import { TREATED_WASTE_VALUES } from './dto/GetTreatedWaste.dto'
 export class SiteController {
   constructor(
     private readonly siteService: SiteService,
-    private readonly scheduleService: DailyScheduleService
+    private readonly scheduleService: DailyScheduleService,
+    private readonly abilityService: AbilityService,
   ) {}
 
   @Post()
-  @ApiOkResponse({ description: 'The site is successfully created.', type: GetSiteDto })
-  async create(@Body() createSiteDto: CreateSiteDto) {
+  @CheckAbility({ action: UserAction.Create, subject: 'site' })
+  @ApiCreatedResponse({ description: 'The site is successfully created.', type: GetSiteDto })
+  async create(
+    @Body() createSiteDto: CreateSiteDto,
+  ) {
     const { schedule: scheduleDto, ...siteData } = createSiteDto
-    
+
     const schedule = scheduleDto?.map((dailySchedule) => dailySchedule?.map((x) => ({
-          open: DailyTime.fromString(x.open),
-          close: DailyTime.fromString(x.close)
-        })) ?? null
-    ) ?? undefined
-  
+      open: DailyTime.fromString(x.open),
+      close: DailyTime.fromString(x.close)
+    })) ?? null) ?? undefined
+
     const site = {
       ...siteData,
       address: {
@@ -57,13 +73,12 @@ export class SiteController {
   @Put(':id')
   replace(@Param('id') id: string, @Body() updateSiteDto: CreateSiteDto) {
     const { schedule: scheduleDto, ...siteData } = updateSiteDto
-    
+
     const schedule = scheduleDto?.map((dailySchedule) => dailySchedule?.map((x) => ({
-          open: DailyTime.fromString(x.open),
-          close: DailyTime.fromString(x.close)
-        })) ?? null
-    ) ?? undefined
-  
+      open: DailyTime.fromString(x.open),
+      close: DailyTime.fromString(x.close)
+    })) ?? null) ?? undefined
+
     const site: Prisma.SiteUpdateInput = {
       ...siteData,
       address: {
@@ -91,7 +106,7 @@ export class SiteController {
         ...s,
         schedule: this.scheduleService.toDto(dailySchedules)
       }))
-      .map(s => plainToClass(GetSiteDto, s))
+      .map(s => plainToInstance(GetSiteDto, s))
 
     return createPaginationData<GetSiteDto>({
       url: getEndpoint(req),
@@ -102,7 +117,7 @@ export class SiteController {
   }
 
   @Get('units/treated-waste')
-  @ApiOkResponse({ 
+  @ApiOkResponse({
     isArray: true,
     description: 'The current values for a treated waste',
     schema: {
@@ -128,7 +143,7 @@ export class SiteController {
       schedule: this.scheduleService.toDto(dailySchedules)
     }
 
-    return plainToClass(
+    return plainToInstance(
       GetSiteDto,
       formattedSite
     )
@@ -140,12 +155,25 @@ export class SiteController {
   // }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiSecurity('access-token')
   @ApiOkResponse({ description: 'The site is successfully deleted.', type: GetSiteDto })
   @ApiBadRequestResponse({ description: 'The id is malformed.' })
+  @ApiUnauthorizedResponse({ description: 'You need to provide a valid access-token.' })
+  @ApiForbiddenResponse({ description: 'You are not an administrator of the site.' })
   @ApiInternalServerErrorResponse({ description: 'Internal server error.' })
   @ApiNotFoundResponse({ description: 'The site is not found.' })
   @UseInterceptors(new NotFoundInterceptor('The site is not found.'))
-  async remove(@Param('id', ParseIntPipe) id: number): Promise<Prisma.Prisma__SiteClient<Site>> {
+  async remove(
+    @Param('id', ParseIntPipe) id: number,
+    @AuthenticatedUser() user: AuthenticatedUserType,
+  ): Promise<Prisma.Prisma__SiteClient<Site | undefined>> {
+    const site = await this.siteService.findOne(id)
+    if (!site) throw new NotFoundException('The site is not found.')
+
+    const ability = this.abilityService.createAbility(user)
+    ForbiddenError.from(ability).throwUnlessCan(UserAction.Delete, subject('site', site))
+
     return this.siteService.remove(id)
   }
 }

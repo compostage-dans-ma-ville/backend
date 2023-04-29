@@ -28,8 +28,8 @@ model User {
   imageId          String?
   role             UserRole @default(USER)
 
-  Organization             Organization[]
-  UserOrganizationRelation UserOrganizationRelation[]
+  organizations UserOrganizationRelation[]
+  sites         UserSiteRelation[]
 }
 
 enum UserRole {
@@ -54,6 +54,7 @@ model Site {
   addressId        Int
   organization     Organization?       @relation(fields: [organizationId], references: [id])
   organizationId   Int?
+  members          UserSiteRelation[]
 }
 
 model ImageSiteRelation {
@@ -101,9 +102,8 @@ model Organization {
   imageId     String?
   links       String[]
 
-  sites                    Site[]
-  members                  User[]
-  UserOrganizationRelation UserOrganizationRelation[]
+  sites   Site[]
+  members UserOrganizationRelation[]
 }
 
 enum OrganizationRole {
@@ -111,16 +111,34 @@ enum OrganizationRole {
   ADMIN
 }
 
+enum SiteRole {
+  MEMBER
+  ADMIN
+  REFEREE
+}
+
 model UserOrganizationRelation {
-  User   User @relation(fields: [userId], references: [id])
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId Int
 
   role OrganizationRole
 
-  Organization   Organization @relation(fields: [organizationId], references: [id])
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   organizationId Int
 
   @@id([userId, organizationId])
+}
+
+model UserSiteRelation {
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
+
+  role SiteRole
+
+  site   Site @relation(fields: [siteId], references: [id])
+  siteId Int
+
+  @@id([userId, siteId])
 }
 
 model DailySchedule {

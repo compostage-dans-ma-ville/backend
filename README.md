@@ -18,11 +18,26 @@ yarn
 #### Local seeding
 
 ```bash
-yarn db:seed
+yarn seed:fake
 ```
 or reset the data with:
 ```bash
-yarn db:seed:refresh
+yarn db:init
+yarn seed:fake:refresh
+```
+
+### Updating schema.prisma
+
+Don't forget after the update of the `schema.prisma` file to run a migration:
+
+```bash
+yarn prisma migrate dev
+```
+
+### Open prisma studio
+
+```bash
+yarn prisma studio 
 ```
 
 ### Set up .env

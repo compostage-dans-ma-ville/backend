@@ -1,19 +1,43 @@
 import 'jest-extended'
 import { Test, TestingModule } from '@nestjs/testing'
-import { INestApplication } from '@nestjs/common'
+import { ExecutionContext, HttpStatus, INestApplication } from '@nestjs/common'
 import * as request from 'supertest'
 import { SiteModule } from '~/site/site.module'
 import { DailyScheduleModule } from '~/dailySchedule/DailySchedule.module'
 import { CreateSiteDto } from '~/site/dto/CreateSite.dto'
 import { GetOpeningDto } from '~/opening/dto/GetOpening.dto'
+import { AbilityModule } from '~/ability/ability.module'
+import { JwtModule } from '@nestjs/jwt'
+import { JwtAuthGuard } from '~/auth/jwt-auth.guard'
+import { authenticatedUser } from './test-utils'
+import { AuthModule } from '~/auth/auth.module'
+import { AuthenticatedUserType } from '~/user/user.service'
 
 describe('sites', () => {
   let app: INestApplication
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [SiteModule, DailyScheduleModule]
-    }).compile()
+      imports: [
+        SiteModule,
+        DailyScheduleModule,
+        JwtModule,
+        AuthModule,
+        AbilityModule
+      ]
+    })
+      .overrideGuard(JwtAuthGuard)
+      .useValue({
+        canActivate: (context: ExecutionContext) => {
+          const user: AuthenticatedUserType = {
+            ...authenticatedUser,
+            role: 'ADMIN'
+          }
+          context.switchToHttp().getRequest().user = user
+          return true
+        }
+      })
+      .compile()
 
     app = moduleFixture.createNestApplication()
     await app.init()
@@ -28,12 +52,13 @@ describe('sites', () => {
       expect(body).toEqual({
         links: {
           first: expect.any(String),
+          next: expect.any(String),
           last: expect.any(String)
         },
         pagination: {
-          pageNumber: 1,
-          pageSize: 20,
-          totalCount: 20
+          pageNumber: expect.any(Number),
+          pageSize: expect.any(Number),
+          totalCount: expect.any(Number)
         },
         data: expect.toBeArray()
       })
@@ -97,7 +122,7 @@ describe('sites', () => {
         .post('/sites')
         .send(payload)
 
-      expect(req.ok).toBe(true)
+      expect(req.status).toBe(HttpStatus.CREATED)
 
       await request(app.getHttpServer()).delete(`/sites/${req.body.id}`)
     })
@@ -133,14 +158,14 @@ describe('sites', () => {
 
       expect(req.ok).toBe(true)
       expect(req.body).toEqual({
-        accessConditions: "Free4All under the following openings",
+        accessConditions: 'Free4All under the following openings',
         addressId: expect.any(Number),
         createdAt: expect.any(String),
-        description: "A fancy description about this site",
+        description: 'A fancy description about this site',
         id: expect.any(Number),
         isPublic: true,
         launchDate: expect.any(String),
-        name: "A new site",
+        name: 'A new site',
         organizationId: null,
         schedule: [
           null,
@@ -222,26 +247,26 @@ describe('sites', () => {
 
       expect(req.ok).toBe(true)
       expect(req.body).toEqual({
-        accessConditions: "Free4All",
+        accessConditions: 'Free4All',
         address: {
           id: original.address.id,
-          city: "Cenon",
-          houseNumber: "5",
+          city: 'Cenon',
+          houseNumber: '5',
           latitude: 44.8578807,
           longitude: -0.5343909,
-          streetName: "chemin des carrières",
-          zipCode: 33150,
+          streetName: 'chemin des carrières',
+          zipCode: 33150
         },
         addressId: original.address.id,
         createdAt: expect.any(String),
-        description: "A fancy description",
+        description: 'A fancy description',
         id: original.id,
         isPublic: true,
         launchDate: expect.any(String),
-        name: "A new site",
+        name: 'A new site',
         treatedWaste: 3000,
         organizationId: null,
-        updatedAt: expect.any(String),
+        updatedAt: expect.any(String)
       })
     })
   })

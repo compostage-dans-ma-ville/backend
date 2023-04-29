@@ -15,8 +15,8 @@ Table User {
   avatar Image
   imageId String
   role UserRole [not null, default: 'USER']
-  Organization Organization [not null]
-  UserOrganizationRelation UserOrganizationRelation [not null]
+  organizations UserOrganizationRelation [not null]
+  sites UserSiteRelation [not null]
 }
 
 Table Site {
@@ -35,6 +35,7 @@ Table Site {
   addressId Int [not null]
   organization Organization
   organizationId Int
+  members UserSiteRelation [not null]
 }
 
 Table ImageSiteRelation {
@@ -79,19 +80,30 @@ Table Organization {
   imageId String
   links String[] [not null]
   sites Site [not null]
-  members User [not null]
-  UserOrganizationRelation UserOrganizationRelation [not null]
+  members UserOrganizationRelation [not null]
 }
 
 Table UserOrganizationRelation {
-  User User [not null]
+  user User [not null]
   userId Int [not null]
   role OrganizationRole [not null]
-  Organization Organization [not null]
+  organization Organization [not null]
   organizationId Int [not null]
 
   indexes {
     (userId, organizationId) [pk]
+  }
+}
+
+Table UserSiteRelation {
+  user User [not null]
+  userId Int [not null]
+  role SiteRole [not null]
+  site Site [not null]
+  siteId Int [not null]
+
+  indexes {
+    (userId, siteId) [pk]
   }
 }
 
@@ -129,6 +141,12 @@ Enum OrganizationRole {
   ADMIN
 }
 
+Enum SiteRole {
+  MEMBER
+  ADMIN
+  REFEREE
+}
+
 Ref: User.imageId > Image.id
 
 Ref: Site.addressId > Address.id [delete: Cascade]
@@ -141,9 +159,13 @@ Ref: ImageSiteRelation.imageId > Image.id
 
 Ref: Organization.imageId > Image.id
 
-Ref: UserOrganizationRelation.userId > User.id
+Ref: UserOrganizationRelation.userId > User.id [delete: Cascade]
 
-Ref: UserOrganizationRelation.organizationId > Organization.id
+Ref: UserOrganizationRelation.organizationId > Organization.id [delete: Cascade]
+
+Ref: UserSiteRelation.userId > User.id
+
+Ref: UserSiteRelation.siteId > Site.id
 
 Ref: DailySchedule.siteId > Site.id [delete: Cascade]
 

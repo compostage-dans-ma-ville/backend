@@ -28,10 +28,11 @@ export const parseContact = (site: SiteCompostage):
 
   if (!data.email.includes('@')) return { err: { id: site.id_site, reason: `The organization email ${data.email} is invalid.` } }
 
+  /*
   const members: Prisma.OrganizationCreateInput['members'] = {
     connectOrCreate: {
       create: {
-        firstname: data.name,
+        firstname: data.name as string,
         lastname: '',
         password: '123456',
         email: data.email
@@ -41,6 +42,7 @@ export const parseContact = (site: SiteCompostage):
       }
     }
   }
+  */
 
-  return { ok: { name: data.name, members } }
+  return { ok: { name: data.name } }
 }

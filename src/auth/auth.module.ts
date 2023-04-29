@@ -10,7 +10,6 @@ import { JwtStrategy } from './jwt.strategy'
 @Module({
   imports: [
     PrismaModule,
-    JwtModule,
     UserModule,
     PassportModule.register({
       defaultStrategy: 'jwt',
@@ -18,13 +17,14 @@ import { JwtStrategy } from './jwt.strategy'
       session: false
     }),
     JwtModule.register({
-      secret: process.env.JWT_SECRET_KEY,
+      secret: process.env.JWT_SECRET_KEY ?? 'test',
       signOptions: {
-        expiresIn: process.env.JWT_EXPIRES_IN
+        expiresIn: process.env.JWT_EXPIRES_IN ?? '4w'
       }
     })
   ],
   providers: [AuthService, JwtStrategy],
-  controllers: [AuthController]
+  controllers: [AuthController],
+  exports: [PassportModule, JwtModule, JwtStrategy]
 })
 export class AuthModule {}

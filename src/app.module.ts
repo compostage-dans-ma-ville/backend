@@ -7,7 +7,9 @@ import { AuthModule } from './auth/auth.module'
 import { UserModule } from '~/user/user.module'
 import { SiteModule } from '~/site/site.module'
 import { AddressModule } from '~/address/address.module'
-import { CaslModule } from './casl/casl.module'
+import { APP_GUARD } from '@nestjs/core'
+import { AbilityGuard } from './ability/ability.guard'
+import { AbilityModule } from './ability/ability.module'
 
 @Module({
   imports: [
@@ -20,9 +22,15 @@ import { CaslModule } from './casl/casl.module'
     UserModule,
     PrismaModule,
     SiteModule,
-    CaslModule
+    AbilityModule
   ],
   controllers: [AppController],
-  providers: [AppService, PrismaModule]
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: AbilityGuard
+    }
+  ]
 })
 export class AppModule {}

@@ -10,7 +10,7 @@ import {
 } from '@nestjs/swagger'
 import { CreateUserDto } from '~/user/dto/create.dto'
 import { LoginUserDto } from '~/user/dto/login.dto'
-import { plainToClass } from '~/utils/dto'
+import { plainToInstance } from '~/utils/dto'
 import { LoginResponseDto } from './dto/login-response.dto'
 
 @ApiTags('Authentification')
@@ -29,7 +29,7 @@ export class AuthController {
   ): Promise<LoginResponseDto> {
     const user = await this.authService.register(createUserDto)
 
-    return plainToClass(
+    return plainToInstance(
       LoginResponseDto,
       {
         data: user,
@@ -43,7 +43,7 @@ export class AuthController {
   @ApiOkResponse({ description: 'User logged in successfully', type: LoginResponseDto })
   @ApiForbiddenResponse({ description: 'Invalid credentials provided' })
   public async login(@Body() loginUserDto: LoginUserDto): Promise<LoginResponseDto> {
-    return plainToClass(
+    return plainToInstance(
       LoginResponseDto,
       await this.authService.login(loginUserDto)
     )

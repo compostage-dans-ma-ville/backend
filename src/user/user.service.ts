@@ -6,6 +6,10 @@ import { CreateUserDto } from './dto/create.dto'
 import { LoginUserDto } from './dto/login.dto'
 import { UpdatePasswordDto } from './dto/updatePassword.dto'
 
+export type AuthenticatedUserType = Prisma.UserGetPayload<{
+  include: { sites: true, organizations: true }
+}>
+
 @Injectable()
 export class UserService {
   constructor(private prisma: PrismaService) { }
@@ -42,9 +46,13 @@ export class UserService {
     return user
   }
 
-  async findByPayload({ email }: {email: string}): Promise<User | null> {
+  async findByEmail(email: string): Promise<AuthenticatedUserType | null> {
     return this.prisma.user.findFirst({
-      where: { email }
+      where: { email },
+      include: {
+        organizations: true,
+        sites: true
+      }
     })
   }
 
