@@ -19,6 +19,13 @@
     "GetSite.dto.ts",
     "site.controller.ts",
     "sites.e2e-spec.ts",
-    "site.schema.ts"
+    "site.schema.ts",
+    "utils/geo.ts",
+    "main.config.ts",
+    "CoordsQueryParams.dto.ts",
+    "PaginationQueryParams.ts",
+    "helpers.ts",
+    "isAllDefinedOrUndefined",
+    "address.service.ts"
   ]
 }

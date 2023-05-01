@@ -1,13 +1,14 @@
+// eslint-disable-next-line max-classes-per-file
 import {
   Controller, Get, Param, Delete,
-  Query, Req, ParseIntPipe, UseInterceptors, Body, Post, Put, UseGuards, NotFoundException
+  Query, Req, ParseIntPipe, UseInterceptors,
+  Body, Post, Put, UseGuards, NotFoundException
 } from '@nestjs/common'
 import type { Request } from 'express'
 import { SiteService } from './site.service'
-import { ItemsQueryPipe } from '~/api-services/pagination/pipes/ItemsQueryPipe'
-import { PageQueryPipe } from '~/api-services/pagination/pipes/PageQueryPipe'
 import { PaginatedData } from '~/api-services/pagination/dto/PaginationData'
 import { createPaginationData } from '~/api-services/pagination/creator/createPaginationData'
+
 import { Prisma, Site } from '@prisma/client'
 import {
   ApiBadRequestResponse,
@@ -36,6 +37,9 @@ import { AuthenticatedUser } from '~/auth/authenticatedUser.decorator'
 import { ForbiddenError, subject } from '@casl/ability'
 import { AuthenticatedUserType } from '~/user/user.service'
 import { JwtAuthGuard } from '~/auth/jwt-auth.guard'
+import { Coordinates } from '~/address/dto/CoordsQueryParams.dto'
+import { isAllDefined } from '~/utils/isAllDefinedOrUndefined'
+import { GetSitesQueryParams } from './dto/GetSitesQueryParams.dto'
 
 @Controller('sites')
 @ApiTags('Sites')
@@ -71,7 +75,10 @@ export class SiteController {
   }
 
   @Put(':id')
-  replace(@Param('id') id: string, @Body() updateSiteDto: CreateSiteDto) {
+  replace(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateSiteDto: CreateSiteDto
+  ) {
     const { schedule: scheduleDto, ...siteData } = updateSiteDto
 
     const schedule = scheduleDto?.map((dailySchedule) => dailySchedule?.map((x) => ({
@@ -86,21 +93,33 @@ export class SiteController {
       }
     }
 
-    return this.siteService.replace(+id, site, { schedule })
+    return this.siteService.replace(id, site, { schedule })
   }
 
   @Get()
   @ApiPaginatedResponse(GetSiteDto)
   async findAll(
     @Req() req: Request,
-    @Query('items', ItemsQueryPipe) items: number,
-    @Query('page', PageQueryPipe) page: number,
+    @Query() query: GetSitesQueryParams,
   ): Promise<PaginatedData<GetSiteDto>> {
-    const totalItemCount = await this.siteService.count()
-    const sites = await this.siteService.findAll({
+    // Extract the query parameters to the dedicated group
+    const {
+      page, items, latitude, longitude, radius
+    } = query
+    const coordinatesQuery = { latitude, longitude, radius }
+
+    // Extra-validation of the query parameters
+    const coordinates: Coordinates | undefined = isAllDefined(coordinatesQuery)
+    // if (!coordinates) {
+    //   throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST)
+    // }
+
+    const [sites, totalItemCount] = await this.siteService.findAll({
       skip: (page - 1) * items,
-      take: items
+      take: items,
+      coordinates
     })
+
     const formattedSites = sites
       .map(({ dailySchedules, ...s }) => ({
         ...s,
@@ -114,18 +133,6 @@ export class SiteController {
       queryOptions: { items, page },
       totalItemCount
     })
-  }
-
-  @Get('units/treated-waste')
-  @ApiOkResponse({
-    isArray: true,
-    description: 'The current values for a treated waste',
-    schema: {
-      example: Object.values(TREATED_WASTE_VALUES)
-    }
-  })
-  async getTreatedWasteUnit() {
-    return TREATED_WASTE_VALUES
   }
 
   @Get(':id')
@@ -147,6 +154,18 @@ export class SiteController {
       GetSiteDto,
       formattedSite
     )
+  }
+
+  @Get('units/treated-waste')
+  @ApiOkResponse({
+    isArray: true,
+    description: 'The current values for a treated waste',
+    schema: {
+      example: Object.values(TREATED_WASTE_VALUES)
+    }
+  })
+  async getTreatedWasteUnit() {
+    return TREATED_WASTE_VALUES
   }
 
   // @Patch(':id')
@@ -173,7 +192,6 @@ export class SiteController {
 
     const ability = this.abilityService.createAbility(user)
     ForbiddenError.from(ability).throwUnlessCan(UserAction.Delete, subject('site', site))
-
     return this.siteService.remove(id)
   }
 }

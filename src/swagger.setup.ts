@@ -3,8 +3,8 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 
 export const setupSwagger = (app: INestApplication): void => {
   const config = new DocumentBuilder()
-    .setTitle('Composte Application API')
-    .setDescription('The composte application API description')
+    .setTitle('les 3 bacs API')
+    .setDescription('The "les 3 bacs" API documentation')
     .setVersion('1.0')
     .addBearerAuth()
     .build()

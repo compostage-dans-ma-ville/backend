@@ -1,11 +1,20 @@
 import { Injectable } from '@nestjs/common'
 import { PrismaService } from '~/prisma/prisma.service'
 import { Prisma, Site } from '@prisma/client'
+import { Coordinates } from '~/address/dto/CoordsQueryParams.dto'
+import { AddressService } from '~/address/address.service'
+
+export type SiteCollectionFilter = {
+  coordinates?: Coordinates
+}
 
 type ScheduleOption = (({ open: number, close: number })[] | null)[]
+
 @Injectable()
 export class SiteService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+  ) {}
 
   async create(createSiteDto: Prisma.SiteCreateInput, options: { schedule?: ScheduleOption }) {
     const site = await this.prisma.site.create({ data: createSiteDto })
@@ -83,8 +92,15 @@ export class SiteService {
     }
   }
 
-  findAll({ skip, take }: Prisma.SiteFindManyArgs) {
-    return this.prisma.site.findMany({
+  async findAll({ skip, take, coordinates }: Prisma.SiteFindManyArgs & SiteCollectionFilter) {
+    const addressQuery = coordinates ? await this.prisma.address.findMany({
+      select: {
+        id: true
+      },
+      where: AddressService.getBBoxFromCoordinates(coordinates)
+    }) : undefined
+
+    const query = {
       include: {
         address: true,
         dailySchedules: {
@@ -94,8 +110,17 @@ export class SiteService {
         }
       },
       skip,
-      take
-    })
+      take,
+      where: addressQuery && {
+        address: { id: { in: addressQuery.map(({ id }) => id) } }
+      }
+    }
+
+    const [sites, count] = await this.prisma.$transaction([
+      this.prisma.site.findMany(query),
+      this.prisma.site.count({ where: query.where })
+    ])
+    return [sites, count] as const
   }
 
   count(): Promise<number> {

@@ -1,8 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { Expose } from 'class-transformer'
+import { IsNumber, IsString } from 'class-validator'
 
 export class CreateAddressDto {
   @Expose()
+  @IsString()
   @ApiProperty({
     description: 'Number associated with the street',
     example: '6 ter'
@@ -10,6 +12,7 @@ export class CreateAddressDto {
     houseNumber: string
 
   @Expose()
+  @IsString()
   @ApiProperty({
     description: 'The name of the street',
     example: 'rue Lothaire'
@@ -17,6 +20,7 @@ export class CreateAddressDto {
     streetName: string
 
   @Expose()
+  @IsNumber()
   @ApiProperty({
     description: 'Postcode of the address',
     example: 67150
@@ -24,6 +28,7 @@ export class CreateAddressDto {
     zipCode: number
 
   @Expose()
+  @IsString()
   @ApiProperty({
     description: 'The city or village name of the address.',
     example: 'Erstein'
@@ -31,6 +36,7 @@ export class CreateAddressDto {
     city: string
 
   @Expose()
+  @IsNumber()
   @ApiProperty({
     description: 'the exact longitude in decimal degree',
     example: 7.66600
@@ -38,6 +44,7 @@ export class CreateAddressDto {
     longitude: number
 
   @Expose()
+  @IsNumber()
   @ApiProperty({
     description: 'the exact latitude in decimal degree',
     example: 48.42523

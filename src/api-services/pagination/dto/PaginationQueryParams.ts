@@ -1,21 +1,24 @@
 import { ApiPropertyOptional } from '@nestjs/swagger'
+import { IsNumber, IsOptional, Min } from 'class-validator'
 
-export class PaginationQueryOptions {
+export class PaginationQueryParams {
   @ApiPropertyOptional({
     description: 'The requested page of the list of existing resources',
-    type: 'string',
-    example: '1',
-    default: '1'
+    example: '1'
   })
-    page?: string
+  @IsOptional()
+  @IsNumber()
+  @Min(1)
+    page: number = 1
 
   @ApiPropertyOptional({
     description: 'The amount of items on the page',
-    type: 'string',
-    example: '20',
-    default: '20'
+    example: '20'
   })
-    items?: string
+  @IsOptional()
+  @IsNumber()
+  @Min(1)
+    items: number = 20
 
   // @ApiPropertyOptional({
   //   description:

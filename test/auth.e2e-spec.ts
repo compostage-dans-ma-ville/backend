@@ -52,9 +52,7 @@ describe('auth', () => {
       }).compile()
 
     app = moduleFixture.createNestApplication()
-
-    mainConfig(app)
-
+    setMainConfig(app)
     await app.init()
   })
 
