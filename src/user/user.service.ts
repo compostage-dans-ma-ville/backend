@@ -14,7 +14,7 @@ export type AuthenticatedUserType = Prisma.UserGetPayload<{
 export class UserService {
   constructor(private prisma: PrismaService) { }
 
-  async user(
+  async find(
     userWhereUniqueInput: Prisma.UserWhereUniqueInput,
   ): Promise<User | null> {
     return this.prisma.user.findUnique({
@@ -138,6 +138,15 @@ export class UserService {
     return this.prisma.user.update({
       where: { id },
       data: { password: await hash(payload.new_password, 10) }
+    })
+  }
+
+  async validateEmail(email: string) {
+    return this.prisma.user.update({
+      where: { email },
+      data: {
+        isEmailConfirmed: true
+      }
     })
   }
 }

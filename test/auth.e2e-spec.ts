@@ -1,12 +1,14 @@
 import request from 'supertest'
 import { Test, TestingModule } from '@nestjs/testing'
 import { INestApplication } from '@nestjs/common'
+import * as cheerio from 'cheerio'
 
 import { faker } from '@faker-js/faker'
 import { AuthModule } from '~/auth/auth.module'
 import { mainConfig } from '~/main.config'
 import { WebAppLinksService } from '~/web-app-links/web-app-links.service'
 import { MailerModule } from '~/mailer/mailer.module'
+import { UserModule } from '~/user/user.module'
 
 const sendMailSpy = jest.fn()
 jest.mock('nodemailer', () => ({
@@ -30,7 +32,7 @@ describe('auth', () => {
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AuthModule, MailerModule],
+      imports: [AuthModule, MailerModule, UserModule],
       providers: [WebAppLinksService]
     }).compile()
 
@@ -49,17 +51,20 @@ describe('auth', () => {
       expect(body).toBeDefined()
       expect(body).toEqual({
         token: expect.any(String),
-        data: expect.objectContaining({
+        data: {
+          id: expect.any(Number),
           firstname: expect.any(String),
           lastname: expect.any(String),
-          email: expect.any(String)
-        })
+          email: expect.any(String),
+          isEmailConfirmed: false
+        }
       })
-      expect(sendMailSpy).toHaveBeenCalledOnceWith(expect.objectContaining({
+      expect(sendMailSpy).toHaveBeenCalledOnceWith({
+        from: expect.any(String),
         to: userData.email,
         subject: 'Activer votre compte',
         html: expect.stringContaining('/authentification/activate/')
-      }))
+      })
     })
 
     it('should fail on invalid provided data', async () => {
@@ -101,6 +106,34 @@ describe('auth', () => {
         .send({ ...userData, password: 'invalidPwd' })
 
       expect(status).toBe(403)
+    })
+  })
+
+  describe('POST /auth/activate/:token', () => {
+    it('should activate a new user account', async () => {
+      const newUser = getUserDataFactory()
+      const { body } = await request(app.getHttpServer()).post('/auth/register').send(newUser)
+
+      const createdUser = body.data
+
+      const $email = cheerio.load(sendMailSpy.mock.lastCall[0].html)
+
+      const validationLink = $email('a').attr('href')!
+      const token = validationLink.split('/').slice(-1).pop()
+
+      const { status } = await request(app.getHttpServer()).post(`/auth/activate/${token}`).send()
+
+      expect(status).toBe(204)
+
+      const { body: getUserRes } = await request(app.getHttpServer()).get(`/users/${createdUser.id}`).send()
+
+      expect(getUserRes.isEmailConfirmed).toBeTrue()
+    })
+
+    it('should fail if invalid token', async () => {
+      const { status } = await request(app.getHttpServer()).post('/auth/activate/foobar').send()
+
+      expect(status).toBe(400)
     })
   })
 })

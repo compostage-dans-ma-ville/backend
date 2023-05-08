@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { User } from '@prisma/client'
 import { UserService } from '~/user/user.service'
@@ -68,5 +68,17 @@ export class AuthService {
 
   getUserToken(user: User): string {
     return this.jwtService.sign({ id: user.id })
+  }
+
+  async validateEmail(token: string): Promise<void> {
+    try {
+      const { email } = this.jwtService.verify(token)
+      await this.userService.validateEmail(email)
+    } catch (error) {
+      throw new HttpException(
+        'Provided token has expired or is invalid',
+        HttpStatus.BAD_REQUEST
+      )
+    }
   }
 }

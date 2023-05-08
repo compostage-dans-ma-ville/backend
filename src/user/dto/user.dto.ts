@@ -1,9 +1,15 @@
 import { Factory } from 'nestjs-seeder'
 import { Expose } from 'class-transformer'
 import { IsEmail, IsNotEmpty } from 'class-validator'
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger'
 
 export class UserDto {
+  @ApiProperty()
+  @IsNotEmpty()
+  @Expose()
+  @Factory(faker => faker?.datatype.number())
+    id: number
+
   @ApiProperty()
   @IsNotEmpty()
   @Expose()
@@ -24,6 +30,12 @@ export class UserDto {
     email: string
 
   @ApiProperty()
+  @IsNotEmpty()
+  @Expose()
+  @Factory(faker => faker?.datatype.boolean())
+    isEmailConfirmed: boolean
+
+  @ApiHideProperty()
   @IsNotEmpty()
   @Factory(faker => faker?.internet.password())
     password: string

@@ -2,11 +2,19 @@ import {
   Body,
   Controller,
   HttpCode,
+  HttpStatus,
+  Param,
   Post
 } from '@nestjs/common'
 import { AuthService } from './auth.service'
 import {
-  ApiBadRequestResponse, ApiConflictResponse, ApiForbiddenResponse, ApiOkResponse, ApiTags
+  ApiBadRequestResponse,
+  ApiConflictResponse,
+  ApiForbiddenResponse,
+  ApiNoContentResponse,
+  ApiOkResponse,
+  ApiParam,
+  ApiTags
 } from '@nestjs/swagger'
 import { CreateUserDto } from '~/user/dto/create.dto'
 import { LoginUserDto } from '~/user/dto/login.dto'
@@ -17,7 +25,7 @@ import { LoginResponseDto } from './dto/login-response.dto'
 @Controller('auth')
 export class AuthController {
   constructor(
-        private readonly authService: AuthService,
+    private readonly authService: AuthService,
   ) {}
 
   @Post('register')
@@ -48,5 +56,19 @@ export class AuthController {
       LoginResponseDto,
       await this.authService.login(loginUserDto)
     )
+  }
+
+  @Post('activate/:token')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiParam({
+    name: 'token',
+    description: 'Token sended in the account validation email during registration'
+  })
+  @ApiNoContentResponse({ description: 'User account successfully activated' })
+  @ApiBadRequestResponse({ description: 'The given token is invalid or has expired' })
+  public async validateEmail(
+    @Param('token') token: string
+  ): Promise<void> {
+    await this.authService.validateEmail(token)
   }
 }
