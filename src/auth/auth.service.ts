@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
-import { JwtPayload } from './jwt.strategy'
 import { User } from '@prisma/client'
 import { UserService } from '~/user/user.service'
 import { CreateUserDto } from '~/user/dto/create.dto'
 import { LoginUserDto } from '~/user/dto/login.dto'
 import { LoginResponseDto } from './dto/login-response.dto'
+import { MailerService } from '~/mailer/mailer.service'
+import { WebAppLinksService } from '~/web-app-links/web-app-links.service'
 
 export interface RegistrationStatusFailed {
     success: false;
@@ -30,33 +31,42 @@ export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly userService: UserService,
+    private readonly mailerService: MailerService,
+    private readonly webAppLinksService: WebAppLinksService,
   ) {}
 
   async register(userDto: CreateUserDto): Promise<User> {
-    return this.userService.createUser(userDto)
+    const createdUser = await this.userService.createUser(userDto)
+    const validateEmailToken = this.jwtService.sign({
+      email: createdUser.email
+    }, { expiresIn: '10m' })
+
+    this.mailerService.sendEmail(
+      createdUser.email,
+      'Activer votre compte',
+      'validateEmail',
+      {
+        validationLink: this.webAppLinksService.activateAccount(validateEmailToken),
+        title: 'Activer votre compte',
+        username: createdUser.firstname
+      }
+    )
+
+    return createdUser
   }
 
   async login(loginUserDto: LoginUserDto): Promise<LoginResponseDto> {
     const user = await this.userService.findByLogin(loginUserDto)
 
-    const token = this.createToken(user)
+    const token = this.getUserToken(user)
 
     return {
-      token: token.Authorization,
+      token,
       data: user
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  createToken({ email }: {email: string}) {
-    const user: JwtPayload = { email }
-    const Authorization = this.jwtService.sign(user, {
-      secret: process.env.JWT_SECRET_KEY, expiresIn: process.env.JWT_EXPIRES_IN
-    })
-
-    return {
-      JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN,
-      Authorization
-    }
+  getUserToken(user: User): string {
+    return this.jwtService.sign({ id: user.id })
   }
 }

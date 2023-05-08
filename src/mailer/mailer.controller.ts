@@ -11,7 +11,7 @@ export class MailerController {
   ) {}
 
   @Get('change-password')
-  root(@Res() res: Response) {
+  changePassword(@Res() res: Response) {
     return res
       .status(HttpStatus.OK)
       .send(this.mailerService.renderEmail(
@@ -19,6 +19,20 @@ export class MailerController {
         {
           title: 'Réinitialiser votre mot de passe',
           redirectLink: 'test'
+        }
+      ).html)
+  }
+
+  @Get('validate-email')
+  validateEmail(@Res() res: Response) {
+    return res
+      .status(HttpStatus.OK)
+      .send(this.mailerService.renderEmail(
+        'validateEmail',
+        {
+          title: 'Valider votre compte',
+          validationLink: 'test',
+          username: 'John'
         }
       ).html)
   }

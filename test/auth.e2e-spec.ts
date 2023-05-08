@@ -5,6 +5,15 @@ import { INestApplication } from '@nestjs/common'
 import { faker } from '@faker-js/faker'
 import { AuthModule } from '~/auth/auth.module'
 import { mainConfig } from '~/main.config'
+import { WebAppLinksService } from '~/web-app-links/web-app-links.service'
+import { MailerModule } from '~/mailer/mailer.module'
+
+const sendMailSpy = jest.fn()
+jest.mock('nodemailer', () => ({
+  createTransport: () => ({
+    sendMail: sendMailSpy
+  })
+}))
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const getUserDataFactory = () => {
@@ -21,7 +30,8 @@ describe('auth', () => {
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AuthModule]
+      imports: [AuthModule, MailerModule],
+      providers: [WebAppLinksService]
     }).compile()
 
     app = moduleFixture.createNestApplication()
@@ -45,6 +55,11 @@ describe('auth', () => {
           email: expect.any(String)
         })
       })
+      expect(sendMailSpy).toHaveBeenCalledOnceWith(expect.objectContaining({
+        to: userData.email,
+        subject: 'Activer votre compte',
+        html: expect.stringContaining('/authentification/activate/')
+      }))
     })
 
     it('should fail on invalid provided data', async () => {
