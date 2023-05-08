@@ -46,9 +46,9 @@ export class UserService {
     return user
   }
 
-  async findByEmail(email: string): Promise<AuthenticatedUserType | null> {
+  async findById(id: number): Promise<AuthenticatedUserType | null> {
     return this.prisma.user.findFirst({
-      where: { email },
+      where: { id },
       include: {
         organizations: true,
         sites: true
@@ -82,7 +82,7 @@ export class UserService {
 
     if (userInDb) {
       throw new HttpException(
-        'user already exist',
+        'User already exist',
         HttpStatus.CONFLICT
       )
     }

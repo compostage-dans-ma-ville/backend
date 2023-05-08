@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common'
 import { AuthService } from './auth.service'
 import {
-  ApiBadRequestResponse, ApiForbiddenResponse, ApiOkResponse, ApiTags
+  ApiBadRequestResponse, ApiConflictResponse, ApiForbiddenResponse, ApiOkResponse, ApiTags
 } from '@nestjs/swagger'
 import { CreateUserDto } from '~/user/dto/create.dto'
 import { LoginUserDto } from '~/user/dto/login.dto'
@@ -22,8 +22,9 @@ export class AuthController {
 
   @Post('register')
   @HttpCode(200)
+  @ApiConflictResponse({ description: 'User with this email already exist' })
   @ApiOkResponse({ description: 'User created successfully', type: LoginResponseDto })
-  @ApiBadRequestResponse()
+  @ApiBadRequestResponse({ description: 'Bad Request' })
   public async register(
     @Body() createUserDto: CreateUserDto
   ): Promise<LoginResponseDto> {
@@ -33,7 +34,7 @@ export class AuthController {
       LoginResponseDto,
       {
         data: user,
-        token: this.authService.createToken({ email: createUserDto.email }).Authorization
+        token: this.authService.getUserToken(user)
       }
     )
   }

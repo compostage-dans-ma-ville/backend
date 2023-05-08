@@ -11,6 +11,7 @@ import { APP_GUARD } from '@nestjs/core'
 import { AbilityGuard } from './ability/ability.guard'
 import { AbilityModule } from './ability/ability.module'
 import { MailerModule } from './mailer/mailer.module'
+import { WebAppLinksService } from './web-app-links/web-app-links.service'
 
 @Module({
   imports: [
@@ -32,7 +33,8 @@ import { MailerModule } from './mailer/mailer.module'
     {
       provide: APP_GUARD,
       useClass: AbilityGuard
-    }
+    },
+    WebAppLinksService
   ]
 })
 export class AppModule {}

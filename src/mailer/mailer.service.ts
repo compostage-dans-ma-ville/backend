@@ -15,8 +15,13 @@ interface GlobalParams {
 interface ChangePasswordParams {
   redirectLink: string
 }
+interface ValidateEmailParams {
+  validationLink: string
+  username: string
+}
 interface TemplateParams {
   resetPassword: ChangePasswordParams & GlobalParams
+  validateEmail: ValidateEmailParams & GlobalParams
 }
 type Template<T = TemplateParams> = {
   [key in keyof T ]: Handlebars.TemplateDelegate<T[key]>
@@ -72,7 +77,8 @@ export class MailerService {
     const templates = this.getTemplatesInFolder(PATH_TO_TEMPLATES)
 
     const compiledTemplates: Template = {
-      resetPassword: Handlebars.compile(templates['reset-password'])
+      resetPassword: Handlebars.compile(templates['reset-password']),
+      validateEmail: Handlebars.compile(templates['validate-email'])
     }
 
     this.templates = compiledTemplates
