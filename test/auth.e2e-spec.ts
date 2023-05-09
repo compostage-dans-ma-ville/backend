@@ -9,6 +9,7 @@ import { mainConfig } from '~/main.config'
 import { WebAppLinksService } from '~/web-app-links/web-app-links.service'
 import { MailerModule } from '~/mailer/mailer.module'
 import { UserModule } from '~/user/user.module'
+import { UserDto } from '~/user/dto/user.dto'
 
 const sendMailSpy = jest.fn()
 jest.mock('nodemailer', () => ({
@@ -26,6 +27,7 @@ const getUserDataFactory = () => {
     password: 'testTest1231*'
   }
 }
+
 describe('auth', () => {
   let app: INestApplication
   const userData = getUserDataFactory()
@@ -41,6 +43,10 @@ describe('auth', () => {
     mainConfig(app)
 
     await app.init()
+  })
+
+  afterEach(() => {
+    sendMailSpy.mockClear()
   })
 
   describe('POST /auth/register', () => {
@@ -109,31 +115,70 @@ describe('auth', () => {
     })
   })
 
-  describe('POST /auth/activate/:token', () => {
-    it('should activate a new user account', async () => {
+  describe('Test user creation', () => {
+    let testUser: UserDto
+
+    beforeAll(async () => {
       const newUser = getUserDataFactory()
       const { body } = await request(app.getHttpServer()).post('/auth/register').send(newUser)
 
-      const createdUser = body.data
-
-      const $email = cheerio.load(sendMailSpy.mock.lastCall[0].html)
-
-      const validationLink = $email('a').attr('href')!
-      const token = validationLink.split('/').slice(-1).pop()
-
-      const { status } = await request(app.getHttpServer()).post(`/auth/activate/${token}`).send()
-
-      expect(status).toBe(204)
-
-      const { body: getUserRes } = await request(app.getHttpServer()).get(`/users/${createdUser.id}`).send()
-
-      expect(getUserRes.isEmailConfirmed).toBeTrue()
+      testUser = body.data
     })
 
-    it('should fail if invalid token', async () => {
-      const { status } = await request(app.getHttpServer()).post('/auth/activate/foobar').send()
+    describe('POST /auth/activate/:token', () => {
+      it('should activate a new user account', async () => {
+        const $email = cheerio.load(sendMailSpy.mock.lastCall[0].html)
 
-      expect(status).toBe(400)
+        const validationLink = $email('a').attr('href')!
+        const token = validationLink.split('/').slice(-1).pop()
+
+        const { status } = await request(app.getHttpServer()).post(`/auth/activate/${token}`).send()
+
+        expect(status).toBe(204)
+
+        const { body: getUserRes } = await request(app.getHttpServer()).get(`/users/${testUser.id}`).send()
+
+        expect(getUserRes.isEmailConfirmed).toBeTrue()
+      })
+
+      it('should fail if invalid token', async () => {
+        const { status } = await request(app.getHttpServer()).post('/auth/activate/foobar').send()
+
+        expect(status).toBe(400)
+      })
+    })
+
+    describe('POST /auth/send-email-validation-token', () => {
+      it('should not send an email if the user\'s email is validated', async () => {
+        const { status } = await request(app.getHttpServer())
+          .post('/auth/send-email-validation-token')
+          .send({ email: testUser.email })
+
+        expect(status).toBe(204)
+        expect(sendMailSpy).not.toHaveBeenCalled()
+      })
+
+      it('should not send an email if the user\'s email is unknow', async () => {
+        const { status } = await request(app.getHttpServer())
+          .post('/auth/send-email-validation-token')
+          .send({ email: 'thisemaildoesntexist@foobar.com' })
+
+        expect(status).toBe(204)
+        expect(sendMailSpy).not.toHaveBeenCalled()
+      })
+
+      it('should send an email', async () => {
+        const newUser = getUserDataFactory()
+        const { body } = await request(app.getHttpServer()).post('/auth/register').send(newUser)
+
+        const user = body.data
+        const { status } = await request(app.getHttpServer())
+          .post('/auth/send-email-validation-token')
+          .send({ email: user.email })
+
+        expect(status).toBe(204)
+        expect(sendMailSpy).toHaveBeenCalledTimes(2)
+      })
     })
   })
 })

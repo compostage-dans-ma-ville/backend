@@ -37,20 +37,8 @@ export class AuthService {
 
   async register(userDto: CreateUserDto): Promise<User> {
     const createdUser = await this.userService.createUser(userDto)
-    const validateEmailToken = this.jwtService.sign({
-      email: createdUser.email
-    }, { expiresIn: '10m' })
 
-    this.mailerService.sendEmail(
-      createdUser.email,
-      'Activer votre compte',
-      'validateEmail',
-      {
-        validationLink: this.webAppLinksService.activateAccount(validateEmailToken),
-        title: 'Activer votre compte',
-        username: createdUser.firstname
-      }
-    )
+    this.sendActivateAccountEmail(createdUser)
 
     return createdUser
   }
@@ -80,5 +68,29 @@ export class AuthService {
         HttpStatus.BAD_REQUEST
       )
     }
+  }
+
+  async sendActivateAccountEmailByEmail(email: string): Promise<void> {
+    const user = await this.userService.find({ email })
+    if (user && !user.isEmailConfirmed) {
+      this.sendActivateAccountEmail(user)
+    }
+  }
+
+  sendActivateAccountEmail(user: User): void {
+    const validateEmailToken = this.jwtService.sign({
+      email: user.email
+    }, { expiresIn: '10m' })
+
+    this.mailerService.sendEmail(
+      user.email,
+      'Activer votre compte',
+      'validateEmail',
+      {
+        validationLink: this.webAppLinksService.activateAccount(validateEmailToken),
+        title: 'Activer votre compte',
+        username: user.firstname
+      }
+    )
   }
 }

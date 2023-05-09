@@ -20,6 +20,7 @@ import { CreateUserDto } from '~/user/dto/create.dto'
 import { LoginUserDto } from '~/user/dto/login.dto'
 import { plainToInstance } from '~/utils/dto'
 import { LoginResponseDto } from './dto/login-response.dto'
+import { SendValidationEmailDto } from './dto/SendValidationEmail.dto'
 
 @ApiTags('Authentification')
 @Controller('auth')
@@ -70,5 +71,14 @@ export class AuthController {
     @Param('token') token: string
   ): Promise<void> {
     await this.authService.validateEmail(token)
+  }
+
+  @Post('send-email-validation-token')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNoContentResponse({ description: 'Validation email sent to the known user' })
+  public async sendEmailValidationToken(
+    @Body() sendEmailDto: SendValidationEmailDto
+  ): Promise<void> {
+    await this.authService.sendActivateAccountEmailByEmail(sendEmailDto.email)
   }
 }
