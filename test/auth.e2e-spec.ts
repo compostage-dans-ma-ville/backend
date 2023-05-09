@@ -1,6 +1,6 @@
 import request from 'supertest'
 import { Test, TestingModule } from '@nestjs/testing'
-import { INestApplication } from '@nestjs/common'
+import { ExecutionContext, INestApplication } from '@nestjs/common'
 import * as cheerio from 'cheerio'
 
 import { faker } from '@faker-js/faker'
@@ -9,6 +9,9 @@ import { mainConfig } from '~/main.config'
 import { WebAppLinksService } from '~/web-app-links/web-app-links.service'
 import { MailerModule } from '~/mailer/mailer.module'
 import { UserModule } from '~/user/user.module'
+import { JwtAuthGuard } from '~/auth/jwt-auth.guard'
+import { AuthenticatedUserType } from '~/user/user.service'
+import { authenticatedUser } from './test-utils'
 
 const sendMailSpy = jest.fn()
 jest.mock('nodemailer', () => ({
@@ -26,6 +29,7 @@ const getUserDataFactory = () => {
     password: 'testTest1231*'
   }
 }
+
 describe('auth', () => {
   let app: INestApplication
   const userData = getUserDataFactory()
@@ -34,7 +38,18 @@ describe('auth', () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AuthModule, MailerModule, UserModule],
       providers: [WebAppLinksService]
-    }).compile()
+    })
+      .overrideGuard(JwtAuthGuard)
+      .useValue({
+        canActivate: (context: ExecutionContext) => {
+          const user: AuthenticatedUserType = {
+            ...authenticatedUser,
+            isEmailConfirmed: false
+          }
+          context.switchToHttp().getRequest().user = user
+          return true
+        }
+      }).compile()
 
     app = moduleFixture.createNestApplication()
 
@@ -118,7 +133,7 @@ describe('auth', () => {
       const newUser = getUserDataFactory()
       const { body } = await request(app.getHttpServer()).post('/auth/register').send(newUser)
 
-      const createdUser = body.data
+      const testUser = body.data
 
       const $email = cheerio.load(sendMailSpy.mock.lastCall[0].html)
 
@@ -130,7 +145,7 @@ describe('auth', () => {
       expect(status).toBe(204)
 
       const { body: getUserRes } = await request(app.getHttpServer())
-        .get(`/users/${createdUser.id}`)
+        .get(`/users/${testUser.id}`)
         .send()
 
       expect(getUserRes.isEmailConfirmed).toBeTrue()
@@ -140,6 +155,17 @@ describe('auth', () => {
       const { status } = await request(app.getHttpServer()).post('/auth/activate/foobar').send()
 
       expect(status).toBe(400)
+    })
+  })
+
+  describe('POST /auth/send-email-validation-token', () => {
+    it('should send an email', async () => {
+      const { status } = await request(app.getHttpServer())
+        .post('/auth/send-email-validation-token')
+        .send()
+
+      expect(status).toBe(204)
+      expect(sendMailSpy).toHaveBeenCalledTimes(1)
     })
   })
 
