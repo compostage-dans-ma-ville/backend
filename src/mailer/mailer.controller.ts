@@ -3,7 +3,9 @@ import {
 } from '@nestjs/common'
 import { Response } from 'express'
 import { MailerService } from './mailer.service'
+import { ApiExcludeController } from '@nestjs/swagger'
 
+@ApiExcludeController()
 @Controller('mail-templates-preview')
 export class MailerController {
   constructor(
