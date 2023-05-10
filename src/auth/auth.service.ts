@@ -81,4 +81,64 @@ export class AuthService {
       )
     }
   }
+
+  async sendResetPasswordEmail(email: string): Promise<void> {
+    const user = await this.userService.find({ email })
+    if (!user) {
+      throw new HttpException(
+        'The email is unknown',
+        HttpStatus.NOT_FOUND
+      )
+    }
+
+    const title = 'Modification de votre mot de passe'
+    this.mailerService.sendEmail(
+      user.email,
+      title,
+      'resetPassword',
+      {
+        title,
+        redirectLink: this.webAppLinksService.resetPassword(this.getResetPasswordToken(user))
+      }
+    )
+  }
+
+  async resetPassword(token: string, password: string): Promise<void> {
+    // @ts-expect-error: userId should be in the token payload
+    const userId = this.jwtService.decode(token)?.userId
+
+    const user = await this.userService.find({ id: userId })
+    if (!user) {
+      throw this.getInvalidPasswordTokenException()
+    }
+
+    try {
+      this.jwtService.verify(
+        token,
+        { secret: this.getResetPasswordTokenSecret(user) }
+      )
+
+      await this.userService.updatePassword(user.id, password)
+    } catch (error) {
+      throw this.getInvalidPasswordTokenException()
+    }
+  }
+
+  private getInvalidPasswordTokenException(): HttpException {
+    return new HttpException(
+      'Invalid or expired token',
+      HttpStatus.FORBIDDEN
+    )
+  }
+
+  private getResetPasswordTokenSecret(user: User): string {
+    return process.env.JWT_SECRET_KEY + user.password
+  }
+
+  private getResetPasswordToken(user: User): string {
+    return this.jwtService.sign(
+      { userId: user.id },
+      { expiresIn: '10m', secret: this.getResetPasswordTokenSecret(user) }
+    )
+  }
 }

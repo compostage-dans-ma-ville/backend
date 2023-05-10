@@ -1,7 +1,10 @@
 import { Factory } from 'nestjs-seeder'
 import { Expose } from 'class-transformer'
-import { IsEmail, IsNotEmpty } from 'class-validator'
+import {
+  IsEmail, IsNotEmpty, Matches, MaxLength, MinLength
+} from 'class-validator'
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger'
+import { PASSWORD_MATCHER } from '~/utils/dto'
 
 export class UserDto {
   @ApiProperty()
@@ -37,6 +40,12 @@ export class UserDto {
 
   @ApiHideProperty()
   @IsNotEmpty()
+  @MinLength(8)
+  @MaxLength(100)
+  @Matches(
+    PASSWORD_MATCHER,
+    { message: 'Password should be a string of more than 8 characters containing at least one lower case, one upper case, one number and one symbol' }
+  )
   @Factory(faker => faker?.internet.password())
     password: string
 }

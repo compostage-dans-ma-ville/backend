@@ -12,6 +12,7 @@ import { JwtAuthGuard } from '~/auth/jwt-auth.guard'
 import { authenticatedUser } from './test-utils'
 import { AuthModule } from '~/auth/auth.module'
 import { AuthenticatedUserType } from '~/user/user.service'
+import { MailerModule } from '~/mailer/mailer.module'
 
 describe('sites', () => {
   let app: INestApplication
@@ -23,7 +24,8 @@ describe('sites', () => {
         DailyScheduleModule,
         JwtModule,
         AuthModule,
-        AbilityModule
+        AbilityModule,
+        MailerModule
       ]
     })
       .overrideGuard(JwtAuthGuard)

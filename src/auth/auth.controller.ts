@@ -12,6 +12,7 @@ import {
   ApiConflictResponse,
   ApiForbiddenResponse,
   ApiNoContentResponse,
+  ApiNotFoundResponse,
   ApiOkResponse,
   ApiParam,
   ApiTags
@@ -20,6 +21,8 @@ import { CreateUserDto } from '~/user/dto/create.dto'
 import { LoginUserDto } from '~/user/dto/login.dto'
 import { plainToInstance } from '~/utils/dto'
 import { LoginResponseDto } from './dto/login-response.dto'
+import { SendResetPasswordEmailDto } from './dto/SendResetPasswordEmail.dto'
+import { ResetPasswordDto } from './dto/ResetPassword.dto'
 
 @ApiTags('Authentification')
 @Controller('auth')
@@ -70,5 +73,31 @@ export class AuthController {
     @Param('token') token: string
   ): Promise<void> {
     await this.authService.validateEmail(token)
+  }
+
+  @Post('send-reset-password-email')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNoContentResponse({ description: 'Email sent with success' })
+  @ApiNotFoundResponse({ description: 'The email is unknown' })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  public async sendResetPasswordEmail(
+    @Body() sendResetPasswordEmailDto: SendResetPasswordEmailDto
+  ): Promise<void> {
+    const { email } = sendResetPasswordEmailDto
+
+    await this.authService.sendResetPasswordEmail(email)
+  }
+
+  @Post('reset-password')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNoContentResponse({ description: 'Password updated with success' })
+  @ApiForbiddenResponse({ description: 'Reset password token is not (anymore) valid' })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  public async resetPassword(
+    @Body() resetPasswordDto: ResetPasswordDto
+  ): Promise<void> {
+    const { token, password } = resetPasswordDto
+
+    await this.authService.resetPassword(token, password)
   }
 }
