@@ -4,7 +4,6 @@ import { compare, hash } from 'bcrypt'
 import { PrismaService } from '~/prisma/prisma.service'
 import { CreateUserDto } from './dto/create.dto'
 import { LoginUserDto } from './dto/login.dto'
-import { UpdatePasswordDto } from './dto/updatePassword.dto'
 
 export type AuthenticatedUserType = Prisma.UserGetPayload<{
   include: { sites: true, organizations: true }
@@ -113,31 +112,10 @@ export class UserService {
     })
   }
 
-  async updatePassword(payload: UpdatePasswordDto, id: number):
-  Promise<User> {
-    const user = await this.prisma.user.findUnique({
-      where: { id }
-    })
-    if (!user) {
-      throw new HttpException(
-        'user id: ' + id + ' is not found',
-        HttpStatus.NOT_FOUND
-      )
-    }
-
-    const areEqual = await compare(
-      payload.old_password,
-      user.password
-    )
-    if (!areEqual) {
-      throw new HttpException(
-        'invalid credentials',
-        HttpStatus.UNAUTHORIZED
-      )
-    }
+  async updatePassword(userId: number, newPassword: string): Promise<User> {
     return this.prisma.user.update({
-      where: { id },
-      data: { password: await hash(payload.new_password, 10) }
+      where: { id: userId },
+      data: { password: await hash(newPassword, 10) }
     })
   }
 

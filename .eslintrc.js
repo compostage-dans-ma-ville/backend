@@ -22,6 +22,12 @@ module.exports = {
       'error',
       2
     ],
+    'max-len': ["error", {
+      "code": 100,
+      "ignoreComments": true,
+      "ignoreRegExpLiterals": true,
+      "ignoreStrings": true
+    }],
     "@typescript-eslint/consistent-type-definitions": ["off"],
     "@typescript-eslint/no-extraneous-class": "off",
     'no-empty-function': ['error', { 'allow': ['constructors'] }],

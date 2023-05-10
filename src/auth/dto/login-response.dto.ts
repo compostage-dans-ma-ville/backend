@@ -1,11 +1,12 @@
 import { ApiProperty, OmitType } from '@nestjs/swagger'
-import { IsNotEmpty } from 'class-validator'
+import { IsJWT, IsNotEmpty } from 'class-validator'
 import { Expose, Type } from 'class-transformer'
 import { UserDto } from '~/user/dto/user.dto'
 
 export class LoginResponseDto {
   @ApiProperty()
   @IsNotEmpty()
+  @IsJWT()
   @Expose()
     token: string
 

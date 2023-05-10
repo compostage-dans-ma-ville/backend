@@ -43,6 +43,10 @@ describe('auth', () => {
     await app.init()
   })
 
+  afterEach(() => {
+    sendMailSpy.mockClear()
+  })
+
   describe('POST /auth/register', () => {
     it('should create a user', async () => {
       const { status, body } = await request(app.getHttpServer()).post('/auth/register').send(userData)
@@ -63,7 +67,7 @@ describe('auth', () => {
         from: expect.any(String),
         to: userData.email,
         subject: 'Activer votre compte',
-        html: expect.stringContaining('/authentification/activate/')
+        html: expect.stringContaining('/authentication/activate/')
       })
     })
 
@@ -125,7 +129,9 @@ describe('auth', () => {
 
       expect(status).toBe(204)
 
-      const { body: getUserRes } = await request(app.getHttpServer()).get(`/users/${createdUser.id}`).send()
+      const { body: getUserRes } = await request(app.getHttpServer())
+        .get(`/users/${createdUser.id}`)
+        .send()
 
       expect(getUserRes.isEmailConfirmed).toBeTrue()
     })
@@ -134,6 +140,63 @@ describe('auth', () => {
       const { status } = await request(app.getHttpServer()).post('/auth/activate/foobar').send()
 
       expect(status).toBe(400)
+    })
+  })
+
+  describe('POST /auth/send-reset-password-email', () => {
+    it('shouldn\'t send an email to unknown email', async () => {
+      const { status } = await request(app.getHttpServer()).post('/auth/send-reset-password-email').send({ email: 'thisemailisunknow@foobar.test' })
+
+      expect(status).toBe(404)
+      expect(sendMailSpy).not.toHaveBeenCalled()
+    })
+
+    it('should fail if invalid payload', async () => {
+      const { status } = await request(app.getHttpServer()).post('/auth/send-reset-password-email').send()
+
+      expect(status).toBe(400)
+    })
+
+    it('should send email', async () => {
+      const { status } = await request(app.getHttpServer()).post('/auth/send-reset-password-email').send({ email: userData.email })
+
+      expect(status).toBe(204)
+      expect(sendMailSpy).toHaveBeenCalledOnceWith({
+        from: expect.any(String),
+        to: userData.email,
+        subject: 'Modification de votre mot de passe',
+        html: expect.stringContaining('/authentication/reset-password/')
+      })
+    })
+  })
+
+  describe('POST /auth/reset-password', () => {
+    it('should fail if invalid payload', async () => {
+      const { status } = await request(app.getHttpServer()).post('/auth/reset-password').send()
+
+      expect(status).toBe(400)
+    })
+
+    it('should update the password', async () => {
+      await request(app.getHttpServer()).post('/auth/send-reset-password-email').send({ email: userData.email })
+
+      const $email = cheerio.load(sendMailSpy.mock.lastCall[0].html)
+
+      const validationLink = $email('a').attr('href')!
+      const token = validationLink.split('/').slice(-1).pop()
+
+      const newPassword = 'AnewPassw0rd!'
+      const { status } = await request(app.getHttpServer())
+        .post('/auth/reset-password')
+        .send({ token, password: newPassword })
+
+      expect(status).toBe(204)
+
+      const { status: getUserStatus } = await request(app.getHttpServer())
+        .post('/auth/login')
+        .send({ email: userData.email, password: newPassword })
+
+      expect(getUserStatus).toBe(200)
     })
   })
 })
