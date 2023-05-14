@@ -4,7 +4,8 @@ import {
   HttpCode,
   HttpStatus,
   Param,
-  Post
+  Post,
+  UseGuards
 } from '@nestjs/common'
 import { AuthService } from './auth.service'
 import {
@@ -15,6 +16,7 @@ import {
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiParam,
+  ApiSecurity,
   ApiTags
 } from '@nestjs/swagger'
 import { CreateUserDto } from '~/user/dto/create.dto'
@@ -23,6 +25,9 @@ import { plainToInstance } from '~/utils/dto'
 import { LoginResponseDto } from './dto/login-response.dto'
 import { SendResetPasswordEmailDto } from './dto/SendResetPasswordEmail.dto'
 import { ResetPasswordDto } from './dto/ResetPassword.dto'
+import { JwtAuthGuard } from './jwt-auth.guard'
+import { AuthenticatedUserType } from '~/user/user.service'
+import { AuthenticatedUser } from './authenticatedUser.decorator'
 
 @ApiTags('Authentification')
 @Controller('auth')
@@ -73,6 +78,17 @@ export class AuthController {
     @Param('token') token: string
   ): Promise<void> {
     await this.authService.validateEmail(token)
+  }
+
+  @Post('send-email-validation-token')
+  @UseGuards(JwtAuthGuard)
+  @ApiSecurity('access-token')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNoContentResponse({ description: 'Validation email sent to the authenticated user' })
+  public sendEmailValidationToken(
+    @AuthenticatedUser() user: AuthenticatedUserType,
+  ): void {
+    this.authService.sendActivateAccountEmail(user)
   }
 
   @Post('send-reset-password-email')
