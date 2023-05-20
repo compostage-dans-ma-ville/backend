@@ -47,6 +47,8 @@ export class CreateSiteDto {
     isPublic: boolean
 
   @Expose()
+  @IsString()
+  @IsOptional()
   @ApiProperty({
     description: 'What site it is.',
     enum: SiteType
@@ -58,7 +60,7 @@ export class CreateSiteDto {
     description: 'Describe if the site is available for general public.',
     example: 'You must live at the residence les mimosas to be able to use our composters. This one is locked by a padlock. Ask our janitor for the code.'
   })
-    accessConditions: string
+    accessConditions?: string
 
   @Expose()
   @ValidateNested()
