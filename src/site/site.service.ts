@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common'
 import { PrismaService } from '~/prisma/prisma.service'
 import { Prisma, Site } from '@prisma/client'
-import { Coordinates } from '~/address/dto/CoordsQueryParams.dto'
+import { CoordsParams } from '~/address/dto/CoordsQueryParams.dto'
 import { AddressService } from '~/address/address.service'
 
 export type SiteCollectionFilter = {
-  coordinates?: Coordinates
+  coordinates?: CoordsParams
 }
 
 type ScheduleOption = (({ open: number, close: number })[] | null)[]

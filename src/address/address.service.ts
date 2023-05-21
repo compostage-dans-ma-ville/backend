@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { Prisma } from '@prisma/client'
-import { Coordinates } from './dto/CoordsQueryParams.dto'
+import { CoordsParams } from './dto/CoordsQueryParams.dto'
 import type { BBox } from './types'
 
 @Injectable()
@@ -29,7 +29,7 @@ export class AddressService {
     }
   }
 
-  static getBBoxFromCoordinates(coordinates: Coordinates): Prisma.AddressWhereInput {
+  static getBBoxFromCoordinates(coordinates: CoordsParams): Prisma.AddressWhereInput {
     const { longitude, latitude, radius } = coordinates
     const {
       minLong, minLat, maxLong, maxLat

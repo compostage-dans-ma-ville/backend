@@ -37,7 +37,7 @@ import { AuthenticatedUser } from '~/auth/authenticatedUser.decorator'
 import { ForbiddenError, subject } from '@casl/ability'
 import { AuthenticatedUserType } from '~/user/user.service'
 import { JwtAuthGuard } from '~/auth/jwt-auth.guard'
-import { Coordinates } from '~/address/dto/CoordsQueryParams.dto'
+import { CoordsParams } from '~/address/dto/CoordsQueryParams.dto'
 import { isAllDefined } from '~/utils/isAllDefinedOrUndefined'
 import { GetSitesQueryParams } from './dto/GetSitesQueryParams.dto'
 
@@ -109,7 +109,7 @@ export class SiteController {
     const coordinatesQuery = { latitude, longitude, radius }
 
     // Extra-validation of the query parameters
-    const coordinates: Coordinates | undefined = isAllDefined(coordinatesQuery)
+    const coordinates: CoordsParams | undefined = isAllDefined(coordinatesQuery)
     // if (!coordinates) {
     //   throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST)
     // }
