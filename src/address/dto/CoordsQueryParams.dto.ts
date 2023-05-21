@@ -1,5 +1,6 @@
-import { ApiPropertyOptional } from '@nestjs/swagger'
+import { ApiPropertyOptional, PartialType, PickType } from '@nestjs/swagger'
 import { IsNumber, IsOptional } from 'class-validator'
+import { AddressDto } from './Address.dto'
 
 export type Coordinates = {
   latitude: number
@@ -7,23 +8,7 @@ export type Coordinates = {
   radius: number
 }
 
-export class CoordsQueryParams implements Partial<Coordinates> {
-  @ApiPropertyOptional({
-    description: 'The latitude in decimal degree (WGS84)',
-    example: 1
-  })
-  @IsOptional()
-  @IsNumber()
-    latitude?: number // TODO: used as string in the rest of the code, should be number
-
-  @ApiPropertyOptional({
-    description: 'The longitude in decimal degree (WGS84)',
-    example: 1
-  })
-  @IsOptional()
-  @IsNumber()
-    longitude?: number
-
+export class CoordsQueryParams extends PartialType(PickType(AddressDto, ['latitude', 'longitude'] as const)) implements Partial<Coordinates> {
   @ApiPropertyOptional({
     description: 'The radius of the search in meters',
     example: 1000
