@@ -5,13 +5,13 @@ import * as cheerio from 'cheerio'
 
 import { faker } from '@faker-js/faker'
 import { AuthModule } from '~/auth/auth.module'
-import { mainConfig } from '~/main.config'
 import { WebAppLinksService } from '~/web-app-links/web-app-links.service'
 import { MailerModule } from '~/mailer/mailer.module'
 import { UserModule } from '~/user/user.module'
 import { JwtAuthGuard } from '~/auth/jwt-auth.guard'
 import { AuthenticatedUserType } from '~/user/user.service'
 import { authenticatedUser } from './test-utils'
+import { setMainConfig } from '~/main.config'
 
 const sendMailSpy = jest.fn()
 jest.mock('nodemailer', () => ({

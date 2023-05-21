@@ -26,6 +26,7 @@
     "PaginationQueryParams.ts",
     "helpers.ts",
     "isAllDefinedOrUndefined",
-    "address.service.ts"
+    "address.service.ts",
+    "auth.e2e-spec.ts"
   ]
 }
