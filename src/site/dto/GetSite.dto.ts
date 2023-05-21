@@ -55,7 +55,7 @@ export class GetSiteDto implements Omit<Site, 'organizationId' | 'addressId'> {
 
   @Expose()
   @ApiProperty({
-    description: 'The type of the current site.',
+    description: 'What site it is.',
     enum: SiteType
   })
     type: SiteType

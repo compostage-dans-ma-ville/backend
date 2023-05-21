@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client'
+import { Prisma, SiteType } from '@prisma/client'
 import { ApiProperty, getSchemaPath } from '@nestjs/swagger'
 import { Expose } from 'class-transformer'
 import { CreateAddressDto } from '~/address/dto/CreateAddress.dto'
@@ -32,6 +32,13 @@ export class CreateSiteDto {
       example: true
     })
       isPublic: boolean
+
+      @Expose()
+      @ApiProperty({
+        description: 'What site it is.',
+        enum: SiteType
+      })
+        type: SiteType
 
     @Expose()
     @ApiProperty({
