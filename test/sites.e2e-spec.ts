@@ -116,7 +116,8 @@ describe('sites', () => {
 
       const RADIUS = 1000
       const { address } = siteTest
-      const response = await request(app.getHttpServer()).get(`/sites?longitude=${address.longitude}&latitude=${address.latitude}&radius=${RADIUS}`)
+      const response = await request(app.getHttpServer())
+        .get(`/sites?longitude=${address.longitude}&latitude=${address.latitude}&radius=${RADIUS}`)
       expect(response.status).toBe(200)
       expect(response.body.data.length).toBeGreaterThan(0)
       const site = response.body.data[0] as GetSiteDto
