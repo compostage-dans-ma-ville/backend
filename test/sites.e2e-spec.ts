@@ -77,7 +77,7 @@ describe('sites', () => {
         name: expect.any(String),
         description: expect.any(String),
         accessConditions: expect.toSatisfy(e => e === null || typeof e === 'string'),
-        type: expect.arrayContaining(Object.values(SiteType)),
+        type: expect.toSatisfy((x) => Object.values(SiteType).includes(x)),
         isPublic: expect.any(Boolean),
         address: {
           id: expect.any(Number),
@@ -169,6 +169,7 @@ describe('sites', () => {
         description: 'A fancy description about this site',
         id: expect.any(Number),
         isPublic: true,
+        type: SiteType.EDUCATIONAL_INSTITUTION,
         launchDate: expect.any(String),
         name: 'A new site',
         organizationId: null,
@@ -205,7 +206,7 @@ describe('sites', () => {
         description: expect.any(String),
         accessConditions: expect.toSatisfy(e => e === null || typeof e === 'string'),
         isPublic: expect.any(Boolean),
-        tyoe: SiteType.EDUCATIONAL_INSTITUTION,
+        type: expect.toSatisfy((x) => Object.values(SiteType).includes(x)),
         address: {
           id: expect.any(Number),
           houseNumber: expect.any(String),
