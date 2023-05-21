@@ -27,6 +27,7 @@
     "helpers.ts",
     "isAllDefinedOrUndefined",
     "address.service.ts",
-    "auth.e2e-spec.ts"
+    "auth.e2e-spec.ts",
+    "user.dto.ts"
   ]
 }

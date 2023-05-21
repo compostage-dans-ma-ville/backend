@@ -1,10 +1,11 @@
 import { Factory } from 'nestjs-seeder'
 import { Expose } from 'class-transformer'
 import {
-  IsEmail, IsNotEmpty, Matches, MaxLength, MinLength
+  IsEmail, IsEnum, IsNotEmpty, Matches, MaxLength, MinLength
 } from 'class-validator'
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger'
 import { PASSWORD_MATCHER } from '~/utils/dto'
+import { UserRole } from '@prisma/client'
 
 export class UserDto {
   @ApiProperty()
@@ -31,6 +32,11 @@ export class UserDto {
   @Expose()
   @Factory(faker => faker?.internet.email())
     email: string
+
+  @ApiProperty()
+  @Expose()
+  @IsEnum(UserRole) // TODO: test if this work as intended
+    role: UserRole
 
   @ApiProperty()
   @IsNotEmpty()
