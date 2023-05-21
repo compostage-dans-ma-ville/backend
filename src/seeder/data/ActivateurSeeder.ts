@@ -12,6 +12,7 @@ import { Result, isErr } from './parser/Result'
 import { parseAddress } from './parser/parseAddress'
 import { parseContact } from './parser/parseContact'
 import { parseDailySchedule } from './parser/parseDailySchedule'
+import { parseSiteType } from './parser/parseSiteType'
 
 const rules: Validator.Rules = {
   boundedBy: 'present',
@@ -65,12 +66,17 @@ const parseSite = (site: SiteCompostage): Result<ParsedSite, ParsedError> => {
   const name = parseName(site.libelle)
   const launchDate = parseLaunchDate(site.date_mise_en_route) ?? null
   const isPublic = parseIsPublic(site.is_public)
+  const type = parseSiteType(site.type)
   const treatedWaste = null
   // const description = site.fonctionnement_site ?? null
   const accessConditions = parseConditionAccess(site.condition_acces) ?? null
 
   if (name === UNPARSABLE) {
     return { err: { id: site.id_site, reason: 'Name is not found.' } }
+  }
+
+  if (type === UNPARSABLE) {
+    return { err: { id: site.id_site, reason: 'Site type is not recognized.' } }
   }
 
   if (isPublic === UNPARSABLE) {
@@ -82,6 +88,7 @@ const parseSite = (site: SiteCompostage): Result<ParsedSite, ParsedError> => {
       name,
       launchDate,
       isPublic,
+      type,
       description: null,
       accessConditions,
       treatedWaste

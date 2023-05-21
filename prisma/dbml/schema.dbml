@@ -25,9 +25,10 @@ Table Site {
   updatedAt DateTime [not null]
   launchDate DateTime
   name String [not null]
+  isPublic Boolean [not null, default: true]
+  type SiteType [not null]
   treatedWaste Int
   description String
-  isPublic Boolean [not null, default: true]
   accessConditions String
   images ImageSiteRelation [not null]
   dailySchedules DailySchedule [not null]
@@ -134,6 +135,14 @@ Enum UserRole {
   USER
   OWNER
   ADMIN
+}
+
+Enum SiteType {
+  ADMINISTRATIVE_INSTITUTION
+  BUILDING_FOOT
+  COMPANY
+  EDUCATIONAL_INSTITUTION
+  SHARED
 }
 
 Enum OrganizationRole {

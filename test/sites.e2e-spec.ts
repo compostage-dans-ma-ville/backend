@@ -13,6 +13,7 @@ import { authenticatedUser } from './test-utils'
 import { AuthModule } from '~/auth/auth.module'
 import { AuthenticatedUserType } from '~/user/user.service'
 import { MailerModule } from '~/mailer/mailer.module'
+import { SiteType } from '@prisma/client'
 
 describe('sites', () => {
   let app: INestApplication
@@ -76,6 +77,7 @@ describe('sites', () => {
         name: expect.any(String),
         description: expect.any(String),
         accessConditions: expect.toSatisfy(e => e === null || typeof e === 'string'),
+        type: expect.toSatisfy((x) => Object.values(SiteType).includes(x)),
         isPublic: expect.any(Boolean),
         address: {
           id: expect.any(Number),
@@ -109,6 +111,7 @@ describe('sites', () => {
         name: 'A new site',
         description: 'A fancy description',
         isPublic: true, // it is always better
+        type: SiteType.EDUCATIONAL_INSTITUTION,
         accessConditions: 'Free4All',
         address: {
           houseNumber: '5',
@@ -134,6 +137,7 @@ describe('sites', () => {
         name: 'A new site',
         description: 'A fancy description about this site',
         isPublic: true, // it is always better
+        type: SiteType.EDUCATIONAL_INSTITUTION,
         accessConditions: 'Free4All under the following openings',
         address: {
           houseNumber: '5',
@@ -165,6 +169,7 @@ describe('sites', () => {
         description: 'A fancy description about this site',
         id: expect.any(Number),
         isPublic: true,
+        type: SiteType.EDUCATIONAL_INSTITUTION,
         launchDate: expect.any(String),
         name: 'A new site',
         organizationId: null,
@@ -201,6 +206,7 @@ describe('sites', () => {
         description: expect.any(String),
         accessConditions: expect.toSatisfy(e => e === null || typeof e === 'string'),
         isPublic: expect.any(Boolean),
+        type: expect.toSatisfy((x) => Object.values(SiteType).includes(x)),
         address: {
           id: expect.any(Number),
           houseNumber: expect.any(String),
@@ -231,6 +237,7 @@ describe('sites', () => {
         name: 'A new site',
         description: 'A fancy description',
         isPublic: true, // it is always better
+        type: SiteType.EDUCATIONAL_INSTITUTION,
         accessConditions: 'Free4All',
         treatedWaste: 3000,
         address: {
@@ -263,6 +270,7 @@ describe('sites', () => {
         description: 'A fancy description',
         id: original.id,
         isPublic: true,
+        type: SiteType.EDUCATIONAL_INSTITUTION,
         launchDate: expect.any(String),
         name: 'A new site',
         treatedWaste: 3000,

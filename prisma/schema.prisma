@@ -38,15 +38,24 @@ enum UserRole {
   ADMIN
 }
 
+enum SiteType {
+  ADMINISTRATIVE_INSTITUTION
+  BUILDING_FOOT
+  COMPANY
+  EDUCATIONAL_INSTITUTION
+  SHARED
+}
+
 model Site {
   id               Int                 @id @default(autoincrement())
   createdAt        DateTime            @default(now())
   updatedAt        DateTime            @updatedAt
   launchDate       DateTime?
   name             String
+  isPublic         Boolean             @default(true)
+  type             SiteType
   treatedWaste     Int?
   description      String?
-  isPublic         Boolean             @default(true)
   accessConditions String?
   images           ImageSiteRelation[]
   dailySchedules   DailySchedule[]

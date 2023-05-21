@@ -1,4 +1,4 @@
-import { Address, Site } from '@prisma/client'
+import { Address, Site, SiteType } from '@prisma/client'
 import { Factory } from 'nestjs-seeder'
 import { TREATED_WASTE_VALUES } from '~/site/dto/GetTreatedWaste.dto'
 
@@ -19,6 +19,9 @@ export class SiteSchema implements Site {
 
   @Factory(() => Math.random() > 0.2)
     isPublic: boolean
+
+  @Factory(faker => faker?.helpers.objectValue(SiteType))
+    type: SiteType
 
   @Factory(faker => Math.random() > 0.5 ? faker?.lorem.paragraphs(3) : undefined)
     accessConditions: string

@@ -1,5 +1,5 @@
 import { ApiProperty, getSchemaPath } from '@nestjs/swagger'
-import { Site } from '@prisma/client'
+import { Site, SiteType } from '@prisma/client'
 import { Expose } from 'class-transformer'
 import { GetAddressDto } from '~/address/dto/GetAddress.dto'
 import { GetScheduleDto } from '~/dailySchedule/dto/getSchedule.dto'
@@ -52,6 +52,13 @@ export class GetSiteDto implements Omit<Site, 'organizationId' | 'addressId'> {
     example: true
   })
     isPublic: boolean
+
+  @Expose()
+  @ApiProperty({
+    description: 'What site it is.',
+    enum: SiteType
+  })
+    type: SiteType
 
   @Expose()
   @ApiProperty({
