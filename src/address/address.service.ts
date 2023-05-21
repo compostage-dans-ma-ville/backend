@@ -29,7 +29,7 @@ export class AddressService {
     }
   }
 
-  static getBBoxFromCoordinates(coordinates: Coordinates): Prisma.AddressWhereInput | undefined {
+  static getBBoxFromCoordinates(coordinates: Coordinates): Prisma.AddressWhereInput {
     const { longitude, latitude, radius } = coordinates
     const {
       minLong, minLat, maxLong, maxLat
