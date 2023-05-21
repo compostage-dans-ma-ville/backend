@@ -1,4 +1,4 @@
-import { Prisma, SiteType } from '@prisma/client'
+import { SiteType } from '@prisma/client'
 import { ApiProperty, getSchemaPath } from '@nestjs/swagger'
 import { Expose, Type } from 'class-transformer'
 import { CreateAddressDto } from '~/address/dto/CreateAddress.dto'
