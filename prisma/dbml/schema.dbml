@@ -12,8 +12,7 @@ Table User {
   description String
   password String [not null]
   isEmailConfirmed Boolean [not null, default: false]
-  avatar Image
-  imageId String
+  avatarId String
   role UserRole [not null, default: 'USER']
   organizations UserOrganizationRelation [not null]
   sites UserSiteRelation [not null]
@@ -56,7 +55,6 @@ Table Image {
   id String [pk]
   mimeType String [not null]
   imageSiteRelation ImageSiteRelation [not null]
-  User User [not null]
   Organization Organization [not null]
 }
 
@@ -155,8 +153,6 @@ Enum SiteRole {
   ADMIN
   REFEREE
 }
-
-Ref: User.imageId > Image.id
 
 Ref: Site.addressId > Address.id [delete: Cascade]
 

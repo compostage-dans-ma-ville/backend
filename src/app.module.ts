@@ -12,6 +12,7 @@ import { AbilityGuard } from './ability/ability.guard'
 import { AbilityModule } from './ability/ability.module'
 import { MailerModule } from './mailer/mailer.module'
 import { WebAppLinksService } from './web-app-links/web-app-links.service'
+import { MulterModule } from '@nestjs/platform-express'
 
 @Module({
   imports: [
@@ -19,6 +20,9 @@ import { WebAppLinksService } from './web-app-links/web-app-links.service'
       isGlobal: true,
       envFilePath: '.env'
     }),
+    MulterModule.register(
+      { dest: './uploaded-pictures' },
+    ),
     AddressModule,
     AuthModule,
     UserModule,
@@ -37,4 +41,4 @@ import { WebAppLinksService } from './web-app-links/web-app-links.service'
     WebAppLinksService
   ]
 })
-export class AppModule {}
+export class AppModule { }

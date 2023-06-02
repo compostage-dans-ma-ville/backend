@@ -24,8 +24,7 @@ model User {
   description      String?
   password         String
   isEmailConfirmed Boolean  @default(false)
-  avatar           Image?   @relation(fields: [imageId], references: [id])
-  imageId          String?
+  avatarId         String?
   role             UserRole @default(USER)
 
   organizations UserOrganizationRelation[]
@@ -83,7 +82,6 @@ model Image {
   id                String              @id
   mimeType          String
   imageSiteRelation ImageSiteRelation[]
-  User              User[]
   Organization      Organization[]
 }
 
