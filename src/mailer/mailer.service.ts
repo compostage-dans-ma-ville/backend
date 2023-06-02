@@ -24,7 +24,7 @@ interface TemplateParams {
   validateEmail: ValidateEmailParams & GlobalParams
 }
 type Template<T = TemplateParams> = {
-  [key in keyof T ]: Handlebars.TemplateDelegate<T[key]>
+  [key in keyof T]: Handlebars.TemplateDelegate<T[key]>
 }
 
 @Injectable()
