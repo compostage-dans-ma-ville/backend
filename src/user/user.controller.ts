@@ -12,10 +12,11 @@ import { plainToInstance } from '~/utils/dto'
 import { AuthenticatedUserType, UserService } from './user.service'
 import { UserDto } from './dto/user.dto'
 import { NotFoundInterceptor } from '~/api-services/NotFoundInterceptor'
-import { FileInterceptor } from '@nestjs/platform-express'
-import { AvatarSharpPipe } from '~/sharp-pipe/avatar-sharp.pipe'
+import { AvatarSharpPipe } from '~/file-upload/sharp-pipe/avatar-sharp.pipe'
 import { JwtAuthGuard } from '~/auth/jwt-auth.guard'
 import { AuthenticatedUser } from '~/auth/authenticatedUser.decorator'
+import { ApiUpload } from '~/file-upload/api-upload.decorator'
+import { fileMimetypeFilter } from '~/file-upload/file-mimetype-filter'
 
 @ApiTags('Users')
 @Controller('users')
@@ -51,7 +52,7 @@ export class UserController {
   @ApiCreatedResponse({ description: 'User\'s avatar successfully uploaded.', type: UserDto })
   @UseGuards(JwtAuthGuard)
   @ApiSecurity('access-token')
-  @UseInterceptors(FileInterceptor('image'))
+  @ApiUpload('image', { fileFilter: fileMimetypeFilter('image') })
   async uploadAvatar(
     @UploadedFile(AvatarSharpPipe) image: string,
     @AuthenticatedUser() user: AuthenticatedUserType
