@@ -8,6 +8,17 @@ import sharp from 'sharp'
 @Injectable()
 export class AvatarSharpPipe implements PipeTransform<Express.Multer.File, Promise<{}>> {
   async transform(image: Express.Multer.File): Promise<{}> {
+    // Allowed file size in mb
+    const maxFileSize: number = 1
+    const fileSize: number = (image.size / (1024 * 1024))
+
+    if (fileSize > maxFileSize) {
+      throw new HttpException(
+        `File is too big: size limit = ${maxFileSize} mb; file size = ${fileSize} mb`,
+        HttpStatus.BAD_REQUEST
+      )
+    }
+
     const randomName = Array(32).fill(null).map(() => (Math.round(Math.random() * 16)).toString(16)).join('')
     const filename = randomName + '.webp'
     const dest = path.join('uploaded-pictures', 'avatar', filename)
