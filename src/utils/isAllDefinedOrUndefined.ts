@@ -6,7 +6,12 @@ export const isAllDefinedOrUndefined = <T, K extends keyof T>
 
 export const isAllDefined = <
   T extends Record<string, T[keyof T]> | ArrayLike<T>
-// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-> (obj: T) => Object.values(obj).every((v) => v !== undefined)
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+>(obj: T) => Object.values(obj).every((v) => v !== undefined)
     ? obj as Record<keyof T, NonNullable<T[keyof T]>>
     : undefined
+
+export const isAllUndefined = <
+T extends Record<string, T[keyof T]> | ArrayLike<T>
+// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+>(obj: T) => Object.values(obj).every((v) => v === undefined)
