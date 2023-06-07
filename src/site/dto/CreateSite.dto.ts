@@ -71,6 +71,7 @@ export class CreateSiteDto {
 
   @Expose()
   @IsOptional()
+  @ValidateNested()
   @Type(() => CreateOpeningDto)
   @ApiProperty({
     type: 'array',
