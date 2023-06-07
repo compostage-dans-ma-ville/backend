@@ -2,7 +2,7 @@
 import {
   Controller, Get, Param, Delete,
   Query, Req, ParseIntPipe, UseInterceptors,
-  Body, Post, Put, UseGuards, NotFoundException
+  Body, Post, Put, UseGuards, NotFoundException, BadRequestException
 } from '@nestjs/common'
 import type { Request } from 'express'
 import { SiteService } from './site.service'
@@ -37,8 +37,7 @@ import { AuthenticatedUser } from '~/auth/authenticatedUser.decorator'
 import { ForbiddenError, subject } from '@casl/ability'
 import { AuthenticatedUserType } from '~/user/user.service'
 import { JwtAuthGuard } from '~/auth/jwt-auth.guard'
-import { CoordsParams } from '~/address/dto/CoordsQueryParams.dto'
-import { isAllDefined } from '~/utils/isAllDefinedOrUndefined'
+import { isAllDefined, isAllUndefined } from '~/utils/isAllDefinedOrUndefined'
 import { GetSitesQueryParams } from './dto/GetSitesQueryParams.dto'
 
 @Controller('sites')
@@ -98,6 +97,7 @@ export class SiteController {
 
   @Get()
   @ApiPaginatedResponse(GetSiteDto)
+  @ApiBadRequestResponse()
   async findAll(
     @Req() req: Request,
     @Query() query: GetSitesQueryParams,
@@ -109,10 +109,12 @@ export class SiteController {
     const coordinatesQuery = { latitude, longitude, radius }
 
     // Extra-validation of the query parameters
-    const coordinates: CoordsParams | undefined = isAllDefined(coordinatesQuery)
-    // if (!coordinates) {
-    //   throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST)
-    // }
+    const coordinates = isAllDefined(coordinatesQuery)
+    const areCoordinatesQueryEmpty = isAllUndefined(coordinatesQuery)
+
+    if (!(areCoordinatesQueryEmpty || coordinates)) {
+      throw new BadRequestException('Some arguments are missing in order to get localized sites.')
+    }
 
     const [sites, totalItemCount] = await this.siteService.findAll({
       skip: (page - 1) * items,
