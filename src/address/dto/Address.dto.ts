@@ -7,7 +7,7 @@ export class AddressDto {
     @IsNumber()
     @ApiProperty({
       description: 'the identifier of an address',
-      example: '6 ter'
+      example: '47'
     })
       id: number
 
