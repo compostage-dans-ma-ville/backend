@@ -66,14 +66,15 @@ describe('auth', () => {
 
       expect(status).toBe(200)
       expect(body).toBeDefined()
-      expect(body).toEqual({
+      expect(body).toStrictEqual({
         token: expect.any(String),
         data: {
           id: expect.any(Number),
           firstname: expect.any(String),
           lastname: expect.any(String),
           email: expect.any(String),
-          isEmailConfirmed: false
+          isEmailConfirmed: false,
+          role: 'USER'
         }
       })
       expect(sendMailSpy).toHaveBeenCalledOnceWith({
