@@ -1,6 +1,7 @@
 import { ApiPropertyOptional, PartialType, PickType } from '@nestjs/swagger'
 import { IsNumber, IsOptional } from 'class-validator'
 import { AddressDto } from './Address.dto'
+import { Type } from 'class-transformer'
 
 export type CoordsParams = {
   latitude: number
@@ -15,5 +16,6 @@ export class CoordsQueryParams extends PartialType(PickType(AddressDto, ['latitu
   })
   @IsOptional()
   @IsNumber()
+  @Type(() => Number)
     radius?: number
 }

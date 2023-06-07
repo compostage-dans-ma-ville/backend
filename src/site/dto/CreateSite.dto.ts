@@ -5,8 +5,9 @@ import { CreateAddressDto } from '~/address/dto/CreateAddress.dto'
 import { CreateOpeningDto } from '~/opening/dto/CreateOpening.dto'
 import { CreateScheduleDto } from '~/dailySchedule/dto/createSchedule.dto'
 import {
+  IsArray,
   IsBoolean,
-  IsDate,
+  IsDateString,
   IsNumber,
   IsOptional,
   IsString,
@@ -15,7 +16,7 @@ import {
 
 export class CreateSiteDto {
   @Expose()
-  @IsDate()
+  @IsDateString()
   @ApiProperty({
     description: 'The date of commissioning.',
     example: new Date()
@@ -56,6 +57,8 @@ export class CreateSiteDto {
     type: SiteType
 
   @Expose()
+  @IsString()
+  @IsOptional()
   @ApiProperty({
     description: 'Describe if the site is available for general public.',
     example: 'You must live at the residence les mimosas to be able to use our composters. This one is locked by a padlock. Ask our janitor for the code.'
@@ -72,9 +75,8 @@ export class CreateSiteDto {
     address: CreateAddressDto
 
   @Expose()
+  @IsArray()
   @IsOptional()
-  @ValidateNested()
-  @Type(() => CreateOpeningDto)
   @ApiProperty({
     type: 'array',
     nullable: true,
