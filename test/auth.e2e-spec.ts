@@ -5,13 +5,13 @@ import * as cheerio from 'cheerio'
 
 import { faker } from '@faker-js/faker'
 import { AuthModule } from '~/auth/auth.module'
-import { mainConfig } from '~/main.config'
 import { WebAppLinksService } from '~/web-app-links/web-app-links.service'
 import { MailerModule } from '~/mailer/mailer.module'
 import { UserModule } from '~/user/user.module'
 import { JwtAuthGuard } from '~/auth/jwt-auth.guard'
 import { AuthenticatedUserType } from '~/user/user.service'
 import { authenticatedUser } from './test-utils'
+import { setMainConfig } from '~/main.config'
 
 const sendMailSpy = jest.fn()
 jest.mock('nodemailer', () => ({
@@ -52,9 +52,7 @@ describe('auth', () => {
       }).compile()
 
     app = moduleFixture.createNestApplication()
-
-    mainConfig(app)
-
+    setMainConfig(app)
     await app.init()
   })
 
@@ -68,14 +66,15 @@ describe('auth', () => {
 
       expect(status).toBe(200)
       expect(body).toBeDefined()
-      expect(body).toEqual({
+      expect(body).toStrictEqual({
         token: expect.any(String),
         data: {
           id: expect.any(Number),
           firstname: expect.any(String),
           lastname: expect.any(String),
           email: expect.any(String),
-          isEmailConfirmed: false
+          isEmailConfirmed: false,
+          role: 'USER'
         }
       })
       expect(sendMailSpy).toHaveBeenCalledOnceWith({

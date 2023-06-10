@@ -13,6 +13,8 @@ import { authenticatedUser } from './test-utils'
 import { AuthModule } from '~/auth/auth.module'
 import { AuthenticatedUserType } from '~/user/user.service'
 import { MailerModule } from '~/mailer/mailer.module'
+import { setMainConfig } from '~/main.config'
+import { GetSiteDto } from '~/site/dto/GetSite.dto'
 import { SiteType } from '@prisma/client'
 
 describe('sites', () => {
@@ -43,6 +45,7 @@ describe('sites', () => {
       .compile()
 
     app = moduleFixture.createNestApplication()
+    setMainConfig(app)
     await app.init()
   })
 
@@ -98,9 +101,27 @@ describe('sites', () => {
     })
 
     it('return the expected amount of site', async () => {
-      const { body } = await request(app.getHttpServer()).get('/sites?items=10')
+      const { body, status } = await request(app.getHttpServer()).get('/sites?items=10')
 
+      expect(status).toBe(200)
       expect(body.data.length).toEqual(10)
+    })
+
+    it('return a site close to the expected position', async () => {
+      const { body, status } = await request(app.getHttpServer()).get('/sites?items=1')
+
+      expect(status).toBe(200)
+      expect(body.data.length).toEqual(1)
+      const siteTest = body.data[0]
+
+      const RADIUS = 1000
+      const { address } = siteTest
+      const response = await request(app.getHttpServer())
+        .get(`/sites?longitude=${address.longitude}&latitude=${address.latitude}&radius=${RADIUS}`)
+      expect(response.status).toBe(200)
+      expect(response.body.data.length).toBeGreaterThan(0)
+      const site = response.body.data[0] as GetSiteDto
+      expect(site).toEqual(siteTest)
     })
   })
 

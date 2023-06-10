@@ -1,24 +1,4 @@
 {
   "conventionalCommits.scopes": [
-    "App",
-    "site",
-    ".vscode",
-    "package.json",
-    "jest",
-    "prisma",
-    "schedule.schema.ts",
-    "schedule.seeder.ts",
-    "WeekTime",
-    "settings.json",
-    "site.seeder.ts",
-    "ActivateurSeeder.ts",
-    ".nvmrc",
-    "CreateSite.dto.ts",
-    "site.service.ts",
-    "CreateAddress.dto",
-    "GetSite.dto.ts",
-    "site.controller.ts",
-    "sites.e2e-spec.ts",
-    "site.schema.ts"
   ]
 }
