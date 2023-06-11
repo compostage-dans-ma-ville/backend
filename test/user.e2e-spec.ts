@@ -12,7 +12,6 @@ import { AuthModule } from '~/auth/auth.module'
 import { AuthenticatedUserType } from '~/user/user.service'
 import { MailerModule } from '~/mailer/mailer.module'
 import { setMainConfig } from '~/main.config'
-import { UserRole } from '@prisma/client'
 
 describe('users', () => {
   let app: INestApplication
