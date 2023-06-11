@@ -26,7 +26,7 @@ export class UserController {
   ) { }
 
   @Get()
-  @ApiPaginatedResponse(UserDto)
+  @ApiPaginatedResponse(GetUserDto)
   @ApiBadRequestResponse()
   async findAll(
     @Req() req: Request,

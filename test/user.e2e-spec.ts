@@ -77,9 +77,7 @@ describe('users', () => {
         updatedAt: expect.toBeDateString(),
         firstname: expect.any(String),
         lastname: expect.any(String),
-        description: null,
-        isEmailConfirmed: expect.any(Boolean),
-        role: expect.toBeOneOf(Object.values(UserRole))
+        description: expect.toSatisfy(e => typeof e === 'string' || e === null)
       })
     })
   })
