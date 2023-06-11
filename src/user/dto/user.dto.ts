@@ -35,6 +35,10 @@ export class UserDto {
 
   @ApiProperty()
   @Expose()
+    description: string | null
+
+  @ApiProperty()
+  @Expose()
   @IsEnum(UserRole) // TODO: test if this work as intended
     role: UserRole
 

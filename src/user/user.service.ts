@@ -55,23 +55,29 @@ export class UserService {
     })
   }
 
-  async users(params: {
+  async findAll(params: {
     skip?: number;
     take?: number;
     cursor?: Prisma.UserWhereUniqueInput;
     where?: Prisma.UserWhereInput;
     orderBy?: Prisma.UserOrderByWithRelationInput;
-  }): Promise<User[]> {
+  }) {
     const {
       skip, take, cursor, where, orderBy
     } = params
-    return this.prisma.user.findMany({
+
+    const query = {
       skip,
       take,
       cursor,
       where,
       orderBy
-    })
+    }
+
+    return this.prisma.$transaction([
+      this.prisma.user.findMany(query),
+      this.prisma.user.count({ where: query.where })
+    ])
   }
 
   async createUser(userDto: CreateUserDto): Promise<User> {
