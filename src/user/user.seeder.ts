@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { Prisma } from '@prisma/client'
 import { Seeder, DataFactory } from 'nestjs-seeder'
 import { PrismaService } from '../prisma/prisma.service'
-import { UserDto } from './dto/user.dto'
+import { UserDto } from './dto/User.dto'
 
 @Injectable()
 export class UserSeeder implements Seeder {

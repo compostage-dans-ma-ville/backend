@@ -1,7 +1,7 @@
 import { Factory } from 'nestjs-seeder'
 import { Expose } from 'class-transformer'
 import {
-  IsEmail, IsEnum, IsNotEmpty, Matches, MaxLength, MinLength
+  IsBoolean, IsEmail, IsEnum, IsNotEmpty, Matches, MaxLength, MinLength
 } from 'class-validator'
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger'
 import { PASSWORD_MATCHER } from '~/utils/dto'
@@ -33,14 +33,19 @@ export class UserDto {
   @Factory(faker => faker?.internet.email())
     email: string
 
-  @ApiProperty()
+  @ApiHideProperty()
   @Expose()
+    description: string | null
+
+  @ApiProperty({
+    enum: UserRole
+  })
   @IsEnum(UserRole) // TODO: test if this work as intended
     role: UserRole
 
-  @ApiProperty()
+  @ApiHideProperty()
   @IsNotEmpty()
-  @Expose()
+  @IsBoolean()
   @Factory(faker => faker?.datatype.boolean())
     isEmailConfirmed: boolean
 

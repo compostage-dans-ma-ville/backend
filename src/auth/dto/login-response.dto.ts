@@ -1,7 +1,7 @@
 import { ApiProperty, OmitType } from '@nestjs/swagger'
 import { IsJWT, IsNotEmpty } from 'class-validator'
 import { Expose, Type } from 'class-transformer'
-import { UserDto } from '~/user/dto/user.dto'
+import { UserDto } from '~/user/dto/User.dto'
 
 export class LoginResponseDto {
   @ApiProperty()
