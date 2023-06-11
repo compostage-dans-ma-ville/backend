@@ -1,8 +1,8 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, OmitType } from '@nestjs/swagger'
 import { Expose } from 'class-transformer'
 import { UserDto } from './User.dto'
 
-export class GetUserDto extends UserDto {
+export class GetUserDto extends OmitType(UserDto, ['isEmailConfirmed', 'role']) {
   @Expose()
   @ApiProperty({
     description: 'Date of creation of this site.',
