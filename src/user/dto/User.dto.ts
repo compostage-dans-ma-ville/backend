@@ -33,17 +33,19 @@ export class UserDto {
   @Factory(faker => faker?.internet.email())
     email: string
 
-  @ApiHideProperty()
+  @ApiProperty()
   @Expose()
     description: string | null
 
   @ApiProperty({
     enum: UserRole
   })
+  @Expose()
   @IsEnum(UserRole) // TODO: test if this work as intended
     role: UserRole
 
-  @ApiHideProperty()
+  @ApiProperty()
+  @Expose()
   @IsNotEmpty()
   @IsBoolean()
   @Factory(faker => faker?.datatype.boolean())
