@@ -1,7 +1,7 @@
-import { ApiProperty, OmitType } from '@nestjs/swagger'
+import { ApiProperty } from '@nestjs/swagger'
 import { IsJWT, IsNotEmpty } from 'class-validator'
 import { Expose, Type } from 'class-transformer'
-import { UserDto } from '~/user/dto/User.dto'
+import { MeDto } from '~/user/dto/Me.dto'
 
 export class LoginResponseDto {
   @ApiProperty()
@@ -10,11 +10,9 @@ export class LoginResponseDto {
   @Expose()
     token: string
 
-  @ApiProperty({
-    type: OmitType(UserDto, ['password'] as const)
-  })
+  @ApiProperty()
   @IsNotEmpty()
   @Expose()
-  @Type(() => OmitType(UserDto, ['password'] as const))
-    data: Omit<UserDto, 'password'>
+  @Type(() => MeDto)
+    data: MeDto
 }
