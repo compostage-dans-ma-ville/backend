@@ -22,6 +22,7 @@ module.exports = {
       'error',
       2
     ],
+    'max-classes-per-file': 'off',
     'max-len': ["error", {
       "code": 100,
       "ignoreComments": true,

@@ -1,11 +1,13 @@
 import { Factory } from 'nestjs-seeder'
-import { Expose } from 'class-transformer'
+import { Expose, Type } from 'class-transformer'
 import {
-  IsBoolean, IsEmail, IsEnum, IsNotEmpty, Matches, MaxLength, MinLength
+  IsArray,
+  IsBoolean, IsEmail, IsEnum, IsNotEmpty, Matches, MaxLength, MinLength, ValidateNested
 } from 'class-validator'
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger'
 import { PASSWORD_MATCHER } from '~/utils/dto'
 import { UserRole } from '@prisma/client'
+import { UserSiteDto } from './UserSite.dto'
 
 export class UserDto {
   @ApiProperty()
@@ -46,6 +48,13 @@ export class UserDto {
 
   @ApiProperty()
   @Expose()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => UserSiteDto)
+    sites: UserSiteDto[]
+
+  @ApiProperty()
+  @Expose()
   @IsNotEmpty()
   @IsBoolean()
   @Factory(faker => faker?.datatype.boolean())
@@ -61,4 +70,18 @@ export class UserDto {
   )
   @Factory(faker => faker?.internet.password())
     password: string
+
+  @Expose()
+  @ApiProperty({
+    description: 'Date of creation of this site.',
+    example: new Date()
+  })
+    createdAt: Date
+
+  @Expose()
+  @ApiProperty({
+    description: 'Last update date of this site.',
+    example: new Date()
+  })
+    updatedAt: Date
 }

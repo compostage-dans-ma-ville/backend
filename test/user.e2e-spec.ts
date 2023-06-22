@@ -12,6 +12,8 @@ import { AuthModule } from '~/auth/auth.module'
 import { AuthenticatedUserType } from '~/user/user.service'
 import { MailerModule } from '~/mailer/mailer.module'
 import { setMainConfig } from '~/main.config'
+import { SiteRole, User } from '@prisma/client'
+import { PrismaService } from '~/prisma/prisma.service'
 
 describe('users', () => {
   let app: INestApplication
@@ -54,7 +56,8 @@ describe('users', () => {
       expect(body).toEqual({
         links: {
           first: expect.any(String),
-          last: expect.any(String)
+          last: expect.any(String),
+          next: expect.toSatisfy(e => typeof e === 'string' || e === undefined)
         },
         pagination: {
           pageNumber: expect.any(Number),
@@ -71,12 +74,46 @@ describe('users', () => {
       expect(status).toBe(200)
       expect(body.data[0]).toMatchObject({
         id: expect.any(Number),
-        email: expect.any(String),
-        createdAt: expect.toBeDateString(),
-        updatedAt: expect.toBeDateString(),
         firstname: expect.any(String),
         lastname: expect.any(String),
         description: expect.toSatisfy(e => typeof e === 'string' || e === null)
+      })
+    })
+  })
+
+  describe('GET /users/:id/sites', () => {
+    let user: User
+    let siteId: number
+    let role: SiteRole
+
+    beforeAll(async () => {
+      const relation = (await app.get(PrismaService).userSiteRelation.findMany({
+        include: { user: true },
+        take: 1
+      }))[0]
+
+      user = relation.user
+      siteId = relation.siteId
+      role = relation.role
+    })
+
+    it('should get the paginated list of sites', async () => {
+      const { status, body } = await request(app.getHttpServer()).get(`/users/${user.id}/sites`)
+
+      expect(status).toBe(200)
+      expect(body).toBeDefined()
+
+      expect(body).toEqual({
+        links: expect.toBeObject(),
+        pagination: expect.toBeObject(),
+        data: expect.arrayContaining([
+          expect.objectContaining({
+            role: role,
+            site: expect.objectContaining({
+              id: siteId
+            })
+          })
+        ])
       })
     })
   })

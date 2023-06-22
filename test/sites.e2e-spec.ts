@@ -9,16 +9,26 @@ import { GetOpeningDto } from '~/opening/dto/GetOpening.dto'
 import { AbilityModule } from '~/ability/ability.module'
 import { JwtModule } from '@nestjs/jwt'
 import { JwtAuthGuard } from '~/auth/jwt-auth.guard'
-import { authenticatedUser } from './test-utils'
 import { AuthModule } from '~/auth/auth.module'
-import { AuthenticatedUserType } from '~/user/user.service'
 import { MailerModule } from '~/mailer/mailer.module'
 import { setMainConfig } from '~/main.config'
 import { GetSiteDto } from '~/site/dto/GetSite.dto'
-import { SiteType } from '@prisma/client'
+import {
+  Address,
+  Site, SiteRole, SiteType, User, UserSiteRelation
+} from '@prisma/client'
+import { PrismaService } from '~/prisma/prisma.service'
+
+const sendMailSpy = jest.fn()
+jest.mock('nodemailer', () => ({
+  createTransport: () => ({
+    sendMail: sendMailSpy
+  })
+}))
 
 describe('sites', () => {
   let app: INestApplication
+  let mockedUser: User
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -33,9 +43,12 @@ describe('sites', () => {
     })
       .overrideGuard(JwtAuthGuard)
       .useValue({
-        canActivate: (context: ExecutionContext) => {
-          const user: AuthenticatedUserType = {
-            ...authenticatedUser,
+        canActivate: async (context: ExecutionContext) => {
+          mockedUser = await moduleFixture.get(PrismaService).user.findFirst({
+            include: { sites: true, organizations: true }
+          }) as User
+          const user = {
+            ...mockedUser,
             role: 'ADMIN'
           }
           context.switchToHttp().getRequest().user = user
@@ -47,6 +60,10 @@ describe('sites', () => {
     app = moduleFixture.createNestApplication()
     setMainConfig(app)
     await app.init()
+  })
+
+  afterEach(() => {
+    sendMailSpy.mockClear()
   })
 
   describe('GET /sites', () => {
@@ -96,7 +113,8 @@ describe('sites', () => {
             && e.every((daily: null | GetOpeningDto[]) => daily === null
               || daily.length === 0
               || daily.every((opening: GetOpeningDto) => opening.open && opening.close)))),
-        treatedWaste: expect.toSatisfy((x) => x === null || Number.isInteger(x))
+        treatedWaste: expect.toSatisfy((x) => x === null || Number.isInteger(x)),
+        members: expect.toBeArray()
       })
     })
 
@@ -242,7 +260,8 @@ describe('sites', () => {
             && e.every((daily: null | GetOpeningDto[]) => daily === null
               || daily.length === 0
               || daily.every((opening: GetOpeningDto) => opening.open && opening.close)))),
-        treatedWaste: expect.toSatisfy((x) => x === null || Number.isInteger(x))
+        treatedWaste: expect.toSatisfy((x) => x === null || Number.isInteger(x)),
+        members: expect.toBeArray()
       })
     })
   })
@@ -333,6 +352,68 @@ describe('sites', () => {
       expect(body).toMatchObject({
         message: expect.any(String)
       })
+    })
+  })
+
+  describe('PUT /sites/:id/members/invitations', () => {
+    let site: (Site & { address: Address; members: UserSiteRelation[]; })
+    const siteAdmins: User[] = []
+    const description = 'Just a description with enough characters...'
+
+    beforeAll(async () => {
+      const { body: sitesBody } = await request(app.getHttpServer()).get('/sites')
+      const { id } = sitesBody.data[0]
+      site = (await app.get(PrismaService).site.findUnique({
+        where: {
+          id
+        },
+        include: {
+          address: true,
+          members: true
+        }
+      }))!
+
+      await Promise.all(site.members.map(async (member) => {
+        // @ts-expect-error
+        if (([SiteRole.ADMIN, SiteRole.REFEREE]).includes(member.role)) {
+          const user = (await app.get(PrismaService).user.findUnique({
+            where: {
+              id: member.userId
+            }
+          }))!
+
+          siteAdmins.push(user)
+        }
+      }))
+    })
+
+    it('should send the invitation request', async () => {
+      const { status } = await request(app.getHttpServer())
+        .put(`/sites/${site.id}/members/invitations`)
+        .send({ description })
+
+      expect(status).toBe(204)
+      expect(sendMailSpy).toHaveBeenCalledOnce()
+
+      const emailCall = sendMailSpy.mock.lastCall[0]
+      const email = emailCall.html as string
+      const bcc = emailCall.bcc as string[]
+
+      expect(email).toContain('Accéder au site')
+      expect(email).toContain(`${mockedUser.firstname} ${mockedUser.lastname}`)
+      expect(email).toContain(mockedUser.email)
+      expect(email).toContain(site.name)
+      expect(email).toContain(`/sites/${site.id}`)
+      expect(bcc).toIncludeAllMembers(siteAdmins.map((admin) => admin.email))
+    })
+
+    it('should not send the invitation request if already asked', async () => {
+      const { status } = await request(app.getHttpServer())
+        .put(`/sites/${site.id}/members/invitations`)
+        .send({ description })
+
+      expect(status).toBe(409)
+      expect(sendMailSpy).toHaveBeenCalledTimes(0)
     })
   })
 })

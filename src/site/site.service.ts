@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import { PrismaService } from '~/prisma/prisma.service'
-import { Prisma, Site } from '@prisma/client'
+import {
+  Prisma, Site, SiteRole, User
+} from '@prisma/client'
 import { CoordsParams } from '~/address/dto/CoordsQueryParams.dto'
 import { AddressService } from '~/address/address.service'
 
@@ -102,6 +104,7 @@ export class SiteService {
 
     const query = {
       include: {
+        members: true,
         address: true,
         dailySchedules: {
           include: {
@@ -132,6 +135,7 @@ export class SiteService {
     return this.prisma.site.findUnique({
       include: {
         address: true,
+        members: true,
         dailySchedules: {
           include: {
             openings: true
@@ -148,5 +152,20 @@ export class SiteService {
 
   remove(id: number): Prisma.Prisma__SiteClient<Site> {
     return this.prisma.site.delete({ where: { id } })
+  }
+
+  async getAdminsAndReferee(id: number): Promise<User[]> {
+    return this.prisma.user.findMany({
+      where: {
+        sites: {
+          some: {
+            siteId: id,
+            role: {
+              in: [SiteRole.ADMIN, SiteRole.REFEREE]
+            }
+          }
+        }
+      }
+    })
   }
 }

@@ -5,10 +5,18 @@ import Handlebars from 'handlebars'
 import mjml2html from 'mjml'
 import { Transporter, createTransport } from 'nodemailer'
 import SMTPTransport from 'nodemailer/lib/smtp-transport'
+import { WebAppLinksService } from '~/web-app-links/web-app-links.service'
+import { Site, User } from '@prisma/client'
 
 const PATH_TO_TEMPLATES = path.resolve(__dirname, './templates')
 const PATH_TO_PARTIALS = path.resolve(PATH_TO_TEMPLATES, './partials')
 
+interface AskSiteInvitationParams {
+  description: string
+  site: Site
+  pathToSite: string
+  user: User
+}
 interface GlobalParams {
   title: string
 }
@@ -22,6 +30,7 @@ interface ValidateEmailParams {
 interface TemplateParams {
   resetPassword: ChangePasswordParams & GlobalParams
   validateEmail: ValidateEmailParams & GlobalParams
+  askSiteInvitation: AskSiteInvitationParams & GlobalParams
 }
 type Template<T = TemplateParams> = {
   [key in keyof T ]: Handlebars.TemplateDelegate<T[key]>
@@ -33,7 +42,7 @@ export class MailerService {
 
   private transporter: Transporter
 
-  constructor() {
+  constructor(private readonly webAppLinksService: WebAppLinksService) {
     this.transporter = createTransport({
       host: process.env.EMAIL_HOST,
       port: Number(process.env.EMAIL_PORT),
@@ -46,20 +55,25 @@ export class MailerService {
   }
 
   sendEmail = <T extends keyof Template>(
-    to: string,
+    to: string | string[],
     subject: string,
     template: T,
     params: TemplateParams[T]
   ): Promise<SMTPTransport.SentMessageInfo> => {
-    const { html, errors } = this.renderEmail(template, params)
+    const { html, errors } = this.renderEmail(
+      template,
+      params
+    )
+    const useBcc = Array.isArray(to)
 
     if (errors.length > 0) {
       throw new Error(JSON.stringify(errors))
     }
 
     return this.transporter.sendMail({
-      from: 'compostage dans ma ville',
-      to,
+      from: process.env.EMAIL_USER,
+      to: useBcc ? undefined : to,
+      bcc: useBcc ? to : undefined,
       subject,
       html
     })
@@ -69,7 +83,11 @@ export class MailerService {
     template: T,
     params: TemplateParams[T]
   ): ReturnType<typeof mjml2html> {
-    return mjml2html(this.templates[template](params))
+    return mjml2html(this.templates[template]({
+      ...params,
+      logo: this.webAppLinksService.image('small-icon-with-text.png'),
+      pathToApp: this.webAppLinksService.home()
+    }))
   }
 
   private loadTemplates(): void {
@@ -78,7 +96,8 @@ export class MailerService {
 
     const compiledTemplates: Template = {
       resetPassword: Handlebars.compile(templates['reset-password']),
-      validateEmail: Handlebars.compile(templates['validate-email'])
+      validateEmail: Handlebars.compile(templates['validate-email']),
+      askSiteInvitation: Handlebars.compile(templates['ask-site-invitation'])
     }
 
     this.templates = compiledTemplates

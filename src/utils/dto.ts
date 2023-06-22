@@ -1,5 +1,7 @@
 import { plainToInstance as plainToClassTransformer } from 'class-transformer'
 
+export const DESCRIPTION_MAX_LENGTH = 800
+
 export const plainToInstance: typeof plainToClassTransformer = (cls, plain, opts) => {
   return plainToClassTransformer(
     cls,

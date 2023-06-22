@@ -1,9 +1,11 @@
 import { ApiProperty, getSchemaPath } from '@nestjs/swagger'
 import { Site, SiteType } from '@prisma/client'
-import { Expose } from 'class-transformer'
+import { Expose, Type } from 'class-transformer'
+import { IsArray, ValidateNested } from 'class-validator'
 import { GetAddressDto } from '~/address/dto/GetAddress.dto'
 import { GetScheduleDto } from '~/dailySchedule/dto/getSchedule.dto'
 import { GetOpeningDto } from '~/opening/dto/GetOpening.dto'
+import { SiteMembersDto } from './SiteMember.dto'
 
 export class GetSiteDto implements Omit<Site, 'organizationId' | 'addressId'> {
   @Expose()
@@ -103,4 +105,11 @@ export class GetSiteDto implements Omit<Site, 'organizationId' | 'addressId'> {
     example: 5000
   })
     treatedWaste: number | null
+
+  @ApiProperty()
+  @Expose()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => SiteMembersDto)
+    members: SiteMembersDto[]
 }

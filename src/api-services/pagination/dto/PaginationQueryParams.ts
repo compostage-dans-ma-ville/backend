@@ -5,7 +5,7 @@ import { IsNumber, IsOptional, Min } from 'class-validator'
 export class PaginationQueryParams {
   @ApiPropertyOptional({
     description: 'The requested page of the list of existing resources',
-    example: '1'
+    default: '1'
   })
   @IsOptional()
   @IsNumber()
@@ -15,7 +15,7 @@ export class PaginationQueryParams {
 
   @ApiPropertyOptional({
     description: 'The amount of items on the page',
-    example: '20'
+    default: '20'
   })
   @IsOptional()
   @IsNumber()

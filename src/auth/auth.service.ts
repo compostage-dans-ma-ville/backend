@@ -7,6 +7,8 @@ import { LoginUserDto } from '~/user/dto/login.dto'
 import { LoginResponseDto } from './dto/login-response.dto'
 import { MailerService } from '~/mailer/mailer.service'
 import { WebAppLinksService } from '~/web-app-links/web-app-links.service'
+import { plainToInstance } from '~/utils/dto'
+import { MeDto } from '~/user/dto/Me.dto'
 
 export interface RegistrationStatusFailed {
     success: false;
@@ -50,7 +52,10 @@ export class AuthService {
 
     return {
       token,
-      data: user
+      data: plainToInstance(
+        MeDto,
+        user
+      )
     }
   }
 
@@ -111,6 +116,10 @@ export class AuthService {
   async resetPassword(token: string, password: string): Promise<void> {
     // @ts-expect-error: userId should be in the token payload
     const userId = this.jwtService.decode(token)?.userId
+
+    if (!userId) {
+      throw this.getInvalidPasswordTokenException()
+    }
 
     const user = await this.userService.find({ id: userId })
     if (!user) {
