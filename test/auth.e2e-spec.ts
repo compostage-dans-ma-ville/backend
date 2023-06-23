@@ -3,14 +3,13 @@ import { Test, TestingModule } from '@nestjs/testing'
 import { ExecutionContext, INestApplication } from '@nestjs/common'
 import * as cheerio from 'cheerio'
 
-import { faker } from '@faker-js/faker'
 import { AuthModule } from '~/auth/auth.module'
 import { WebAppLinksService } from '~/web-app-links/web-app-links.service'
 import { MailerModule } from '~/mailer/mailer.module'
 import { UserModule } from '~/user/user.module'
 import { JwtAuthGuard } from '~/auth/jwt-auth.guard'
 import { AuthenticatedUserType } from '~/user/user.service'
-import { authenticatedUser } from './test-utils'
+import { authenticatedUser, getUserDataFactory } from './test-utils'
 import { setMainConfig } from '~/main.config'
 
 const sendMailSpy = jest.fn()
@@ -19,16 +18,6 @@ jest.mock('nodemailer', () => ({
     sendMail: sendMailSpy
   })
 }))
-
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-const getUserDataFactory = () => {
-  return {
-    firstname: faker.name.firstName(),
-    lastname: faker.name.lastName(),
-    email: faker.internet.email(),
-    password: 'testTest1231*'
-  }
-}
 
 describe('auth', () => {
   let app: INestApplication
@@ -73,8 +62,11 @@ describe('auth', () => {
           firstname: expect.any(String),
           lastname: expect.any(String),
           email: expect.any(String),
+          createdAt: expect.any(String),
+          updatedAt: expect.any(String),
           isEmailConfirmed: false,
-          role: 'USER'
+          role: 'USER',
+          description: expect.toSatisfy(e => typeof e === 'string' || e === null)
         }
       })
       expect(sendMailSpy).toHaveBeenCalledOnceWith({
@@ -111,6 +103,7 @@ describe('auth', () => {
       expect(body).toEqual({
         token: expect.any(String),
         data: expect.objectContaining({
+          id: expect.any(Number),
           firstname: expect.any(String),
           lastname: expect.any(String),
           email: expect.any(String)

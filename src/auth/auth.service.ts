@@ -7,6 +7,8 @@ import { LoginUserDto } from '~/user/dto/login.dto'
 import { LoginResponseDto } from './dto/login-response.dto'
 import { MailerService } from '~/mailer/mailer.service'
 import { WebAppLinksService } from '~/web-app-links/web-app-links.service'
+import { plainToInstance } from '~/utils/dto'
+import { MeDto } from '~/user/dto/Me.dto'
 
 export interface RegistrationStatusFailed {
     success: false;
@@ -50,7 +52,10 @@ export class AuthService {
 
     return {
       token,
-      data: user
+      data: plainToInstance(
+        MeDto,
+        user
+      )
     }
   }
 

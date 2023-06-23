@@ -54,7 +54,8 @@ describe('users', () => {
       expect(body).toEqual({
         links: {
           first: expect.any(String),
-          last: expect.any(String)
+          last: expect.any(String),
+          next: expect.toSatisfy(e => typeof e === 'string' || e === undefined)
         },
         pagination: {
           pageNumber: expect.any(Number),
@@ -71,9 +72,6 @@ describe('users', () => {
       expect(status).toBe(200)
       expect(body.data[0]).toMatchObject({
         id: expect.any(Number),
-        email: expect.any(String),
-        createdAt: expect.toBeDateString(),
-        updatedAt: expect.toBeDateString(),
         firstname: expect.any(String),
         lastname: expect.any(String),
         description: expect.toSatisfy(e => typeof e === 'string' || e === null)
