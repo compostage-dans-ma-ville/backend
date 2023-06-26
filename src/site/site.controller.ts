@@ -2,7 +2,11 @@
 import {
   Controller, Get, Param, Delete,
   Query, Req, ParseIntPipe, UseInterceptors,
-  Body, Post, Put, UseGuards, NotFoundException, BadRequestException
+  Body, Post, Put, UseGuards, NotFoundException, BadRequestException,
+  ConflictException,
+  HttpCode,
+  HttpStatus,
+  InternalServerErrorException
 } from '@nestjs/common'
 import type { Request } from 'express'
 import { SiteService } from './site.service'
@@ -20,7 +24,8 @@ import {
   ApiTags,
   ApiSecurity,
   ApiUnauthorizedResponse,
-  ApiCreatedResponse
+  ApiCreatedResponse,
+  ApiConflictResponse
 } from '@nestjs/swagger'
 import { ApiPaginatedResponse } from '~/api-services/pagination/ApiPaginationResponse'
 import { GetSiteDto } from './dto/GetSite.dto'
@@ -35,10 +40,11 @@ import { AbilityService, UserAction } from '~/ability/ability.service'
 import { CheckAbility } from '~/ability/ability.decorator'
 import { AuthenticatedUser } from '~/auth/authenticatedUser.decorator'
 import { ForbiddenError, subject } from '@casl/ability'
-import { AuthenticatedUserType } from '~/user/user.service'
+import { AuthenticatedUserType, UserService } from '~/user/user.service'
 import { JwtAuthGuard } from '~/auth/jwt-auth.guard'
 import { isAllDefined, isAllUndefined } from '~/utils/isAllDefinedOrUndefined'
 import { GetSitesQueryParams } from './dto/GetSitesQueryParams.dto'
+import { UserSiteInvitationBodyDto } from './dto/UserSiteInvitationBody.dto'
 
 @Controller('sites')
 @ApiTags('Sites')
@@ -48,9 +54,11 @@ export class SiteController {
     private readonly siteService: SiteService,
     private readonly scheduleService: DailyScheduleService,
     private readonly abilityService: AbilityService,
+    private readonly userService: UserService,
   ) {}
 
   @Post()
+  @ApiSecurity('access-token')
   @CheckAbility({ action: UserAction.Create, subject: 'site' })
   @ApiCreatedResponse({ description: 'The site is successfully created.', type: GetSiteDto })
   async create(
@@ -195,5 +203,39 @@ export class SiteController {
     const ability = this.abilityService.createAbility(user)
     ForbiddenError.from(ability).throwUnlessCan(UserAction.Delete, subject('site', site))
     return this.siteService.remove(id)
+  }
+
+  @Put(':id/members/invitations')
+  @ApiSecurity('access-token')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiUnauthorizedResponse({ description: 'You need to provide a valid access-token.' })
+  @ApiNotFoundResponse({ description: 'The site is not found.' })
+  @ApiConflictResponse({ description: 'The user is already a member or has already asked for invitation less than 7 days ago.' })
+  async askForInvitation(
+    @Param('id', ParseIntPipe) id: number,
+    @AuthenticatedUser() user: AuthenticatedUserType,
+    @Body() userInvitation: UserSiteInvitationBodyDto
+  ): Promise<void> {
+    const site = await this.siteService.findOne(id)
+    const { description } = userInvitation
+
+    if (!site) throw new NotFoundException('The site is not found.')
+
+    if (!(await this.userService.canSendInvitationToSite(user.id, site.id))) {
+      throw new ConflictException('The user is already a member or has already asked for invitation less than 7 days ago.')
+    }
+
+    try {
+      const admins = await this.siteService.getAdminsAndReferee(site.id)
+      await this.userService.sendInvitationToSite(
+        user,
+        site,
+        description,
+        admins.map(({ email }) => email)
+      )
+    } catch (error) {
+      throw new InternalServerErrorException()
+    }
   }
 }

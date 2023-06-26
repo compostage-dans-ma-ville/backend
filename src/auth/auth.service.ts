@@ -117,6 +117,10 @@ export class AuthService {
     // @ts-expect-error: userId should be in the token payload
     const userId = this.jwtService.decode(token)?.userId
 
+    if (!userId) {
+      throw this.getInvalidPasswordTokenException()
+    }
+
     const user = await this.userService.find({ id: userId })
     if (!user) {
       throw this.getInvalidPasswordTokenException()
