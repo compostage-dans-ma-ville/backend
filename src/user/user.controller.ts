@@ -6,7 +6,8 @@ import {
   Query,
   Req,
   UseInterceptors,
-  UseGuards
+  UseGuards,
+  NotFoundException
 } from '@nestjs/common'
 import type { Request } from 'express'
 import {
@@ -28,6 +29,8 @@ import { GetUserDto } from './dto/GetUser.dto'
 import { AuthenticatedUser } from '~/auth/authenticatedUser.decorator'
 import { JwtAuthGuard } from '~/auth/jwt-auth.guard'
 import { MeDto } from './dto/Me.dto'
+import { UserSiteExtendedDto } from './dto/UserSiteExtended.dto'
+import { PaginatedData } from '~/api-services/pagination/dto/PaginationData'
 
 @ApiTags('Users')
 @Controller('users')
@@ -92,5 +95,30 @@ export class UserController {
       GetUserDto,
       user
     )
+  }
+
+  @Get(':id/sites')
+  @ApiPaginatedResponse(UserSiteExtendedDto)
+  @ApiNotFoundResponse({ description: 'The user is not found.' })
+  async findSites(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() req: Request,
+    @Query() query: PaginationQueryParams,
+  ): Promise<PaginatedData<UserSiteExtendedDto> | undefined> {
+    const { page, items } = query
+    const user = await this.userService.findById(id)
+
+    if (!user) throw new NotFoundException('The user is not found.')
+
+    const sites = await this.userService.getSites(user, query)
+
+    const formattedSites = sites.map(s => plainToInstance(UserSiteExtendedDto, s))
+
+    return createPaginationData<UserSiteExtendedDto>({
+      url: getEndpoint(req),
+      items: formattedSites,
+      queryOptions: { items, page },
+      totalItemCount: formattedSites.length
+    })
   }
 }

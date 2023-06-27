@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
 import {
-  User, Prisma, UserRole, Site
+  User, Prisma, UserRole, Site, UserSiteRelation
 } from '@prisma/client'
 import { compare, hash } from 'bcrypt'
 import { PrismaService } from '~/prisma/prisma.service'
@@ -9,6 +9,7 @@ import { LoginUserDto } from './dto/login.dto'
 import dayjs from 'dayjs'
 import { MailerService } from '~/mailer/mailer.service'
 import { WebAppLinksService } from '~/web-app-links/web-app-links.service'
+import { PaginationQueryParams } from '~/api-services/pagination/dto/PaginationQueryParams'
 
 export type AuthenticatedUserType = Prisma.UserGetPayload<{
   include: { sites: true, organizations: true }
@@ -209,5 +210,30 @@ export class UserService {
         }
       })
     }
+  }
+
+  async getSites(user: User, pagination: PaginationQueryParams): Promise<(UserSiteRelation & {
+    site: Site;
+})[]> {
+    const { page, items } = pagination
+
+    const storedUser = await this.prisma.user.findUnique({
+      where: { id: user.id },
+      include: {
+        sites: {
+          skip: (page - 1) * items,
+          take: items,
+          include: {
+            site: {
+              include: {
+                address: true
+              }
+            }
+          }
+        }
+      }
+    })
+
+    return storedUser!.sites
   }
 }

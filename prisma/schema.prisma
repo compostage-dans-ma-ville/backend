@@ -149,7 +149,7 @@ model UserSiteRelation {
   site   Site @relation(fields: [siteId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   siteId Int
 
-  @@id([userId, siteId])
+  @@unique([userId, siteId])
 }
 
 model DailySchedule {

@@ -106,7 +106,7 @@ Table UserSiteRelation {
   siteId Int [not null]
 
   indexes {
-    (userId, siteId) [pk]
+    (userId, siteId) [unique]
   }
 }
 
