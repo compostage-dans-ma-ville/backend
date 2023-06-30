@@ -1,0 +1,36 @@
+{{#> page}}
+  <mj-section>
+    <mj-column>
+      <mj-text line-height="30px">
+        <h1>Demande d'invitation pour collaborer sur le site "{{site.name}}"</h1>
+      </mj-text>
+      <mj-text>
+        <p>L'utilisateur suivant souhaiterais rejoindre les membres du site <a href="{{pathToSite}}" target="_blank">{{site.name}}</a>.</p>
+      </mj-text>
+    </mj-column>
+  </mj-section>
+
+  <mj-section padding="0 20px">
+    <mj-column border="2px solid #000000" >
+      <mj-text><b>Nom:</b> {{user.firstname}} {{user.lastname}}</mj-text>
+      <mj-divider border-width="1px" border-style="dashed" border-color="black" padding="0 20px" />
+      <mj-text><b>Email:</b> {{user.email}}</mj-text>
+      <mj-divider border-width="1px" border-style="dashed" border-color="black" padding="0 20px" />
+      <mj-text><b>Description:</b> <em>{{description}}</em> </mj-text>
+    </mj-column>
+  </mj-section>
+
+  <mj-section>
+    <mj-column>
+      <mj-text>
+        <p>Vous pouvez inviter cet utilisateur depuis la section <b>Notre équipe</b> de la page du site à l'aide de l'email "<b>{{user.email}}</b>" de l'utilisateur.</p>
+      </mj-text>
+    </mj-column>
+  </mj-section>
+
+  <mj-section>
+    <mj-column>
+      <mj-button href="{{pathToSite}}">Accéder au site</mj-button>
+    </mj-column>
+  </mj-section>
+{{/page}}

@@ -129,7 +129,7 @@ describe('auth', () => {
 
       const $email = cheerio.load(sendMailSpy.mock.lastCall[0].html)
 
-      const validationLink = $email('a').attr('href')!
+      const validationLink = $email('a:contains("Valider mon compte")').attr('href')!
       const token = validationLink.split('/').slice(-1).pop()
 
       const { status } = await request(app.getHttpServer()).post(`/auth/activate/${token}`).send()
@@ -200,15 +200,16 @@ describe('auth', () => {
 
       const $email = cheerio.load(sendMailSpy.mock.lastCall[0].html)
 
-      const validationLink = $email('a').attr('href')!
+      const validationLink = $email('a:contains("Modifier mon mot de passe")').attr('href')!
       const token = validationLink.split('/').slice(-1).pop()
 
       const newPassword = 'AnewPassw0rd!'
-      const { status } = await request(app.getHttpServer())
+      const { status, body } = await request(app.getHttpServer())
         .post('/auth/reset-password')
         .send({ token, password: newPassword })
 
       expect(status).toBe(204)
+      expect(body).toStrictEqual({})
 
       const { status: getUserStatus } = await request(app.getHttpServer())
         .post('/auth/login')

@@ -17,6 +17,7 @@ Table User {
   role UserRole [not null, default: 'USER']
   organizations UserOrganizationRelation [not null]
   sites UserSiteRelation [not null]
+  siteInvitations MemberSiteInvitation [not null]
 }
 
 Table Site {
@@ -37,6 +38,7 @@ Table Site {
   organization Organization
   organizationId Int
   members UserSiteRelation [not null]
+  memberInvitations MemberSiteInvitation [not null]
 }
 
 Table ImageSiteRelation {
@@ -131,6 +133,18 @@ Table Opening {
   }
 }
 
+Table MemberSiteInvitation {
+  user User [not null]
+  userId Int [not null]
+  site Site [not null]
+  siteId Int [not null]
+  updatedAt DateTime [not null]
+
+  indexes {
+    (userId, siteId) [pk]
+  }
+}
+
 Enum UserRole {
   USER
   OWNER
@@ -172,10 +186,14 @@ Ref: UserOrganizationRelation.userId > User.id [delete: Cascade]
 
 Ref: UserOrganizationRelation.organizationId > Organization.id [delete: Cascade]
 
-Ref: UserSiteRelation.userId > User.id
+Ref: UserSiteRelation.userId > User.id [delete: Cascade]
 
-Ref: UserSiteRelation.siteId > Site.id
+Ref: UserSiteRelation.siteId > Site.id [delete: Cascade]
 
 Ref: DailySchedule.siteId > Site.id [delete: Cascade]
 
 Ref: Opening.(DailyScheduleSiteId, DailyScheduleDayOfWeek) > DailySchedule.(siteId, dayOfWeek) [delete: Cascade]
+
+Ref: MemberSiteInvitation.userId > User.id [delete: Cascade]
+
+Ref: MemberSiteInvitation.siteId > Site.id [delete: Cascade]

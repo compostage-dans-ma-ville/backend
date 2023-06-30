@@ -1,9 +1,14 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
-import { User, Prisma, UserRole } from '@prisma/client'
+import {
+  User, Prisma, UserRole, Site
+} from '@prisma/client'
 import { compare, hash } from 'bcrypt'
 import { PrismaService } from '~/prisma/prisma.service'
 import { CreateUserDto } from './dto/create.dto'
 import { LoginUserDto } from './dto/login.dto'
+import dayjs from 'dayjs'
+import { MailerService } from '~/mailer/mailer.service'
+import { WebAppLinksService } from '~/web-app-links/web-app-links.service'
 
 export type AuthenticatedUserType = Prisma.UserGetPayload<{
   include: { sites: true, organizations: true }
@@ -11,7 +16,11 @@ export type AuthenticatedUserType = Prisma.UserGetPayload<{
 
 @Injectable()
 export class UserService {
-  constructor(private prisma: PrismaService) { }
+  constructor(
+    private prisma: PrismaService,
+    private mailerService: MailerService,
+    private webAppLinksService: WebAppLinksService
+  ) { }
 
   async find(
     userWhereUniqueInput: Prisma.UserWhereUniqueInput,
@@ -132,5 +141,73 @@ export class UserService {
         isEmailConfirmed: true
       }
     })
+  }
+
+  async canSendInvitationToSite(userId: number, siteId: number): Promise<boolean> {
+    const user = await this.findById(userId)
+    const isAlreadyMember = user?.sites.some(({ siteId: id }) => id === siteId)
+
+    if (isAlreadyMember) return false
+
+    const invitation = await this.prisma.memberSiteInvitation.findFirst({
+      where: {
+        userId,
+        siteId
+      }
+    })
+
+    const now = Date.now()
+
+    if (!invitation) return true
+
+    const askedLessThan7daysAgo = dayjs(now).diff(invitation.updatedAt, 'days') < 7
+    return !askedLessThan7daysAgo
+  }
+
+  async sendInvitationToSite(
+    user: User,
+    site: Site,
+    description: string,
+    to: string[]
+  ): Promise<void> {
+    await this.mailerService.sendEmail(
+      to,
+      `Demande d'invitation: ${site.name}`,
+      'askSiteInvitation',
+      {
+        title: `Demande d'invitation pour collaborer sur le site "${site.name}"`,
+        user,
+        site,
+        description,
+        pathToSite: this.webAppLinksService.site(site.id)
+      }
+    )
+
+    const invitation = await this.prisma.memberSiteInvitation.findFirst({
+      where: {
+        userId: user.id,
+        siteId: site.id
+      }
+    })
+
+    if (invitation) {
+      await this.prisma.memberSiteInvitation.update({
+        where: {
+          userId_siteId: {
+            userId: user.id,
+            siteId: site.id
+          }
+        },
+        data: { updatedAt: new Date() }
+      })
+    } else {
+      await this.prisma.memberSiteInvitation.create({
+        data: {
+          userId: user.id,
+          siteId: site.id,
+          updatedAt: new Date()
+        }
+      })
+    }
   }
 }
