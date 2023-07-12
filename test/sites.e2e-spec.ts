@@ -18,6 +18,7 @@ import {
   Site, SiteRole, SiteType, User, UserSiteRelation
 } from '@prisma/client'
 import { PrismaService } from '~/prisma/prisma.service'
+import { faker } from '@faker-js/faker'
 
 const sendMailSpy = jest.fn()
 jest.mock('nodemailer', () => ({
@@ -93,7 +94,7 @@ describe('sites', () => {
         id: expect.any(Number),
         createdAt: expect.any(String),
         updatedAt: expect.any(String),
-        launchDate: null,
+        launchDate: expect.toSatisfy((x) => x === null || typeof x === 'string'),
         name: expect.any(String),
         description: expect.any(String),
         accessConditions: expect.toSatisfy(e => e === null || typeof e === 'string'),
@@ -114,6 +115,7 @@ describe('sites', () => {
               || daily.length === 0
               || daily.every((opening: GetOpeningDto) => opening.open && opening.close)))),
         treatedWaste: expect.toSatisfy((x) => x === null || Number.isInteger(x)),
+        website: expect.toSatisfy((x) => x === null || typeof x === 'string'),
         members: expect.toBeArray()
       })
     })
@@ -222,6 +224,7 @@ describe('sites', () => {
           null
         ],
         treatedWaste: null,
+        website: null,
         updatedAt: expect.any(String)
       })
 
@@ -240,7 +243,7 @@ describe('sites', () => {
         id,
         createdAt: expect.any(String),
         updatedAt: expect.any(String),
-        launchDate: null,
+        launchDate: expect.toSatisfy(e => e === null || typeof e === 'string'),
         name: expect.any(String),
         description: expect.any(String),
         accessConditions: expect.toSatisfy(e => e === null || typeof e === 'string'),
@@ -261,7 +264,8 @@ describe('sites', () => {
               || daily.length === 0
               || daily.every((opening: GetOpeningDto) => opening.open && opening.close)))),
         treatedWaste: expect.toSatisfy((x) => x === null || Number.isInteger(x)),
-        members: expect.toBeArray()
+        members: expect.toBeArray(),
+        website: expect.toSatisfy(e => e === null || typeof e === 'string')
       })
     })
   })
@@ -287,7 +291,8 @@ describe('sites', () => {
           city: 'Cenon',
           latitude: 44.8578807,
           longitude: -0.5343909
-        }
+        },
+        website: faker.internet.url()
       }
       const req = await request(app.getHttpServer())
         .put(`/sites/${original.id}`)
@@ -315,7 +320,8 @@ describe('sites', () => {
         name: 'A new site',
         treatedWaste: 3000,
         organizationId: null,
-        updatedAt: expect.any(String)
+        updatedAt: expect.any(String),
+        website: payload.website
       })
     })
   })

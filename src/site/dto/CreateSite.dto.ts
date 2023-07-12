@@ -1,70 +1,19 @@
-import { SiteType } from '@prisma/client'
-import { ApiProperty, getSchemaPath } from '@nestjs/swagger'
+import { ApiProperty, OmitType, getSchemaPath } from '@nestjs/swagger'
 import { Expose, Type } from 'class-transformer'
 import { CreateAddressDto } from '~/address/dto/CreateAddress.dto'
 import { CreateOpeningDto } from '~/opening/dto/CreateOpening.dto'
 import { CreateScheduleDto } from '~/dailySchedule/dto/createSchedule.dto'
 import {
   IsArray,
-  IsBoolean,
-  IsDateString,
-  IsNumber,
   IsOptional,
-  IsString,
   ValidateNested
 } from 'class-validator'
+import { GetSiteDto } from './GetSite.dto'
 
-export class CreateSiteDto {
-  @Expose()
-  @IsDateString()
-  @ApiProperty({
-    description: 'The date of commissioning.',
-    example: new Date()
-  })
-    launchDate: Date
-
-  @Expose()
-  @IsString()
-  @ApiProperty({
-    description: 'Human friendly name of this site.',
-    example: 'Le Poulor\'nay'
-  })
-    name: string
-
-  @Expose()
-  @IsString()
-  @IsOptional()
-  @ApiProperty({
-    description: 'A basic summary of this site.'
-  })
-    description?: string
-
-  @Expose()
-  @IsBoolean()
-  @ApiProperty({
-    description: 'Describe if the site is available for general public.',
-    example: true
-  })
-    isPublic: boolean
-
-  @Expose()
-  @IsString()
-  @IsOptional()
-  @ApiProperty({
-    description: 'What site it is.',
-    enum: SiteType
-  })
-    type: SiteType
-
-  @Expose()
-  @IsString()
-  @IsOptional()
-  @ApiProperty({
-    description: 'Describe if the site is available for general public.',
-    example: 'You must live at the residence les mimosas to be able to use our composters. This one is locked by a padlock. Ask our janitor for the code.'
-  })
-    accessConditions?: string
-
+export class CreateSiteDto extends OmitType(
+  GetSiteDto,
+  ['id', 'createdAt', 'updatedAt', 'address', 'schedule', 'members'] as const
+) {
   @Expose()
   @ValidateNested()
   @Type(() => CreateAddressDto)
@@ -90,14 +39,4 @@ export class CreateSiteDto {
     }
   })
     schedule?: CreateScheduleDto['schedules']
-
-    @Expose()
-    @IsNumber()
-    @IsOptional()
-    @ApiProperty({
-      description: 'Average quantity of compost produced after each collection',
-      nullable: true,
-      example: 5000
-    })
-      treatedWaste?: number
 }

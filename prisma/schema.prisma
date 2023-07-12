@@ -58,6 +58,7 @@ model Site {
   treatedWaste      Int?
   description       String?
   accessConditions  String?
+  website           String?
   images            ImageSiteRelation[]
   dailySchedules    DailySchedule[]
   address           Address                @relation(fields: [addressId], references: [id], onUpdate: Cascade, onDelete: Cascade)

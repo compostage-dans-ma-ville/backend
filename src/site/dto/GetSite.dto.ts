@@ -1,13 +1,22 @@
 import { ApiProperty, getSchemaPath } from '@nestjs/swagger'
-import { Site, SiteType } from '@prisma/client'
+import { SiteType } from '@prisma/client'
 import { Expose, Type } from 'class-transformer'
-import { IsArray, ValidateNested } from 'class-validator'
+import {
+  IsArray,
+  IsBoolean,
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  IsString,
+  IsUrl,
+  ValidateNested
+} from 'class-validator'
 import { GetAddressDto } from '~/address/dto/GetAddress.dto'
 import { GetScheduleDto } from '~/dailySchedule/dto/getSchedule.dto'
 import { GetOpeningDto } from '~/opening/dto/GetOpening.dto'
 import { SiteMembersDto } from './SiteMember.dto'
 
-export class GetSiteDto implements Omit<Site, 'organizationId' | 'addressId'> {
+export class GetSiteDto {
   @Expose()
   @ApiProperty({
     description: 'Unique identifier of a site.',
@@ -16,39 +25,23 @@ export class GetSiteDto implements Omit<Site, 'organizationId' | 'addressId'> {
     id: number
 
   @Expose()
-  @ApiProperty({
-    description: 'Date of creation of this site.',
-    example: new Date()
-  })
-    createdAt: Date
-
-  @Expose()
-  @ApiProperty({
-    description: 'Last update date of this site.',
-    example: new Date()
-  })
-    updatedAt: Date
-
-  @Expose()
+  @IsString()
+  @IsOptional()
   @ApiProperty({
     description: 'The date of commissioning.',
     example: new Date()
   })
-    launchDate: Date
+    launchDate?: Date
 
   @Expose()
+  @IsString()
   @ApiProperty({
     description: 'Human friendly name of this site.'
   })
     name: string
 
   @Expose()
-  @ApiProperty({
-    description: 'A basic summary of this site.'
-  })
-    description: string | null
-
-  @Expose()
+  @IsBoolean()
   @ApiProperty({
     description: 'Describe if the site is available for general public.',
     example: true
@@ -56,18 +49,12 @@ export class GetSiteDto implements Omit<Site, 'organizationId' | 'addressId'> {
     isPublic: boolean
 
   @Expose()
+  @IsEnum(SiteType)
   @ApiProperty({
     description: 'What site it is.',
     enum: SiteType
   })
     type: SiteType
-
-  @Expose()
-  @ApiProperty({
-    description: 'Describe if the site is available for general public.',
-    example: 'You must live at the residence les mimosas to be able to use our composters. This one is locked by a padlock. Ask our janitor for the code.'
-  })
-    accessConditions: string
 
   @Expose()
   @ApiProperty({
@@ -98,18 +85,60 @@ export class GetSiteDto implements Omit<Site, 'organizationId' | 'addressId'> {
   })
     schedule: GetScheduleDto['schedules']
 
-  @Expose()
-  @ApiProperty({
-    description: 'Average quantity of compost produced after each collection',
-    nullable: true,
-    example: 5000
-  })
-    treatedWaste: number | null
-
   @ApiProperty()
   @Expose()
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => SiteMembersDto)
     members: SiteMembersDto[]
+
+  @Expose()
+  @IsString()
+  @IsOptional()
+  @ApiProperty({
+    description: 'A basic summary of this site.'
+  })
+    description?: string
+
+  @Expose()
+  @IsString()
+  @IsOptional()
+  @ApiProperty({
+    description: 'Describe if the site is available for general public.',
+    example: 'You must live at the residence les mimosas to be able to use our composters. This one is locked by a padlock. Ask our janitor for the code.'
+  })
+    accessConditions?: string
+
+  @Expose()
+  @IsUrl()
+  @IsOptional()
+  @ApiProperty({
+    description: 'Link to a site website',
+    nullable: true
+  })
+    website?: string
+
+  @Expose()
+  @IsNumber()
+  @IsOptional()
+  @ApiProperty({
+    description: 'Average quantity of compost produced after each collection',
+    nullable: true,
+    example: 5000
+  })
+    treatedWaste?: number
+
+  @Expose()
+  @ApiProperty({
+    description: 'Date of creation of this site.',
+    example: new Date()
+  })
+    createdAt: Date
+
+  @Expose()
+  @ApiProperty({
+    description: 'Last update date of this site.',
+    example: new Date()
+  })
+    updatedAt: Date
 }

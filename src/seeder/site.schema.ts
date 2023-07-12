@@ -48,4 +48,11 @@ export class SiteSchema implements Site {
       : null
   )
     treatedWaste: number | null
+
+  @Factory(
+    faker => Math.random() > 0.25
+      ? faker?.internet.url()
+      : null
+  )
+    website: string | null
 }
