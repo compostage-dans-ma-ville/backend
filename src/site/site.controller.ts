@@ -45,6 +45,7 @@ import { JwtAuthGuard } from '~/auth/jwt-auth.guard'
 import { isAllDefined, isAllUndefined } from '~/utils/isAllDefinedOrUndefined'
 import { GetSitesQueryParams } from './dto/GetSitesQueryParams.dto'
 import { UserSiteInvitationBodyDto } from './dto/UserSiteInvitationBody.dto'
+import { AddMemberBodyDto } from './dto/AddMemberBody.dto'
 
 @Controller('sites')
 @ApiTags('Sites')
@@ -203,6 +204,27 @@ export class SiteController {
     const ability = this.abilityService.createAbility(user)
     ForbiddenError.from(ability).throwUnlessCan(UserAction.Delete, subject('site', site))
     return this.siteService.remove(id)
+  }
+
+  @Put(':id/members')
+  @UseGuards(JwtAuthGuard)
+  @ApiSecurity('access-token')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiUnauthorizedResponse({ description: 'You need to provide a valid access-token.' })
+  @ApiForbiddenResponse({ description: 'You are not an administrator of the site.' })
+  @ApiNotFoundResponse({ description: 'The site is not found.' })
+  @ApiConflictResponse({ description: 'User with that email is already member of the site.' })
+  async addMember(
+    @Param('id', ParseIntPipe) id: number,
+    @AuthenticatedUser() user: AuthenticatedUserType,
+    @Body() body: AddMemberBodyDto
+  ): Promise<void> {
+    const site = await this.siteService.findOne(id)
+    if (!site) throw new NotFoundException('The site is not found.')
+
+    const ability = this.abilityService.createAbility(user)
+    ForbiddenError.from(ability).throwUnlessCan(UserAction.Update, subject('site', site))
+    return this.siteService.addMember(site, body.email, body.role)
   }
 
   @Put(':id/members/invitations')

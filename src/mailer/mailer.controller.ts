@@ -64,4 +64,25 @@ export class MailerController {
         }
       ).html)
   }
+
+  @Get('invite-site-member')
+  inviteSiteMember(@Res() res: Response) {
+    return res
+      .status(HttpStatus.OK)
+      .send(this.mailerService.renderEmail(
+        'inviteSiteMember',
+        {
+          title: 'Invitation',
+          site: {
+            id: 42,
+            name: 'Site de compostage de Metz'
+          } as Site,
+          email: 'justauser@gmail.com',
+          isAlreadyUser: false,
+          pathToSite: this.webAppLinksService.site(42),
+          redirectLink: 'test',
+          registerLink: this.webAppLinksService.register()
+        }
+      ).html)
+  }
 }

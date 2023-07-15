@@ -1,10 +1,13 @@
-import { Injectable } from '@nestjs/common'
+import { ConflictException, Injectable } from '@nestjs/common'
 import { PrismaService } from '~/prisma/prisma.service'
 import {
-  Prisma, Site, SiteRole, User
+  Prisma, Site, SiteRole, User, UserSiteRelation
 } from '@prisma/client'
 import { CoordsParams } from '~/address/dto/CoordsQueryParams.dto'
 import { AddressService } from '~/address/address.service'
+import { JwtService } from '@nestjs/jwt'
+import { MailerService } from '~/mailer/mailer.service'
+import { WebAppLinksService } from '~/web-app-links/web-app-links.service'
 
 export type SiteCollectionFilter = {
   coordinates?: CoordsParams
@@ -16,6 +19,9 @@ type ScheduleOption = (({ open: number, close: number })[] | null)[]
 export class SiteService {
   constructor(
     private readonly prisma: PrismaService,
+    private readonly jwtService: JwtService,
+    private readonly mailerService: MailerService,
+    private readonly webAppLinksService: WebAppLinksService
   ) {}
 
   async create(createSiteDto: Prisma.SiteCreateInput, options: { schedule?: ScheduleOption }) {
@@ -167,5 +173,45 @@ export class SiteService {
         }
       }
     })
+  }
+
+  async addMember(
+    site: Site & {members: UserSiteRelation[]},
+    userEmail: string,
+    role: SiteRole
+  ): Promise<void> {
+    const user = await this.prisma.user.findFirst({
+      where: { email: userEmail }
+    })
+
+    if (user) {
+      const isUserAlreadyMember = site.members.some(({ userId }) => userId === user.id)
+      if (isUserAlreadyMember) throw new ConflictException()
+    }
+
+    const token = this.jwtService.sign(
+      {
+        targetSiteId: site.id,
+        email: userEmail,
+        role
+      },
+      { expiresIn: '5d' }
+    )
+
+    const mailTitle = 'Invitation à rejoindre les membres!'
+    await this.mailerService.sendEmail(
+      userEmail,
+      mailTitle,
+      'inviteSiteMember',
+      {
+        title: mailTitle,
+        site,
+        email: userEmail,
+        pathToSite: this.webAppLinksService.site(site.id),
+        isAlreadyUser: user !== null,
+        redirectLink: this.webAppLinksService.siteWithInvitation(site.id, token),
+        registerLink: this.webAppLinksService.register()
+      }
+    )
   }
 }

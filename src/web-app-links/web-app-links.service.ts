@@ -6,6 +6,10 @@ export class WebAppLinksService {
     return process.env.APP_BASEURL!
   }
 
+  register(): string {
+    return `${process.env.APP_BASEURL}/authentication/register`
+  }
+
   activateAccount(token: string): string {
     return `${process.env.APP_BASEURL}/authentication/activate/${token}`
   }
@@ -20,5 +24,9 @@ export class WebAppLinksService {
 
   site(id: number): string {
     return `${process.env.APP_BASEURL}/sites/${id}`
+  }
+
+  siteWithInvitation(id: number, token: string): string {
+    return `${process.env.APP_BASEURL}/sites/${id}?invitation=${token}`
   }
 }
