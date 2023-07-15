@@ -27,10 +27,19 @@ interface ValidateEmailParams {
   validationLink: string
   username: string
 }
+interface InviteSiteMemberParams {
+  site: Site
+  email: string
+  pathToSite: string
+  isAlreadyUser: boolean
+  redirectLink: string
+  registerLink: string
+}
 interface TemplateParams {
   resetPassword: ChangePasswordParams & GlobalParams
   validateEmail: ValidateEmailParams & GlobalParams
   askSiteInvitation: AskSiteInvitationParams & GlobalParams
+  inviteSiteMember: InviteSiteMemberParams & GlobalParams
 }
 type Template<T = TemplateParams> = {
   [key in keyof T ]: Handlebars.TemplateDelegate<T[key]>
@@ -97,7 +106,8 @@ export class MailerService {
     const compiledTemplates: Template = {
       resetPassword: Handlebars.compile(templates['reset-password']),
       validateEmail: Handlebars.compile(templates['validate-email']),
-      askSiteInvitation: Handlebars.compile(templates['ask-site-invitation'])
+      askSiteInvitation: Handlebars.compile(templates['ask-site-invitation']),
+      inviteSiteMember: Handlebars.compile(templates['invite-site-member'])
     }
 
     this.templates = compiledTemplates

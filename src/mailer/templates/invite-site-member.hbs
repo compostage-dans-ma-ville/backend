@@ -1,0 +1,48 @@
+{{#> page}}
+  <mj-section>
+    <mj-column>
+      <mj-text line-height="30px">
+        <h1>Invitation à collaborer sur le site "{{site.name}}"</h1>
+      </mj-text>
+      <mj-text>
+        <p>Un administrateur du site t'invite à rejoindre les membres de <a href="{{pathToSite}}" target="_blank">{{site.name}}</a>.</p>
+      </mj-text>
+    </mj-column>
+  </mj-section>
+
+  {{#unless isAlreadyUser}}
+    <mj-section>
+      <mj-column>
+        <mj-text line-height="30px">
+          <h2>De quoi s'agit t'il?</h2>
+          <p>
+            L'application <a href="{{pathToApp}}">les 3 bacs</a> est une plateforme collaborative dédiée à la gestion des sites de compostage partagé.
+            Un des administrateur souhaiterais vous inviter en tant que membre du site mentionné plus haut.
+            Nous vous invitons donc à vous créer un compte avec l'adresse mail "<b>{{email}}</b>" afin d'accepter l'invitation:
+          </p>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+    
+    <mj-section>
+      <mj-column>
+        <mj-button href="{{registerLink}}">Créer un compte</mj-button>
+      </mj-column>
+    </mj-section>
+
+    <mj-section>
+      <mj-column>
+        <mj-text line-height="30px">
+          <h2>Une fois mon compte créé:</h2>
+          <p>Après avoir créé un compte et validé votre adresse email, vous pouvez rejoindre le site:</p>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+  {{/unless}}
+
+  <mj-section>
+    <mj-column>
+      <mj-button href="{{redirectLink}}">Rejoindre les membres du site</mj-button>
+    </mj-column>
+  </mj-section>
+{{/page}}

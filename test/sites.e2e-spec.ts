@@ -422,4 +422,59 @@ describe('sites', () => {
       expect(sendMailSpy).toHaveBeenCalledTimes(0)
     })
   })
+
+  describe('PUT /sites/:id/members', () => {
+    let site: Site
+
+    beforeAll(async () => {
+      const { body: sitesBody } = await request(app.getHttpServer()).get('/sites')
+      const { id } = sitesBody.data[0]
+      site = (await app.get(PrismaService).site.findUnique({
+        where: { id }
+      }))!
+    })
+
+    it('should send the invitation request to a non user', async () => {
+      const userEmail = 'foobarrandomemail@gmail.com'
+
+      const { status } = await request(app.getHttpServer())
+        .put(`/sites/${site.id}/members`)
+        .send({ email: userEmail, role: SiteRole.MEMBER })
+
+      expect(status).toBe(204)
+      expect(sendMailSpy).toHaveBeenCalledOnce()
+
+      const emailCall = sendMailSpy.mock.lastCall[0]
+      const email = emailCall.html as string
+      const to = emailCall.to as string[]
+
+      expect(to).toBe(userEmail)
+      expect(email).toContain('Créer un compte')
+      expect(email).toContain('Rejoindre les membres du site')
+      expect(email).toContain(userEmail)
+      expect(email).toContain(site.name)
+      expect(email).toContain(`/sites/${site.id}`)
+    })
+
+    it('should send the invitation request to a user', async () => {
+      const user = (await app.get(PrismaService).user.findFirst())!
+
+      const { status } = await request(app.getHttpServer())
+        .put(`/sites/${site.id}/members`)
+        .send({ email: user.email, role: SiteRole.MEMBER })
+
+      expect(status).toBe(204)
+      expect(sendMailSpy).toHaveBeenCalledOnce()
+
+      const emailCall = sendMailSpy.mock.lastCall[0]
+      const email = emailCall.html as string
+      const to = emailCall.to as string[]
+
+      expect(to).toBe(user.email)
+      expect(email).not.toContain('Créer un compte')
+      expect(email).toContain('Rejoindre les membres du site')
+      expect(email).toContain(site.name)
+      expect(email).toContain(`/sites/${site.id}`)
+    })
+  })
 })
