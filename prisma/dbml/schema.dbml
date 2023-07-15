@@ -29,6 +29,7 @@ Table Site {
   isPublic Boolean [not null, default: true]
   type SiteType [not null]
   treatedWaste Int
+  householdsAmount Int
   description String
   accessConditions String
   website String

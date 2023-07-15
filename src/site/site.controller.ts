@@ -35,7 +35,6 @@ import { DailyScheduleService } from '~/dailySchedule/DailySchedule.service'
 import { plainToInstance } from '~/utils/dto'
 import { CreateSiteDto } from './dto/CreateSite.dto'
 import { DailyTime } from '~/api-services/DailyTime'
-import { TREATED_WASTE_VALUES } from './dto/GetTreatedWaste.dto'
 import { AbilityService, UserAction } from '~/ability/ability.service'
 import { CheckAbility } from '~/ability/ability.decorator'
 import { AuthenticatedUser } from '~/auth/authenticatedUser.decorator'
@@ -57,52 +56,6 @@ export class SiteController {
     private readonly abilityService: AbilityService,
     private readonly userService: UserService,
   ) {}
-
-  @Post()
-  @ApiSecurity('access-token')
-  @CheckAbility({ action: UserAction.Create, subject: 'site' })
-  @ApiCreatedResponse({ description: 'The site is successfully created.', type: GetSiteDto })
-  async create(
-    @Body() createSiteDto: CreateSiteDto,
-  ) {
-    const { schedule: scheduleDto, ...siteData } = createSiteDto
-
-    const schedule = scheduleDto?.map((dailySchedule) => dailySchedule?.map((x) => ({
-      open: DailyTime.fromString(x.open),
-      close: DailyTime.fromString(x.close)
-    })) ?? null) ?? undefined
-
-    const site = {
-      ...siteData,
-      address: {
-        create: createSiteDto.address
-      }
-    }
-
-    return this.siteService.create(site, { schedule })
-  }
-
-  @Put(':id')
-  replace(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() updateSiteDto: CreateSiteDto
-  ) {
-    const { schedule: scheduleDto, ...siteData } = updateSiteDto
-
-    const schedule = scheduleDto?.map((dailySchedule) => dailySchedule?.map((x) => ({
-      open: DailyTime.fromString(x.open),
-      close: DailyTime.fromString(x.close)
-    })) ?? null) ?? undefined
-
-    const site: Prisma.SiteUpdateInput = {
-      ...siteData,
-      address: {
-        update: updateSiteDto.address
-      }
-    }
-
-    return this.siteService.replace(id, site, { schedule })
-  }
 
   @Get()
   @ApiPaginatedResponse(GetSiteDto)
@@ -146,6 +99,30 @@ export class SiteController {
     })
   }
 
+  @Post()
+  @ApiSecurity('access-token')
+  @CheckAbility({ action: UserAction.Create, subject: 'site' })
+  @ApiCreatedResponse({ description: 'The site is successfully created.', type: GetSiteDto })
+  async create(
+    @Body() createSiteDto: CreateSiteDto,
+  ) {
+    const { schedule: scheduleDto, ...siteData } = createSiteDto
+
+    const schedule = scheduleDto?.map((dailySchedule) => dailySchedule?.map((x) => ({
+      open: DailyTime.fromString(x.open),
+      close: DailyTime.fromString(x.close)
+    })) ?? null) ?? undefined
+
+    const site = {
+      ...siteData,
+      address: {
+        create: createSiteDto.address
+      }
+    }
+
+    return this.siteService.create(site, { schedule })
+  }
+
   @Get(':id')
   @ApiOkResponse({ description: 'The site is successfully retrieved.', type: GetSiteDto })
   @ApiNotFoundResponse({ description: 'The site is not found.' })
@@ -167,22 +144,27 @@ export class SiteController {
     )
   }
 
-  @Get('units/treated-waste')
-  @ApiOkResponse({
-    isArray: true,
-    description: 'The current values for a treated waste',
-    schema: {
-      example: Object.values(TREATED_WASTE_VALUES)
-    }
-  })
-  async getTreatedWasteUnit() {
-    return TREATED_WASTE_VALUES
-  }
+  @Put(':id')
+  replace(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateSiteDto: CreateSiteDto
+  ) {
+    const { schedule: scheduleDto, ...siteData } = updateSiteDto
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateSiteDto: UpdateSiteDto) {
-  //   return this.siteService.update(+id, updateSiteDto)
-  // }
+    const schedule = scheduleDto?.map((dailySchedule) => dailySchedule?.map((x) => ({
+      open: DailyTime.fromString(x.open),
+      close: DailyTime.fromString(x.close)
+    })) ?? null) ?? undefined
+
+    const site: Prisma.SiteUpdateInput = {
+      ...siteData,
+      address: {
+        update: updateSiteDto.address
+      }
+    }
+
+    return this.siteService.replace(id, site, { schedule })
+  }
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard)

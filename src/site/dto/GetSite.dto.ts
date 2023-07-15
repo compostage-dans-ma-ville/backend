@@ -122,11 +122,20 @@ export class GetSiteDto {
   @IsNumber()
   @IsOptional()
   @ApiProperty({
-    description: 'Average quantity of compost produced after each collection',
+    description: 'Average quantity of compost produced each year',
     nullable: true,
     example: 5000
   })
     treatedWaste?: number
+
+  @Expose()
+  @IsNumber()
+  @IsOptional()
+  @ApiProperty({
+    description: 'Amount of households associated to a composting site',
+    nullable: true
+  })
+    householdsAmount?: number
 
   @Expose()
   @ApiProperty({

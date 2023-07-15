@@ -51,6 +51,13 @@ export class SiteSchema implements Site {
 
   @Factory(
     faker => Math.random() > 0.25
+      ? faker?.random.numeric(2)
+      : null
+  )
+    householdsAmount: number | null
+
+  @Factory(
+    faker => Math.random() > 0.25
       ? faker?.internet.url()
       : null
   )

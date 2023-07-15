@@ -115,6 +115,7 @@ describe('sites', () => {
               || daily.length === 0
               || daily.every((opening: GetOpeningDto) => opening.open && opening.close)))),
         treatedWaste: expect.toSatisfy((x) => x === null || Number.isInteger(x)),
+        householdsAmount: expect.toSatisfy((x) => x === null || Number.isInteger(x)),
         website: expect.toSatisfy((x) => x === null || typeof x === 'string'),
         members: expect.toBeArray()
       })
@@ -224,6 +225,7 @@ describe('sites', () => {
           null
         ],
         treatedWaste: null,
+        householdsAmount: null,
         website: null,
         updatedAt: expect.any(String)
       })
@@ -264,6 +266,7 @@ describe('sites', () => {
               || daily.length === 0
               || daily.every((opening: GetOpeningDto) => opening.open && opening.close)))),
         treatedWaste: expect.toSatisfy((x) => x === null || Number.isInteger(x)),
+        householdsAmount: expect.toSatisfy((x) => x === null || Number.isInteger(x)),
         members: expect.toBeArray(),
         website: expect.toSatisfy(e => e === null || typeof e === 'string')
       })
@@ -284,6 +287,7 @@ describe('sites', () => {
         type: SiteType.EDUCATIONAL_INSTITUTION,
         accessConditions: 'Free4All',
         treatedWaste: 3000,
+        householdsAmount: 42,
         address: {
           houseNumber: '5',
           streetName: 'chemin des carrières',
@@ -319,6 +323,7 @@ describe('sites', () => {
         launchDate: expect.any(String),
         name: 'A new site',
         treatedWaste: 3000,
+        householdsAmount: 42,
         organizationId: null,
         updatedAt: expect.any(String),
         website: payload.website

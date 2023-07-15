@@ -92,7 +92,8 @@ const parseSite = (site: SiteCompostage): Result<ParsedSite, ParsedError> => {
       description: null,
       accessConditions,
       treatedWaste,
-      website: null
+      website: null,
+      householdsAmount: null
     }
   }
 }
